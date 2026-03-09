@@ -1,0 +1,93 @@
+<div class="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5 max-w-md">
+
+        <!-- Nombre -->
+        <div>
+            <label class="text-sm text-[var(--brand-text)]">
+                Nombre *
+            </label>
+
+            <input type="text" formControlName="first_name" class="input-primary w-full">
+
+            @if (getError('first_name')) {
+            <small class="text-red-400 text-xs mt-1 block">
+                {{ getError('first_name') }}
+            </small>
+            }
+        </div>
+
+
+        <!-- Apellido -->
+        <div>
+            <label class="text-sm text-[var(--brand-text)]">
+                Apellido
+            </label>
+
+            <input type="text" formControlName="last_name" class="input-primary w-full">
+        </div>
+
+
+        <!-- Email -->
+        <div>
+            <label class="text-sm text-[var(--brand-text)]">
+                Email *
+            </label>
+
+            <input type="email" formControlName="email" class="input-primary w-full">
+
+            @if (getError('email')) {
+            <small class="text-red-400 text-xs mt-1 block">
+                {{ getError('email') }}
+            </small>
+            }
+        </div>
+
+
+        <!-- Teléfono -->
+        <div class="flex flex-col gap-1 w-full">
+
+            <label class="text-sm text-[var(--brand-text)]">
+                Teléfono *
+            </label>
+
+            <ngx-intl-tel-input [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true"
+                [searchCountryFlag]="true" [searchCountryField]="[
+        SearchCountryField.Name,
+        SearchCountryField.DialCode,
+        SearchCountryField.Iso2
+      ]" [selectedCountryISO]="CountryISO.Mexico" [phoneValidation]="true" [separateDialCode]="true"
+                [numberFormat]="PhoneNumberFormat.International" formControlName="phone"
+                [cssClass]="'input-primary w-full'">
+
+            </ngx-intl-tel-input>
+
+            @if (getError('phone')) {
+            <small class="text-red-400 text-xs mt-1 block">
+                {{ getError('phone') }}
+            </small>
+            }
+
+        </div>
+
+
+        <!-- Botón -->
+        <button type="submit" [disabled]="form.invalid" class="w-full mt-4 py-3 rounded-lg
+           bg-[var(--brand-primary)]
+           text-white
+           font-medium
+           transition
+           hover:opacity-90
+           cursor-pointer
+           disabled:opacity-50
+           disabled:cursor-not-allowed">
+
+            Continuar
+
+        </button>
+
+        <p class="text-xs text-gray-500 text-center mt-2">
+            Tus datos solo se usarán para gestionar tu cita.
+        </p>
+
+    </form>
+</div>

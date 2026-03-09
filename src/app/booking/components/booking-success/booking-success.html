@@ -1,0 +1,135 @@
+<div class="max-w-xl mx-auto text-center space-y-6 pb-6 animate-in zoom-in-95 fade-in duration-500">
+
+    <!-- SUCCESS HEADER -->
+    <div class="flex flex-col items-center">
+
+        <div class="h-14 w-14 bg-emerald-100 text-emerald-600 rounded-full
+                    flex items-center justify-center mb-3 ring-4 ring-emerald-50 text-xl font-bold">
+            ✓
+        </div>
+
+        <h2 class="text-2xl font-bold text-slate-900">
+            ¡Cita confirmada!
+        </h2>
+
+        <p class="text-sm text-slate-500">
+            Hemos enviado los detalles a tu correo electrónico.
+        </p>
+
+    </div>
+
+
+    <!-- BOOKING SUMMARY -->
+    <div class="bg-white rounded-2xl p-5 shadow-md
+                border border-slate-100 text-left space-y-5">
+
+        <!-- SERVICE -->
+        <div class="flex items-start gap-3">
+
+            <div class="p-2 bg-blue-50 text-[var(--brand-primary)] rounded-xl">
+                <lucide-angular [name]="ClipboardList" class="h-5 w-5"></lucide-angular>
+            </div>
+
+            <div>
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    Servicio
+                </p>
+
+                <p class="font-semibold text-slate-900">
+                    {{ service?.name }}
+                </p>
+
+                <p class="text-xs text-slate-500">
+                    {{ variant?.duration_minutes }} minutos • ${{ variant?.price }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- DATE -->
+        <div class="flex items-start gap-3">
+
+            <div class="p-2 bg-indigo-50 text-[var(--brand-primary)] rounded-xl">
+                <lucide-angular [name]="Calendar" class="h-5 w-5"></lucide-angular>
+            </div>
+
+            <div>
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    Fecha y hora
+                </p>
+
+                <p class="font-semibold text-slate-900">
+                    {{ date | date:'EEEE d MMMM' }}
+                </p>
+
+                <p class="text-xs text-slate-500">
+                    A las {{ time }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- CUSTOMER -->
+        <div class="flex items-start gap-3">
+
+            <div class="p-2 bg-slate-50 text-[var(--brand-primary)] rounded-xl">
+                <lucide-angular [name]="User" class="h-5 w-5"></lucide-angular>
+            </div>
+
+            <div>
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    Cliente
+                </p>
+
+                <p class="font-semibold text-slate-900">
+                    {{ customer?.first_name }} {{ customer?.last_name }}
+                </p>
+
+                <p class="text-xs text-slate-500">
+                    {{ customer?.email }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTION BUTTONS -->
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+
+        <!-- NEW BOOKING -->
+        <button (click)="restart.emit()" class="px-6 py-2.5 rounded-lg
+                   bg-[var(--brand-primary)]
+                   text-white
+                   text-sm font-semibold
+                   hover:opacity-90
+                   transition cursor-pointer">
+
+            Agendar otra cita
+
+        </button>
+
+        <!-- CLOSE -->
+        <button (click)="close()" class="px-6 py-2.5 rounded-lg
+                   bg-[var(--brand-secondary)]
+                   text-slate-700
+                   text-sm font-medium
+                   hover:opacity-90
+                   transition cursor-pointer">
+
+            Cerrar
+
+        </button>
+
+    </div>
+
+</div>

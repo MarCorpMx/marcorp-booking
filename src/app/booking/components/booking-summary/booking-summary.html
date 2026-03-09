@@ -1,0 +1,156 @@
+<div class="bg-white rounded-3xl shadow-xl shadow-slate-200 border border-slate-100 flex flex-col">
+
+    <!-- CONTENT -->
+    <div class="p-6 space-y-6">
+
+        <!-- TITLE -->
+        <h3 class="text-xl font-black text-slate-900 flex items-center gap-2">
+            Tu cita
+            <span class="h-2 w-2 bg-[var(--brand-primary)] rounded-full animate-pulse"></span>
+        </h3>
+
+        <div class="space-y-5">
+
+            <!-- SERVICE -->
+            <div class="flex items-start gap-3">
+
+                <div class="p-2 rounded-xl"
+                    [ngClass]="service ? 'bg-[var(--brand-bg)] text-[var(--brand-primary)]' : 'bg-slate-50 text-slate-300'">
+
+                    <lucide-angular [name]="icons.ClipboardList" class="h-5 w-5"></lucide-angular>
+
+                </div>
+
+                <div class="flex-1">
+
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Servicio
+                    </p>
+
+                    <p *ngIf="service; else noService" class="font-bold text-slate-900 leading-tight">
+                        {{service?.name}} - {{variant?.name}}
+                    </p>
+
+                    <ng-template #noService>
+                        <p class="text-sm text-slate-400 italic">No seleccionado</p>
+                    </ng-template>
+
+                </div>
+
+            </div>
+
+            <!-- DATE TIME -->
+
+            <div class="flex items-start gap-3">
+
+                <div class="p-2 rounded-xl"
+                    [ngClass]="selectedDate ? 'bg-[var(--brand-bg)] text-[var(--brand-primary)]' : 'bg-slate-50 text-slate-300'">
+
+                    <lucide-angular [name]="icons.Calendar" class="h-5 w-5"></lucide-angular>
+
+                </div>
+
+                <div class="flex-1">
+
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Fecha y hora
+                    </p>
+
+                    <div *ngIf="selectedDate && selectedTime; else pendingDate"
+                        class="font-bold text-slate-900 leading-tight">
+
+                        <p>{{selectedDate | date:'d MMMM'}}</p>
+
+                        <p class="text-sm text-[var(--brand-secondary)] flex items-center gap-1 mt-0.5">
+
+                            <lucide-angular [name]="icons.Clock" class="h-3 w-3"></lucide-angular>
+
+                            {{selectedTime}}
+
+                        </p>
+
+                    </div>
+
+                    <ng-template #pendingDate>
+                        <p class="text-sm text-slate-400 italic">Pendiente</p>
+                    </ng-template>
+
+                </div>
+
+            </div>
+
+            <!-- CUSTOMER -->
+
+            <div class="flex items-start gap-3">
+
+                <div class="p-2 rounded-xl"
+                    [ngClass]="customer ? 'bg-[var(--brand-bg)] text-[var(--brand-primary)]' : 'bg-slate-50 text-slate-300'">
+
+                    <lucide-angular [name]="icons.User" class="h-5 w-5"></lucide-angular>
+
+                </div>
+
+                <div class="flex-1">
+
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Cliente
+                    </p>
+
+                    <p *ngIf="customer; else noCustomer" class="font-bold text-slate-900 leading-tight">
+
+                        {{customer?.first_name}} {{customer?.last_name}}
+
+                    </p>
+
+                    <ng-template #noCustomer>
+                        <p class="text-sm text-slate-400 italic">Pendiente</p>
+                    </ng-template>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- PRICE + BUTTON (STICKY FOOTER) -->
+    <div class="border-t border-slate-100 p-6 space-y-4 bg-white">
+
+        <div class="flex justify-between items-end">
+
+            <span class="text-sm font-bold text-slate-500">
+                Total
+            </span>
+
+            <span class="text-3xl font-black text-slate-900">
+                ${{variant?.price || 0}} MXN
+            </span>
+
+        </div>
+
+        <button (click)="confirmBooking()" [disabled]="!service || !selectedDate || !selectedTime || !customer"
+            [ngClass]="{
+    'cursor-pointer hover:opacity-90': service && selectedDate && selectedTime && customer,
+    'cursor-not-allowed': !service || !selectedDate || !selectedTime || !customer
+  }" class="w-full py-3 rounded-xl
+         bg-[var(--brand-primary)] text-white font-bold
+         transition
+         disabled:bg-slate-200 disabled:text-slate-400">
+
+            Confirmar cita
+
+        </button>
+
+        <div
+            class="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 rounded-xl">
+
+            <lucide-angular [name]="icons.ShieldCheck" class="h-4 w-4 text-emerald-500"></lucide-angular>
+
+            Pago seguro en el establecimiento
+
+        </div>
+
+    </div>
+
+</div>

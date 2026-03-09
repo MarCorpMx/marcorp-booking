@@ -1,0 +1,53 @@
+<div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+    <!-- HEADER -->
+    <!--<div>
+    <h2 class="text-2xl font-bold text-slate-900">
+      Fecha y hora
+    </h2>
+
+    <p class="text-slate-500">
+      ¿Cuándo te gustaría venir?
+    </p>
+  </div>-->
+
+    <!-- DATE SELECTOR -->
+    <div class="flex gap-2 overflow-x-auto pb-2">
+
+        <button *ngFor="let day of days" (click)="selectDate(day)"
+            class="flex flex-col items-center min-w-[70px] p-3 rounded-2xl border-2 transition-all cursor-pointer"
+            [ngClass]="{
+        'border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white shadow-lg shadow-[var(--brand-primary)]':
+          isSelectedDate(day),
+        'border-white bg-white hover:border-slate-200 text-slate-600 shadow-sm':
+          !isSelectedDate(day)
+      }">
+
+            <span class="text-[10px] uppercase font-bold tracking-wider opacity-80">
+                {{ day | date:'EEE' }}
+            </span>
+
+            <span class="text-lg font-black mt-1">
+                {{ day | date:'d' }}
+            </span>
+
+        </button>
+
+    </div>
+
+    <!-- TIME GRID -->
+    <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+
+        <button *ngFor="let time of times" (click)="selectTime(time)" class="p-3 text-sm font-bold rounded-xl border-2 border-white bg-white
+             hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]
+             transition-all shadow-sm cursor-pointer" [ngClass]="{
+'border-[var(--brand-primary)] bg-[var(--brand-primary)] text-[var(--brand-primary)]': selectedTime === time
+}">
+
+            {{ time }}
+
+        </button>
+
+    </div>
+
+</div>

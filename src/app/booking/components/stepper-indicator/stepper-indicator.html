@@ -1,0 +1,53 @@
+<nav aria-label="Progress" class="mb-8">
+  <ol class="flex items-center justify-between w-full">
+
+    <li
+      *ngFor="let step of steps; let i = index"
+      class="relative flex flex-col items-center w-full">
+
+      <!-- LINE -->
+      <div
+        *ngIf="i !== steps.length - 1"
+        class="absolute top-5 left-1/2 w-full h-[2px]"
+        [ngClass]="currentStep > step.id ? 'bg-[var(--brand-primary)]' : 'bg-slate-200'">
+      </div>
+
+      <!-- CIRCLE -->
+      <div
+        class="relative flex h-10 w-10 items-center justify-center rounded-full border-2 z-10 transition-all"
+
+        [ngClass]="{
+          'bg-[var(--brand-primary)] border-[var(--brand-primary)] text-white': currentStep > step.id,
+          'bg-white border-[var(--brand-primary)] text-[var(--brand-primary)] shadow-sm': currentStep === step.id,
+          'bg-white border-slate-200 text-slate-400': currentStep < step.id
+        }">
+
+        <!-- CHECK -->
+        <lucide-angular
+          *ngIf="currentStep > step.id"
+          [name]="icons.Check"
+          class="h-5 w-5">
+        </lucide-angular>
+
+        <!-- ICON -->
+        <lucide-angular
+          *ngIf="currentStep <= step.id"
+          [name]="icons[step.icon]"
+          class="h-5 w-5">
+        </lucide-angular>
+
+      </div>
+
+      <!-- LABEL -->
+      <span
+        class="mt-2 text-[10px] font-semibold uppercase tracking-wider"
+        [ngClass]="currentStep === step.id ? 'text-[var(--brand-primary)]' : 'text-slate-400'">
+
+        {{ step.name }}
+
+      </span>
+
+    </li>
+
+  </ol>
+</nav>

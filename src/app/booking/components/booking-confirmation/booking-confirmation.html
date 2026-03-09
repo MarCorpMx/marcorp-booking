@@ -1,0 +1,107 @@
+<section id="booking-confirmation"
+    class="pt-6 mt-10 p-6 rounded-2xl border border-gray-200 bg-white shadow-sm scroll-mt-60">
+    <!-- space-y-4 pt-6 border-t border-gray-200 animate-fade-in scroll-mt-40 -->
+    <h2 class="text-xl font-semibold mb-6">
+        Resumen
+    </h2>
+
+    <div class="space-y-4 text-sm">
+
+        <div class="flex justify-between">
+            <span class="text-gray-500">Servicio</span>
+            <span class="font-medium">{{ service?.name }}</span>
+        </div>
+
+        <div class="flex justify-between" *ngIf="variant">
+            <span class="text-gray-500">Variante</span>
+            <span class="font-medium">{{ variant?.name }}</span>
+        </div>
+
+        <div class="flex justify-between">
+            <span class="text-gray-500">Fecha</span>
+            <span class="font-medium">{{ date | date:'d MMMM' }}</span>
+        </div>
+
+        <div class="flex justify-between">
+            <span class="text-gray-500">Hora</span>
+            <span class="font-medium">{{ time }}</span>
+        </div>
+
+        <div class="border-t pt-4 mt-4"></div>
+
+        <div class="flex justify-between">
+            <span class="text-gray-500">Cliente</span>
+            <span class="font-medium">
+                {{ customer?.first_name }} {{ customer?.last_name }}
+            </span>
+        </div>
+
+        <div class="flex justify-between">
+            <span class="text-gray-500">Email</span>
+            <span class="font-medium">
+                {{ customer?.email }}
+            </span>
+        </div>
+
+        <div class="flex justify-between">
+            <span class="text-gray-500">Teléfono</span>
+            <span class="font-medium">
+                {{ customer?.phone?.internationalNumber }}
+            </span>
+        </div>
+
+        <div class="flex justify-between font-semibold text-base mt-6 border-t pt-4">
+            <span>Total</span>
+            <span>${{ variant?.price }} MXN</span>
+        </div>
+
+    </div>
+
+    
+    <button (click)="confirmBooking()" class="w-full mt-8 py-3 rounded-xl
+bg-[var(--brand-primary)]
+text-white
+font-semibold
+transition
+hover:opacity-90
+flex items-center justify-center
+gap-2 cursor-pointer">
+
+        <span *ngIf="!loading">
+            Confirmar cita
+        </span>
+
+        <span *ngIf="loading">
+            Procesando...
+        </span>
+
+    </button>
+
+    <p class="text-xs text-gray-400 mt-4">
+        Tus datos solo se usarán para confirmar tu cita.
+    </p>
+
+
+    
+    <!--
+    <button (click)="confirmBooking()" class="w-full mt-8 py-3 rounded-xl
+bg-[var(--brand-primary)]
+text-white
+font-medium
+transition
+hover:opacity-90
+flex items-center justify-center
+gap-2">
+
+        <span *ngIf="!loading">
+            Confirmar cita
+        </span>
+
+        <span *ngIf="loading">
+            Procesando...
+        </span>
+
+    </button>
+    -->
+
+</section>
