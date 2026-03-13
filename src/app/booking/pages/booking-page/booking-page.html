@@ -6,7 +6,8 @@
                 <!-- Logo -->
                 <div class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden">
 
-                    <img *ngIf="organization?.logo_url" [src]="organization?.logo_url" class="w-full h-full object-cover">
+                    <img *ngIf="organization?.logo_url" [src]="organization?.logo_url"
+                        class="w-full h-full object-cover">
 
                     <span *ngIf="!organization?.logo_url" class="text-lg font-semibold text-gray-400">
                         {{ organization?.name?.charAt(0) }}
@@ -17,12 +18,17 @@
                     <div class="flex items-center gap-2 mt-1">
                         <span class="flex items-center gap-0.5 text-[10px] font-bold text-amber-500">
                             <lucide-angular [name]="Star" class="h-3 w-3 fill-current"></lucide-angular>
-                            4.9 (1.2k)
+                            <!-- 4.9 (1.2k) -->
+                            {{ (organization?.rating ?? 0) | number:'1.1-1' }}
+                            ({{ formatReviews(organization?.reviews_count) }})
                         </span>
                         <span class="text-[10px] font-bold text-slate-400 flex items-center gap-0.5">
                             <lucide-angular [name]="MapPin" class="h-3 w-3"></lucide-angular>
-                            <!-- {{ organization?.city || 'Ubicación' }} -->
-                            Cuernavaca
+                            {{
+                            organization?.city && organization?.state
+                            ? organization?.city + ', ' + organization?.state
+                            : organization?.city || organization?.state || 'Ubicación'
+                            }}
                         </span>
                     </div>
                 </div>
@@ -51,7 +57,16 @@
                             1. Selecciona un servicio
                         </h2>
 
-                        <app-service-selector [services]="services" (variantSelected)="onVariantSelected($event)">
+                        <!-- SKELETON -->
+                        <div *ngIf="servicesLoading" class="space-y-4">
+
+                            <div *ngFor="let i of [1,2,3]" class="h-24 rounded-2xl bg-slate-200 animate-pulse">
+                            </div>
+
+                        </div>
+
+                        <app-service-selector *ngIf="!servicesLoading" [services]="services"
+                            (variantSelected)="onVariantSelected($event)">
                         </app-service-selector>
 
                     </section>
@@ -67,7 +82,7 @@
                             2. Selecciona fecha y hora
                         </h2>
 
-                        <app-date-time-selector [selectedVariant]="selectedVariant"
+                        <app-date-time-selector [selectedVariant]="selectedVariant" [organization]="organization"
                             (dateSelected)="onDateSelected($event)" (timeSelected)="onTimeSelected($event)">
                         </app-date-time-selector>
 

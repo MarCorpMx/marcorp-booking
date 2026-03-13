@@ -1,5 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+import { BookingService } from '../../../core/services/booking.service';
+import { TimeSlot } from '../../../core/models/date-time.model';
+
 
 @Component({
   selector: 'app-date-time-selector',
@@ -8,42 +12,122 @@ import { CommonModule } from '@angular/common';
   styleUrl: './date-time-selector.css',
 })
 
-export class DateTimeSelector {
+export class DateTimeSelector implements OnInit, OnChanges {
   @Input() selectedVariant: any;
-
+  @Input() organization: any;
   @Output() dateSelected = new EventEmitter<Date>();
-  @Output() timeSelected = new EventEmitter<string>();
+  //@Output() timeSelected = new EventEmitter<string>();
+  @Output() timeSelected = new EventEmitter<TimeSlot>();
+
+  loadingDays = false;
+  loadingTimes = false;
 
   selectedDate!: Date;
   selectedTime!: string;
 
+  availableDays: Record<string, boolean> = {};
+
   days: Date[] = [];
-  times: string[] = [
-    '09:00', '09:30', '10:00', '10:30',
-    '11:00', '11:30', '12:00',
-    '15:00', '15:30', '16:00', '16:30', '17:00'
-  ];
+  times: TimeSlot[] = [];
+
+  showNumDays: number = 9;
+
+  constructor(private bookingService: BookingService) { }
 
   ngOnInit() {
     const today = new Date();
 
-    this.days = Array.from({ length: 7 }).map((_, i) => {
+    this.days = Array.from({ length: this.showNumDays }).map((_, i) => {
       const d = new Date();
       d.setDate(today.getDate() + i);
       return d;
     });
+  }
 
-    this.selectedDate = today;
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['selectedVariant'] && this.selectedVariant) {
+      const today = new Date();
+      this.selectedDate = today;
+      this.dateSelected.emit(today);
+      this.loadAvailabilityRange(today);
+      this.loadAvailability(today);
+    }
+  }
+
+  loadAvailabilityRange(startDate: Date) {
+    this.loadingDays = true;
+
+    //const formattedDate = startDate.toISOString().split('T')[0];
+    const formattedDate = startDate.toLocaleDateString('en-CA');
+
+    this.bookingService
+      .getAvailabilityRange(
+        this.organization.slug,
+        this.selectedVariant.id,
+        formattedDate,
+        this.showNumDays
+      )
+      .subscribe((res: any) => {
+
+        this.availableDays = {};
+
+        res.days.forEach((day: any) => {
+          this.availableDays[day.date] = day.available;
+        });
+
+        this.loadingDays = false;
+
+      });
+  }
+
+  isDayAvailable(date: Date) {
+    //const key = date.toISOString().split('T')[0];
+    const key = date.toLocaleDateString('en-CA');
+
+    return this.availableDays[key] ?? false;
+  }
+
+  loadAvailability(date: Date) {
+    if (!this.selectedVariant) return;
+
+    this.loadingTimes = true;
+
+    //const formattedDate = date.toISOString().split('T')[0];
+    const formattedDate = date.toLocaleDateString('en-CA');
+
+    this.bookingService
+      .getAvailability(
+        this.organization.slug,
+        this.selectedVariant.id,
+        formattedDate
+      )
+      .subscribe((res: any) => {
+        this.times = res.available_slots ?? [];
+
+        this.loadingTimes = false;
+      });
   }
 
   selectDate(date: Date) {
     this.selectedDate = date;
+    this.selectedTime = '';
+
+    this.loadAvailability(date);
+
     this.dateSelected.emit(date);
   }
 
-  selectTime(time: string) {
-    this.selectedTime = time;
-    this.timeSelected.emit(time);
+  selectTime(slot: TimeSlot) {
+    this.selectedTime = slot.time;
+
+    // emitir fecha actual si no se ha emitido
+    this.dateSelected.emit(this.selectedDate);
+
+    this.timeSelected.emit(slot);
+    /*this.timeSelected.emit({
+      time: slot.time,
+      staff_member_id: slot.staff_member_id
+    });*/
   }
 
   isSelectedDate(date: Date) {

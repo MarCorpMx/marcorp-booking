@@ -50,6 +50,20 @@
             </span>
         </div>
 
+        @if(customer?.notes?.length > 0){
+        <div class="flex flex-col gap-1">
+
+            <span class="text-gray-500 text-sm">
+                Notas
+            </span>
+
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm">
+                {{ customer?.notes }}
+            </div>
+
+        </div>
+        }
+
         <div class="flex justify-between font-semibold text-base mt-6 border-t pt-4">
             <span>Total</span>
             <span>${{ variant?.price }} MXN</span>
@@ -57,7 +71,7 @@
 
     </div>
 
-    
+
     <button (click)="confirmBooking()" class="w-full mt-8 py-3 rounded-xl
 bg-[var(--brand-primary)]
 text-white
@@ -82,7 +96,7 @@ gap-2 cursor-pointer">
     </p>
 
 
-    
+
     <!--
     <button (click)="confirmBooking()" class="w-full mt-8 py-3 rounded-xl
 bg-[var(--brand-primary)]

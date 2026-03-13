@@ -24,9 +24,7 @@ export class BookingSuccess {
   @Output() restart = new EventEmitter<void>();
 
   close() {
-    alert("hola");
     window.close();
-
     // window.location.href = "https://puntodecalma.com";
   }
 

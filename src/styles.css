@@ -32,6 +32,7 @@
   --brand-text: #1F2937 !important;
 }
 
+
 .input-primary {
   @apply w-full
   px-4 py-2.5
@@ -49,6 +50,27 @@
   focus:ring-[var(--brand-primary)]
   focus:border-[var(--brand-primary)];
 }
+
+/*
+.input-primary {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 10px 12px;
+  font-size: 14px;
+  transition: all 0.15s ease;
+  background: white;
+}
+
+.input-primary:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+}
+
+.input-primary::placeholder {
+  color: #9ca3af;
+}*/
 
 button {
   transition: all 0.18s ease;

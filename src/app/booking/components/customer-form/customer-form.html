@@ -1,5 +1,6 @@
 <div class="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
-    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5 max-w-md">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5 max-w-lg"> 
+        <!-- class="space-y-5 max-w-md" -->
 
         <!-- Nombre -->
         <div>
@@ -20,10 +21,16 @@
         <!-- Apellido -->
         <div>
             <label class="text-sm text-[var(--brand-text)]">
-                Apellido
+                Apellido 
             </label>
 
             <input type="text" formControlName="last_name" class="input-primary w-full">
+
+            @if (getError('last_name')) {
+            <small class="text-red-400 text-xs mt-1 block">
+                {{ getError('last_name') }}
+            </small>
+            }
         </div>
 
 
@@ -66,6 +73,21 @@
                 {{ getError('phone') }}
             </small>
             }
+
+        </div>
+
+        <!-- Notas -->
+        <div>
+            <label class="text-sm text-[var(--brand-text)]">
+                Comentarios (opcional)
+            </label>
+
+            <textarea formControlName="notes" rows="3" maxlength="500" placeholder="¿Algo que debamos saber?"
+                class="input-primary w-full resize-none"></textarea>
+
+            <div class="flex justify-end text-xs text-gray-400">
+                {{ form.get('notes')?.value?.length || 0 }}/500
+            </div>
 
         </div>
 

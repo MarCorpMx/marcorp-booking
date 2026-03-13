@@ -35,22 +35,28 @@ export class CustomerForm implements OnInit {
 
   initForm() {
     this.form = this.fb.group({
-      first_name: ['Omar', [
+      first_name: ['', [
         Validators.required,
         Validators.minLength(2),
         Validators.maxLength(100)
       ]],
 
-      last_name: [''],
+      last_name: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(100)
+      ]],
 
-      email: ['om@mail.com', [
+      email: ['', [
         Validators.required,
         Validators.email,
         Validators.maxLength(150)
       ]],
 
-      //phone: [null, Validators.required]
-      phone: ['7702021345', Validators.required]
+      //phone: [null, Validators.required],
+      phone: ['', Validators.required],
+
+      notes: ['']
     });
   }
 

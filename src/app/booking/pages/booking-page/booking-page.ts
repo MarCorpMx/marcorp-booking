@@ -15,6 +15,7 @@ import { OrganizationService } from '../../../core/services/organization.service
 import { OrganizationModel } from '../../../core/models/organization.model';
 import { BookingService } from '../../../core/services/booking.service';
 import { ServiceModel } from '../../../core/models/service.model';
+import { TimeSlot } from '../../../core/models/date-time.model';
 
 import { Title } from '@angular/platform-browser';
 
@@ -31,6 +32,8 @@ export class BookingPage implements OnInit {
   readonly Star = Star;
   readonly MapPin = MapPin;
 
+  servicesLoading = true;
+
   organization?: OrganizationModel;
   services: ServiceModel[] = [];
 
@@ -39,6 +42,7 @@ export class BookingPage implements OnInit {
 
   selectedDate: Date | null = null;
   selectedTime: string | null = null;
+  staff_member_id: number = 0;
 
   currentStep = 1;
   showConfirmation = false;
@@ -46,6 +50,7 @@ export class BookingPage implements OnInit {
   customerData: any = null;
 
   bookingCompleted = false;
+  isSubmitting = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -84,7 +89,6 @@ export class BookingPage implements OnInit {
 
   }
 
-
   ngOnInit(): void {
     const slug = this.route.snapshot.paramMap.get('slug')!;
 
@@ -92,7 +96,7 @@ export class BookingPage implements OnInit {
       .loadOrganization(slug)
       .subscribe(org => {
         this.organization = org;
-        this.setBranding(org); 
+        this.setBranding(org);
         this.loadServices(slug);
 
         console.log(org);
@@ -104,6 +108,7 @@ export class BookingPage implements OnInit {
       .getServices(slug)
       .subscribe((services: any) => {
         this.services = services;
+        this.servicesLoading = false;
       });
   }
 
@@ -143,8 +148,10 @@ export class BookingPage implements OnInit {
     this.updateStep();
   }
 
-  onTimeSelected(time: string) {
-    this.selectedTime = time;
+  onTimeSelected(slot: TimeSlot) {
+    this.selectedTime = slot.time;
+    this.staff_member_id = slot.staff_member_id;
+
     this.updateStep();
 
     if (this.selectedDate && this.selectedTime) {
@@ -156,8 +163,6 @@ export class BookingPage implements OnInit {
     this.customerData = data;
     this.currentStep = 4;
     this.updateStep();
-
-    console.log('el vato', data);
 
     setTimeout(() => {
       document.getElementById('booking-confirmation')
@@ -197,71 +202,65 @@ export class BookingPage implements OnInit {
     }, 50);
   }
 
-  /*
+
   createBooking() {
+    if (!this.organization) return;
+    if (!this.selectedVariant || !this.selectedDate || !this.selectedTime) {
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    const slug = this.organization.slug;
+    const phone = this.customerData.phone;
+
     const payload = {
       service_variant_id: this.selectedVariant.id,
-      date: this.selectedDate,
-      time: this.selectedTime,
-      customer: {
-        first_name: this.customerData.first_name,
-        last_name: this.customerData.last_name,
-        email: this.customerData.email,
-        phone: this.customerData.phone
-      }
+      staff_member_id: this.staff_member_id,
 
+      //date: this.selectedDate?.toISOString().split('T')[0],
+      date: this.selectedDate?.toLocaleDateString('en-CA'),
+      time: this.selectedTime,
+
+      first_name: this.customerData.first_name,
+      last_name: this.customerData.last_name,
+      email: this.customerData.email,
+
+      phone: phone ? {
+        number: phone.nationalNumber,
+        e164Number: phone.e164Number,
+        countryCode: phone.countryCode,
+        dialCode: phone.dialCode
+      } : null,
+
+      notes: this.customerData.notes
     };
 
-    this.bookingService.create(payload)
+    this.bookingService
+      .createAppointment(slug, payload)
       .subscribe({
-        next: (booking) => {
-          this.bookingConfirmed = true;
-          this.bookingData = booking;
+
+        next: () => {
+          this.isSubmitting = false;
+          this.bookingCompleted = true;
+
+          setTimeout(() => {
+            document.getElementById('booking-success')
+              ?.scrollIntoView({ behavior: 'smooth' });
+          }, 200);
+
         },
-        error: () => {
-          alert('Error al crear la cita');
+        error: (error) => {
+          this.isSubmitting = false;
+          console.error(error);
+          alert('No se pudo crear la cita. Intenta nuevamente.');
         }
+
       });
-
-  }*/
-
-  createBooking() {
-
-    this.bookingCompleted = true;
-
-    setTimeout(() => {
-      alert("falta la creacion");
-      document.getElementById('booking-success')?.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }, 200);
-
-    /*this.bookingService.createBooking({
-      service_id: this.selectedService.id,
-      variant_id: this.selectedVariant.id,
-      date: this.selectedDate,
-      time: this.selectedTime,
-      customer: this.customerData
-    }).subscribe({
-
-      next: () => {
-
-        this.bookingCompleted = true;
-
-        setTimeout(() => {
-          document.getElementById('booking-success')?.scrollIntoView({
-            behavior: 'smooth'
-          });
-        }, 50);
-
-      }
-
-    });*/
 
   }
 
   resetBooking() {
-
     this.bookingCompleted = false;
     this.showConfirmation = false;
 
@@ -278,6 +277,16 @@ export class BookingPage implements OnInit {
       behavior: 'smooth'
     });
 
+  }
+
+  formatReviews(count?: number): string {
+    if (!count) return '0';
+
+    if (count >= 1000) {
+      return (count / 1000).toFixed(1).replace('.0', '') + 'k';
+    }
+
+    return count.toString();
   }
 
 }

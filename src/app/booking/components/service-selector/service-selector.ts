@@ -18,7 +18,6 @@ export class ServiceSelector {
   selectedVariant: any = null;
   selectedVariantId: number | null = null;
 
-  
 
   selectVariant(service: any, variant: any) {
     this.selectedVariantId = variant.id;
@@ -31,11 +30,12 @@ export class ServiceSelector {
   }
 
 
-  /*toggleService(index: number) {
+  toggleService(index: number) {
     this.expandedIndex = this.expandedIndex === index ? null : index;
-  }*/
+  }
 
-  toggleService(serviceId: number) {
+    
+  /*toggleService(serviceId: number) {
     if (this.expandedIndex === serviceId) {
       this.expandedIndex = null;
       return;
@@ -49,6 +49,6 @@ export class ServiceSelector {
       this.selectVariant(service, service.variants[0]);
     }
 
-  }
+  }*/
 
 }
