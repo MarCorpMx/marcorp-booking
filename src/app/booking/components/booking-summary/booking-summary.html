@@ -27,9 +27,28 @@
                         Servicio
                     </p>
 
-                    <p *ngIf="service; else noService" class="font-bold text-slate-900 leading-tight">
+                    <!--<p *ngIf="service; else noService" class="font-bold text-slate-900 leading-tight">
                         {{service?.name}} - {{variant?.name}}
-                    </p>
+                    </p>-->
+
+                    <div *ngIf="service; else noService">
+
+                        <p class="font-bold text-slate-900 leading-tight">
+                            {{ service?.name }} - {{ getVariantDisplayName(variant?.name) }}
+                        </p>
+
+                        <span
+                            class="inline-flex items-center mt-1 px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wide"
+                            [ngClass]="variant?.mode === 'presential'
+            ? 'bg-emerald-50 text-[var(--brand-secondary)]'
+            : 'bg-indigo-50 text-[var(--brand-secondary)]'">
+
+                            {{ variant?.mode === 'presential' ? 'Presencial' : 'En línea' }}
+
+                        </span>
+
+                    </div>
+
 
                     <ng-template #noService>
                         <p class="text-sm text-slate-400 italic">No seleccionado</p>

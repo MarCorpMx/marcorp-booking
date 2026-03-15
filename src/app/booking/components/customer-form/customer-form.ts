@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { NgxIntlTelInputModule, CountryISO, PhoneNumberFormat, SearchCountryField } from 'ngx-intl-tel-input';
@@ -12,6 +12,7 @@ import { NgxIntlTelInputModule, CountryISO, PhoneNumberFormat, SearchCountryFiel
 })
 
 export class CustomerForm implements OnInit {
+
   @Output() formCompleted = new EventEmitter<any>();
   form!: FormGroup;
 
@@ -53,8 +54,8 @@ export class CustomerForm implements OnInit {
         Validators.maxLength(150)
       ]],
 
-      //phone: [null, Validators.required],
-      phone: ['', Validators.required],
+      phone: [null, Validators.required],
+      //phone: ['7702021345', Validators.required],
 
       notes: ['']
     });

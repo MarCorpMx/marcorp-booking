@@ -8,6 +8,7 @@ import { LucideAngularModule, ClipboardList, Calendar, Clock, User, ShieldCheck 
   templateUrl: './booking-summary.html',
   styleUrl: './booking-summary.css',
 })
+
 export class BookingSummary {
 
   @Input() service: any;
@@ -33,7 +34,15 @@ export class BookingSummary {
     ShieldCheck
   };
 
-  
+  getVariantDisplayName(name?: string) {
+    if (!name) return '';
+
+    return name
+      .replace(/—\s*Presencial/i, '')
+      .replace(/—\s*En línea/i, '')
+      .trim();
+  }
+
   confirmBooking() {
     this.confirm.emit();
   }

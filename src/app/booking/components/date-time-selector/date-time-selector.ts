@@ -47,17 +47,56 @@ export class DateTimeSelector implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['selectedVariant'] && this.selectedVariant) {
       const today = new Date();
-      this.selectedDate = today;
-      this.dateSelected.emit(today);
+      //this.selectedDate = today;
+      //this.dateSelected.emit(today);
       this.loadAvailabilityRange(today);
-      this.loadAvailability(today);
+      //this.loadAvailability(today);
     }
   }
 
   loadAvailabilityRange(startDate: Date) {
     this.loadingDays = true;
 
-    //const formattedDate = startDate.toISOString().split('T')[0];
+    const formattedDate = startDate.toLocaleDateString('en-CA');
+
+    this.bookingService
+      .getAvailabilityRange(
+        this.organization.slug,
+        this.selectedVariant.id,
+        formattedDate,
+        this.showNumDays
+      )
+      .subscribe((res: any) => {
+
+        this.availableDays = {};
+
+        res.days.forEach((day: any) => {
+          this.availableDays[day.date] = day.available;
+        });
+
+        this.loadingDays = false;
+
+        // Seleccionar primer día disponible
+        const firstAvailable = this.days.find(d =>
+          this.availableDays[d.toLocaleDateString('en-CA')]
+        );
+
+        if (firstAvailable) {
+          this.selectedDate = firstAvailable;
+          this.dateSelected.emit(firstAvailable);
+          this.loadAvailability(firstAvailable);
+        } else {
+          // ningún día disponible
+          this.selectedDate = this.days[0];
+          this.times = [];
+        }
+
+      });
+  }
+
+
+  /*loadAvailabilityRange(startDate: Date) {
+    this.loadingDays = true;
     const formattedDate = startDate.toLocaleDateString('en-CA');
 
     this.bookingService
@@ -78,7 +117,7 @@ export class DateTimeSelector implements OnInit, OnChanges {
         this.loadingDays = false;
 
       });
-  }
+  }*/
 
   isDayAvailable(date: Date) {
     //const key = date.toISOString().split('T')[0];

@@ -56,7 +56,7 @@
                         {{ variant.name }}
                     </div>
 
-                    <!-- duration badge -->
+                    <!-- BADGES  -->
                     <div class="flex items-center gap-2 mt-1">
 
                         <span class="text-xs font-medium
@@ -69,7 +69,48 @@
 
                         </span>
 
+                        @if (variant.mode && variant.mode !== 'hybrid') {
+
+                        <span class="text-xs font-medium
+                 text-[var(--brand-primary)]
+                 bg-blue-100
+                 px-2 py-1
+                 rounded-lg">
+
+                            {{ getModeLabel(variant.mode) }}
+
+                        </span>
+
+                        }
+
                     </div>
+
+                    <!-- HYBRID SELECTOR -->
+                   <!-- @if (selectedVariantId === variant.id && variant.mode === 'hybrid') {
+
+                    <div class="flex flex-wrap gap-2 mt-3">
+
+                        <button (click)="variantSelected.emit({service, variant, mode:'presential'})" class="px-3 py-1 rounded-lg
+                   bg-slate-200 hover:bg-slate-300
+                   text-sm cursor-pointer
+                   transition">
+
+                            🏢 Presencial
+
+                        </button>
+
+                        <button (click)="variantSelected.emit({service, variant, mode:'online'})" class="px-3 py-1 rounded-lg
+                   bg-slate-200 hover:bg-slate-300
+                   text-sm cursor-pointer
+                   transition">
+
+                            💻 En línea
+
+                        </button>
+
+                    </div>
+
+                    }-->
 
                 </div>
 

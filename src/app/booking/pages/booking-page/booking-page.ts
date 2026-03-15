@@ -18,11 +18,14 @@ import { ServiceModel } from '../../../core/models/service.model';
 import { TimeSlot } from '../../../core/models/date-time.model';
 
 import { Title } from '@angular/platform-browser';
+import { NotificationService } from '../../../core/services/notification.service';
+
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-booking-page',
   imports: [CommonModule, LucideAngularModule, StepperIndicator, BookingSummary, ServiceSelector,
-    DateTimeSelector, CustomerForm, BookingConfirmation, BookingSuccess
+    DateTimeSelector, CustomerForm, BookingConfirmation, BookingSuccess, MatButtonModule
   ],
   templateUrl: './booking-page.html',
   styleUrl: './booking-page.css',
@@ -52,12 +55,19 @@ export class BookingPage implements OnInit {
   bookingCompleted = false;
   isSubmitting = false;
 
+  formLoadedAt!: number;
+
   constructor(
     private route: ActivatedRoute,
     private organizationService: OrganizationService,
     private bookingService: BookingService,
-    private title: Title
+    private title: Title,
+    private notify: NotificationService
   ) { }
+
+  /*pruebaMensajes() {
+    this.notify.error('No se pudo crear la cita. Intenta nuevamente en unos minutos.');
+  }*/
 
   setBranding(org: OrganizationModel) {
 
@@ -90,6 +100,7 @@ export class BookingPage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.formLoadedAt = Date.now();
     const slug = this.route.snapshot.paramMap.get('slug')!;
 
     this.organizationService
@@ -98,8 +109,6 @@ export class BookingPage implements OnInit {
         this.organization = org;
         this.setBranding(org);
         this.loadServices(slug);
-
-        console.log(org);
       });
   }
 
@@ -107,10 +116,41 @@ export class BookingPage implements OnInit {
     this.bookingService
       .getServices(slug)
       .subscribe((services: any) => {
-        this.services = services;
+        this.services = this.transformServices(services);
         this.servicesLoading = false;
       });
   }
+
+  transformServices(services: ServiceModel[]): ServiceModel[] {
+    return services.map(service => ({
+      ...service,
+      variants: service.variants.flatMap(variant => {
+        if (variant.mode !== 'hybrid') {
+          return {
+            ...variant,
+            originalVariantId: variant.id
+          };
+        }
+
+        return [
+          {
+            ...variant,
+            originalVariantId: variant.id,
+            name: `${variant.name} — Presencial`,
+            mode: 'presential'
+          },
+
+          {
+            ...variant,
+            originalVariantId: variant.id,
+            name: `${variant.name} — En línea`,
+            mode: 'online'
+          }
+        ];
+      })
+    }));
+  }
+
 
   onVariantSelected(data: any) {
     this.selectedService = data.service;
@@ -189,7 +229,6 @@ export class BookingPage implements OnInit {
     if (this.customerData) {
       this.currentStep = 4;
     }
-
   }
 
   goToConfirmation() {
@@ -209,6 +248,7 @@ export class BookingPage implements OnInit {
       return;
     }
 
+    form_time: this.formLoadedAt
     this.isSubmitting = true;
 
     const slug = this.organization.slug;
@@ -233,7 +273,13 @@ export class BookingPage implements OnInit {
         dialCode: phone.dialCode
       } : null,
 
-      notes: this.customerData.notes
+      notes: this.customerData.notes,
+
+      mode: this.selectedVariant.mode,
+
+      // honeypot
+      website: null,
+      form_time: this.formLoadedAt
     };
 
     this.bookingService
@@ -252,8 +298,24 @@ export class BookingPage implements OnInit {
         },
         error: (error) => {
           this.isSubmitting = false;
+
           console.error(error);
-          alert('No se pudo crear la cita. Intenta nuevamente.');
+          const message = error.error?.message || error.message || 'Error inesperado';
+          this.notify.error(message);
+
+          /*if (error.status === 409) {
+            this.notify.error(error.error?.message);
+            return;
+          }
+          if (error.status === 422) {
+            this.notify.error(error.error?.message ?? 'Datos inválidos');
+            return;
+          }
+          this.notify.error('No se pudo crear la cita. Intenta nuevamente en algunos minutos.');*/
+
+          //console.log('Full error', error);
+          //console.log('Backend message', error.error?.message);
+          //this.notify.error(error.error?.message ?? 'No se pudo crear la cita.');
         }
 
       });

@@ -21,6 +21,15 @@ export class BookingConfirmation {
 
   loading = false;
 
+  getVariantDisplayName(name?: string) {
+    if (!name) return '';
+
+    return name
+      .replace(/—\s*Presencial/i, '')
+      .replace(/—\s*En línea/i, '')
+      .trim();
+  }
+
   confirmBooking() {
     if (this.loading) return;
 

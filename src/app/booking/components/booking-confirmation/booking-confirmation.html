@@ -14,7 +14,12 @@
 
         <div class="flex justify-between" *ngIf="variant">
             <span class="text-gray-500">Variante</span>
-            <span class="font-medium">{{ variant?.name }}</span>
+            <span class="font-medium">{{ getVariantDisplayName(variant?.name) }}</span>
+        </div>
+
+        <div class="flex justify-between" *ngIf="variant">
+            <span class="text-gray-500">Modalidad</span>
+            <span class="font-medium">{{ variant?.mode === 'presential' ? 'Presencial' : 'En línea' }}</span>
         </div>
 
         <div class="flex justify-between">
