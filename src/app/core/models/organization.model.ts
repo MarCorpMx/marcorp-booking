@@ -19,4 +19,6 @@ export interface OrganizationModel {
 
   rating?: number;
   reviews_count?: number;
+
+  plan?: string;
 }

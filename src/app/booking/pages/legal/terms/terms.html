@@ -1,0 +1,405 @@
+@if(loading){
+<div class="animate-pulse bg-white min-h-screen">
+
+    <!-- NAVBAR -->
+    <div class="border-b border-gray-100 px-6 py-5">
+
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+
+            <!-- logo -->
+            <div class="h-8 w-28 rounded-xl bg-gray-200"></div>
+
+            <!-- menu -->
+            <div class="hidden md:flex gap-4">
+
+                <div class="h-4 w-20 rounded bg-gray-200"></div>
+                <div class="h-4 w-24 rounded bg-gray-200"></div>
+                <div class="h-4 w-20 rounded bg-gray-200"></div>
+
+            </div>
+
+            <!-- button -->
+            <div class="h-10 w-32 rounded-2xl bg-gray-200"></div>
+
+        </div>
+
+    </div>
+
+    <!-- HERO -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+
+        <div class="grid md:grid-cols-2 gap-10 items-center">
+
+            <div class="space-y-6">
+
+                <div class="h-12 w-4/5 rounded-xl bg-gray-200"></div>
+
+                <div class="space-y-3">
+
+                    <div class="h-4 w-full rounded bg-gray-200"></div>
+                    <div class="h-4 w-5/6 rounded bg-gray-200"></div>
+                    <div class="h-4 w-4/6 rounded bg-gray-200"></div>
+
+                </div>
+
+                <div class="flex gap-4">
+
+                    <div class="h-12 w-40 rounded-2xl bg-gray-200"></div>
+                    <div class="h-12 w-32 rounded-2xl bg-gray-200"></div>
+
+                </div>
+
+            </div>
+
+            <!-- hero image -->
+            <div class="h-[420px] rounded-3xl bg-gray-200"></div>
+
+        </div>
+
+    </section>
+
+</div>
+}
+
+@if(!loading){
+<section class="min-h-screen bg-gray-50">
+
+    <!-- Header simple -->
+    <div class="border-b bg-white">
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+
+            <a routerLink="/" class="text-sm text-[var(--brand-primary)] hover:underline cursor-pointer">
+
+                ← Volver a ROMBI
+
+            </a>
+
+            <h1 class="text-4xl font-bold mt-4 text-gray-900">
+
+                Términos y Condiciones
+
+            </h1>
+
+            <p class="text-gray-500 mt-3 max-w-2xl">
+
+                Última actualización: Junio 2026
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- Content -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-14">
+
+        <div class="bg-white rounded-3xl border border-gray-200 p-8 md:p-12">
+
+
+            <div class="prose prose-gray max-w-none">
+
+                <h2>1. Aceptación de los términos</h2>
+
+                <p>
+                    Al acceder o utilizar ROMBI, aceptas estos Términos y Condiciones.
+                    Si no estás de acuerdo con ellos, deberás abstenerte de utilizar
+                    nuestros servicios.
+                </p>
+
+                <hr>
+
+                <h2>2. Descripción del servicio</h2>
+
+                <p>
+                    ROMBI es una plataforma SaaS diseñada para permitir a negocios
+                    administrar:
+                </p>
+
+                <ul>
+                    <li>Agenda y citas.</li>
+                    <li>Clientes y expedientes.</li>
+                    <li>Servicios y horarios.</li>
+                    <li>Sucursales y colaboradores.</li>
+                    <li>Reservas en línea.</li>
+                    <li>Recordatorios y comunicaciones.</li>
+                    <li>Reportes y configuraciones del negocio.</li>
+                </ul>
+
+                <hr>
+
+                <h2>3. Registro de cuenta</h2>
+
+                <p>
+                    Para utilizar determinadas funcionalidades deberás crear una cuenta
+                    proporcionando información verdadera, actualizada y completa.
+                </p>
+
+                <p>
+                    El usuario es responsable de mantener la confidencialidad de sus
+                    credenciales y de toda actividad realizada desde su cuenta.
+                </p>
+
+                <hr>
+
+                <h2>4. Uso permitido</h2>
+
+                <p>
+                    El usuario acepta utilizar la plataforma únicamente para actividades
+                    legales y relacionadas con la operación de su negocio.
+                </p>
+
+                <ul>
+                    <li>No utilizar la plataforma para actividades fraudulentas.</li>
+                    <li>No intentar vulnerar la seguridad del sistema.</li>
+                    <li>No realizar ingeniería inversa del software.</li>
+                    <li>No utilizar ROMBI para distribuir malware o spam.</li>
+                    <li>No revender el servicio sin autorización.</li>
+                    <li>No utilizar la plataforma para actividades ilícitas.</li>
+                </ul>
+
+                <hr>
+
+                <h2>5. Reservas públicas</h2>
+
+                <p>
+                    ROMBI permite habilitar páginas públicas para que los clientes finales
+                    puedan reservar servicios.
+                </p>
+
+                <p>
+                    El negocio es el único responsable de:
+                </p>
+
+                <ul>
+                    <li>Los servicios ofrecidos.</li>
+                    <li>La información mostrada.</li>
+                    <li>Los horarios publicados.</li>
+                    <li>La atención y relación con sus clientes.</li>
+                </ul>
+
+                <p>
+                    ROMBI actúa únicamente como proveedor tecnológico.
+                </p>
+
+                <hr>
+
+                <h2>6. Suscripciones y pagos</h2>
+
+                <p>
+                    Algunos servicios de ROMBI operan mediante planes de pago recurrentes.
+                    El usuario acepta cubrir las tarifas vigentes publicadas al momento de
+                    contratar.
+                </p>
+
+                <p>
+                    La falta de pago podrá ocasionar:
+                </p>
+
+                <ul>
+                    <li>Limitación de funcionalidades.</li>
+                    <li>Suspensión temporal del servicio.</li>
+                    <li>Cancelación de la cuenta.</li>
+                </ul>
+
+                <p>
+                    Las tarifas y características podrán modificarse previo aviso.
+                </p>
+
+                <hr>
+
+                <h2>7. Integraciones con terceros</h2>
+
+                <p>
+                    ROMBI puede integrarse con servicios externos tales como:
+                </p>
+
+                <ul>
+                    <li>WhatsApp.</li>
+                    <li>Correo electrónico.</li>
+                    <li>Pasarelas de pago.</li>
+                    <li>Mapas y geolocalización.</li>
+                    <li>Servicios de mensajería.</li>
+                </ul>
+
+                <p>
+                    ROMBI no controla la disponibilidad o funcionamiento de dichos
+                    servicios y no será responsable por fallas atribuibles a terceros.
+                </p>
+
+                <hr>
+
+                <h2>8. Disponibilidad del servicio</h2>
+
+                <p>
+                    Nos esforzamos por mantener la plataforma disponible de manera
+                    continua; sin embargo, no garantizamos disponibilidad ininterrumpida.
+                </p>
+
+                <p>
+                    Podrán existir interrupciones derivadas de:
+                </p>
+
+                <ul>
+                    <li>Mantenimiento programado.</li>
+                    <li>Actualizaciones del sistema.</li>
+                    <li>Fallas de proveedores externos.</li>
+                    <li>Eventos fuera de nuestro control.</li>
+                </ul>
+
+                <hr>
+
+                <h2>9. Propiedad intelectual</h2>
+
+                <p>
+                    Todo el software, diseño, marca, logotipos, código fuente y elementos
+                    visuales de ROMBI pertenecen exclusivamente a sus propietarios y se
+                    encuentran protegidos por las leyes aplicables en materia de propiedad
+                    intelectual.
+                </p>
+
+                <hr>
+
+                <h2>10. Propiedad de los datos</h2>
+
+                <p>
+                    La información capturada por el negocio dentro de ROMBI pertenece al
+                    propio negocio.
+                </p>
+
+                <p>
+                    ROMBI actúa únicamente como encargado del almacenamiento y procesamiento
+                    de dicha información.
+                </p>
+
+                <hr>
+
+                <h2>11. Protección de datos personales</h2>
+
+                <p>
+                    El tratamiento de información personal se rige conforme a nuestro Aviso
+                    de Privacidad.
+                </p>
+
+                <p>
+                    El usuario es responsable del cumplimiento de las obligaciones legales
+                    correspondientes respecto a los datos de sus propios clientes.
+                </p>
+
+                <hr>
+
+                <h2>12. Respaldos y pérdida de información</h2>
+
+                <p>
+                    Aunque implementamos medidas razonables de seguridad y respaldo,
+                    ROMBI no garantiza que nunca puedan ocurrir pérdidas de información.
+                </p>
+
+                <p>
+                    El usuario es responsable de conservar respaldos adicionales cuando lo
+                    considere necesario.
+                </p>
+
+                <hr>
+
+                <h2>13. Suspensión o cancelación</h2>
+
+                <p>
+                    Nos reservamos el derecho de suspender o cancelar cuentas que:
+                </p>
+
+                <ul>
+                    <li>Incumplan estos términos.</li>
+                    <li>Representen riesgos de seguridad.</li>
+                    <li>Sean utilizadas para actividades ilícitas.</li>
+                    <li>Generen abuso o afectaciones a la plataforma.</li>
+                </ul>
+
+                <hr>
+
+                <h2>14. Limitación de responsabilidad</h2>
+
+                <p>
+                    ROMBI no será responsable por:
+                </p>
+
+                <ul>
+                    <li>Pérdidas económicas indirectas.</li>
+                    <li>Pérdida de clientes o ingresos.</li>
+                    <li>Errores derivados del mal uso de la plataforma.</li>
+                    <li>Interrupciones ocasionadas por terceros.</li>
+                    <li>Decisiones comerciales tomadas por el usuario.</li>
+                </ul>
+
+                <p>
+                    La responsabilidad máxima de ROMBI se limitará al monto pagado por el
+                    usuario durante los últimos doce meses.
+                </p>
+
+                <hr>
+
+                <h2>15. Modificaciones</h2>
+
+                <p>
+                    Podemos actualizar estos términos en cualquier momento.
+                    Las modificaciones entrarán en vigor una vez publicadas.
+                </p>
+
+                <p>
+                    El uso continuo del servicio implica la aceptación de las nuevas
+                    condiciones.
+                </p>
+
+                <hr>
+
+                <h2>16. Legislación aplicable</h2>
+
+                <p>
+                    Estos términos se regirán conforme a las leyes de los Estados Unidos
+                    Mexicanos.
+                </p>
+
+                <p>
+                    Cualquier controversia será sometida a los tribunales competentes de
+                    México.
+                </p>
+
+                <hr>
+
+                <h2>17. Contacto</h2>
+
+                <p>
+                    Para dudas relacionadas con estos términos podrás comunicarte mediante
+                    nuestros canales oficiales de contacto.
+                </p>
+
+                <p>
+                    <strong>ROMBI</strong><br>
+                    Plataforma de gestión y reservas en línea.<br>
+                    Todos los derechos reservados.
+                </p>
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+
+    <!-- Footer simple -->
+    <div class="border-t bg-white">
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6
+                    text-sm text-gray-400 text-center">
+
+            © {{ anioActual }} ROMBI. Todos los derechos reservados.
+
+        </div>
+
+    </div>
+
+</section>
+}

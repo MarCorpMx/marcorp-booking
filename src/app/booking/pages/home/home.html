@@ -1,0 +1,1927 @@
+@if(loading){
+<div class="animate-pulse bg-white min-h-screen">
+
+    <!-- NAVBAR -->
+    <div class="border-b border-gray-100 px-6 py-5">
+
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+
+            <!-- logo -->
+            <div class="h-8 w-28 rounded-xl bg-gray-200"></div>
+
+            <!-- menu -->
+            <div class="hidden md:flex gap-4">
+
+                <div class="h-4 w-20 rounded bg-gray-200"></div>
+                <div class="h-4 w-24 rounded bg-gray-200"></div>
+                <div class="h-4 w-20 rounded bg-gray-200"></div>
+
+            </div>
+
+            <!-- button -->
+            <div class="h-10 w-32 rounded-2xl bg-gray-200"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- HERO -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+
+        <div class="grid md:grid-cols-2 gap-10 items-center">
+
+            <div class="space-y-6">
+
+                <div class="h-12 w-4/5 rounded-xl bg-gray-200"></div>
+
+                <div class="space-y-3">
+
+                    <div class="h-4 w-full rounded bg-gray-200"></div>
+                    <div class="h-4 w-5/6 rounded bg-gray-200"></div>
+                    <div class="h-4 w-4/6 rounded bg-gray-200"></div>
+
+                </div>
+
+                <div class="flex gap-4">
+
+                    <div class="h-12 w-40 rounded-2xl bg-gray-200"></div>
+                    <div class="h-12 w-32 rounded-2xl bg-gray-200"></div>
+
+                </div>
+
+            </div>
+
+            <!-- hero image -->
+            <div class="h-[420px] rounded-3xl bg-gray-200"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FEATURES -->
+    <section class="max-w-7xl mx-auto px-6 py-16">
+
+        <div class="h-10 w-72 rounded-xl bg-gray-200 mx-auto mb-12"></div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+
+            @for (item of [1,2,3,4]; track item) {
+
+            <div class="border border-gray-100 rounded-3xl p-6 space-y-4">
+
+                <div class="h-12 w-12 rounded-2xl bg-gray-200"></div>
+
+                <div class="h-5 w-40 rounded bg-gray-200"></div>
+
+                <div class="space-y-2">
+
+                    <div class="h-3 w-full rounded bg-gray-200"></div>
+                    <div class="h-3 w-5/6 rounded bg-gray-200"></div>
+
+                </div>
+
+            </div>
+
+            }
+
+        </div>
+
+    </section>
+
+
+    <!-- BUSINESS -->
+    <section class="max-w-7xl mx-auto px-6 py-16">
+
+        <div class="h-10 w-80 rounded-xl bg-gray-200 mx-auto mb-12"></div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+
+            @for (item of [1,2,3,4,5,6]; track item) {
+
+            <div class="border border-gray-100 rounded-3xl p-6 space-y-4">
+
+                <div class="h-12 w-12 rounded-2xl bg-gray-200"></div>
+
+                <div class="h-5 w-32 rounded bg-gray-200"></div>
+
+                <div class="space-y-2">
+
+                    <div class="h-3 w-full rounded bg-gray-200"></div>
+                    <div class="h-3 w-4/6 rounded bg-gray-200"></div>
+
+                </div>
+
+            </div>
+
+            }
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer class="border-t mt-20 px-6 py-10">
+
+        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
+
+            @for (item of [1,2,3]; track item) {
+
+            <div class="space-y-4">
+
+                <div class="h-5 w-28 rounded bg-gray-200"></div>
+
+                <div class="space-y-2">
+
+                    <div class="h-3 w-40 rounded bg-gray-200"></div>
+                    <div class="h-3 w-32 rounded bg-gray-200"></div>
+                    <div class="h-3 w-36 rounded bg-gray-200"></div>
+
+                </div>
+
+            </div>
+
+            }
+
+        </div>
+
+    </footer>
+
+</div>
+}
+
+@if(!loading){
+<section>
+
+    <!-- Header sticky -->
+    <header class="sticky top-0 z-50 transition-all duration-300" [class.bg-[var(--brand-bg)]/95]="!isScrolled"
+        [class.bg-white]="isScrolled" [class.shadow-md]="isScrolled">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+
+            <!-- LOGO -->
+            <div class="cursor-pointer" (click)="scrollTo('hero')">
+
+                <h1 class="text-2xl font-extrabold tracking-[0.14em] text-gray-800">
+                    RO<span class="text-[var(--brand-primary)]">M</span>BI
+                </h1>
+
+                <p class="text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                    by Marcorp
+                </p>
+
+            </div>
+
+
+            <!-- DESKTOP NAV -->
+            <nav class="hidden md:flex items-center gap-2
+           bg-white rounded-2xl p-2 shadow-sm border border-gray-100">
+
+                <button class="nav-link" (click)="scrollTo('business')">
+                    Negocios
+                </button>
+
+                <button class="nav-link" (click)="scrollTo('features')">
+                    Funciones
+                </button>
+
+                <button class="nav-link" (click)="scrollTo('pricing')">
+                    Planes
+                </button>
+
+                <button class="nav-link" (click)="scrollTo('faq')">
+                    Preguntas frecuentes
+                </button>
+
+                <button class="nav-link" (click)="scrollTo('contact')">
+                    Contacto
+                </button>
+
+            </nav>
+
+
+            <!-- RIGHT SIDE -->
+            <div class="flex items-center gap-3">
+
+                <!-- MOBILE BUTTON -->
+                <button (click)="toggleMenu()" class="md:hidden p-2 rounded-xl border border-gray-200 bg-white">
+
+                    <lucide-icon [name]="Menu"></lucide-icon>
+
+                </button>
+
+
+                <!-- CTA -->
+                <button (click)="goToRombi()" class="hidden lg:block px-5 py-2 rounded-xl text-white
+        bg-[var(--brand-primary)]
+        cursor-pointer transition-all duration-200
+        hover:scale-[1.02]">
+
+                    Crear mi cuenta gratis
+
+                </button>
+
+            </div>
+
+        </div>
+
+        @if(menuOpen){
+
+        <div class="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm" (click)="closeMenu()">
+
+            <div class="absolute top-0 right-0 h-full w-64 sm:w-72
+bg-white shadow-2xl px-7 py-6
+flex flex-col" (click)="$event.stopPropagation()">
+
+                <!-- TOP -->
+
+                <div class="flex justify-between items-center mb-10">
+
+                    <div>
+
+                        <h2 class="font-bold text-lg">
+                            ROMBI
+                        </h2>
+
+                        <p class="text-xs text-gray-500">
+                            Navegación
+                        </p>
+
+                    </div>
+
+                    <button (click)="closeMenu()" class="w-10 h-10
+           flex items-center justify-center
+           rounded-xl
+           border border-gray-200
+           bg-gray-50
+
+           hover:bg-gray-100
+           hover:scale-105
+
+           transition-all duration-200
+           cursor-pointer">
+
+                        <lucide-icon [name]="X" class="w-4 h-4 text-gray-500">
+
+                        </lucide-icon>
+
+                    </button>
+
+                </div>
+
+
+                <!-- <div class="mb-6 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div> -->
+                <div class="mb-6 border-b border-gray-100"></div>
+
+                <!-- LINKS -->
+
+                <div class="flex flex-col gap-2">
+
+                    <button class="mobile-nav" (click)="scrollTo('business')">
+
+                        Negocios
+
+                    </button>
+
+
+                    <button class="mobile-nav" (click)="scrollTo('features')">
+
+                        Funciones
+
+                    </button>
+
+
+                    <button class="mobile-nav" (click)="scrollTo('pricing')">
+
+                        Planes
+
+                    </button>
+
+                    <button class="mobile-nav" (click)="scrollTo('faq')">
+
+                        Preguntas frecuentes
+
+                    </button>
+
+                    <button class="mobile-nav" (click)="scrollTo('contact')">
+
+                        Contacto
+
+                    </button>
+
+                </div>
+
+
+                <!-- CTA -->
+                <div class="mt-auto pt-6">
+                    <button (click)="goToRombi()" class="w-full py-3 rounded-xl
+bg-[var(--brand-primary)]
+text-white">
+
+                        Crear mi cuenta gratis
+
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        }
+
+    </header>
+
+    <!-- Hero -->
+    <section id="hero" class="min-h-screen flex items-center py-14 md:py-0">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-12 items-center">
+
+            <div>
+
+                <div class="inline-block mb-5 px-4 py-2 rounded-full bg-[var(--brand-secondary)] text-sm">
+
+                    Más citas. Menos mensajes. Menos administración.
+
+                </div>
+
+                <h2 class="text-5xl md:text-7xl font-bold leading-tight text-[var(--brand-text)]">
+
+                    La forma inteligente de agendar
+
+                </h2>
+
+                <p class="mt-6 text-lg text-gray-500 leading-relaxed">
+
+                    Centraliza citas, servicios, staff, recordatorios
+                    y permite que tus clientes agenden contigo 24/7
+                    desde una página profesional.
+
+                </p>
+
+                <div class="mt-8 flex gap-4 flex-wrap">
+
+                    <button (click)="goToRombi()"
+                        class="px-4 sm:px-6 py-4 rounded-2xl bg-[var(--brand-primary)] text-white
+                cursor-pointer transition-all duration-200 box-shadow: var(--shadow-soft) hover:bg-[var(--brand-primary-light)] ">
+
+                        Crear mi cuenta gratis
+
+                    </button>
+
+                    <button (click)="openDemoModal()" class="px-6 py-4 rounded-2xl
+                border border-gray-300
+                flex items-center gap-3
+                cursor-pointer
+                transition-all duration-200
+                hover:bg-[var(--border-soft)]">
+
+                        <lucide-icon [name]="Play" class="w-4 h-4">
+                        </lucide-icon>
+
+                        Ver ROMBI en acción
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div class="bg-white rounded-3xl shadow-xl p-6">
+
+                    <!-- MOCKUP APP (meter imagen de admin_panel + booking_public)-->
+                    <div class="relative flex items-center justify-center py-10 overflow-hidden">
+
+                        <!-- MAIN MOCKUP (ADMIN PANEL) -->
+                        <div class="relative z-10
+                w-full max-w-[520px]
+                rounded-3xl
+                overflow-hidden
+                shadow-2xl
+                border border-gray-200
+                bg-white">
+
+                            <!-- images/admin-dashboard.webp -->
+                            <img src="images/Portada_1.png" alt="ROMBI Dashboard" class="w-full h-auto object-cover">
+
+                        </div>
+
+                        <!-- FLOATING CARD (BOOKING PUBLIC) -->
+                        <div class="absolute
+                -bottom-8
+                right-2 md:-right-10
+                z-20
+                w-[180px] md:w-[230px]
+                rounded-2xl
+                overflow-hidden
+                bg-white
+                border-4 border-white
+                shadow-xl
+                rotate-[-6deg]
+                transition-all duration-300">
+
+                            <!-- images/booking-public.webp -->
+                            <img src="images/img_1.png" alt="Booking público" class="w-full h-auto object-cover">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Nichos -->
+    <section id="business" class="py-14 md:py-24">
+
+        <!-- Divider -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-8">
+
+            <div class="w-full h-0.5 bg-gradient-to-r 
+              from-transparent 
+              via-gray-200 
+              to-transparent">
+            </div>
+
+        </div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+            <h3 class="text-3xl md:text-4xl font-bold leading-tight text-center mb-4">
+
+                Creado para negocios reales
+
+            </h3>
+
+            <p class="text-center text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+
+                ROMBI impulsa negocios todos los días.
+
+                <span class="font-medium text-gray-700">
+                    Incluido el nuestro.
+                </span>
+
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+
+                @for (generalNiche of generalNiches; track generalNiche.key) {
+                <div class="group text-left rounded-2xl
+       border border-[var(--brand-primary)]/15
+       bg-[var(--brand-primary)]/5
+       p-4
+
+       hover:border-[var(--brand-primary)]
+       hover:bg-[var(--brand-primary)]/10
+       hover:shadow-md
+
+       transition-all duration-200">
+
+                    <div class="w-12 h-12 rounded-xl
+                    bg-[var(--brand-primary)]/10
+                        flex items-center justify-center mb-3">
+                        <lucide-icon [name]="generalNiche.icon" class="w-5 h-5 text-[var(--brand-primary)]">
+                        </lucide-icon>
+                    </div>
+
+                    <h4 class="mt-4 font-semibold">{{ generalNiche.name }}</h4>
+
+                    <p class="text-gray-500 mt-2">
+                        {{ generalNiche.description }}
+                    </p>
+
+                </div>
+                }
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-14 md:py-24 bg-white">
+
+        <!-- Divider -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-8">
+
+            <div class="w-full h-0.5 bg-gradient-to-r 
+              from-transparent 
+              via-gray-200 
+              to-transparent">
+            </div>
+
+        </div>
+
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+
+            <h3 class="text-3xl md:text-4xl font-bold leading-tight text-center mb-4">
+
+                Todo lo que necesitas
+
+            </h3>
+
+            <p class="text-center text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+
+                Más que una agenda. Un sistema completo para administrar tu negocio.
+
+            </p>
+
+
+            <div class="grid md:grid-cols-2 gap-8">
+
+                @for (feature of features; track feature.key) {
+
+
+                <div class="group p-5 md:p-6 rounded-3xl
+            border border-gray-200
+            bg-gradient-to-b from-white to-gray-50
+
+            hover:shadow-xl
+            hover:-translate-y-1
+
+            transition-all duration-300">
+
+                    <div class="w-14 h-14 rounded-2xl
+            bg-[var(--brand-primary)]/10
+            flex items-center justify-center">
+
+                        <lucide-icon [name]="feature.icon"></lucide-icon>
+
+                    </div>
+
+                    <div>
+
+                        <h4 class="text-lg font-semibold text-[var(--text-primary)]">
+                            {{ feature.name }}
+                        </h4>
+
+                        <p class="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                            {{ feature.description }}
+                        </p>
+
+                    </div>
+
+                </div>
+                }
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Booking público showcase -->
+    <section id="online-booking" class="py-14 md:py-24">
+
+        <!-- Divider -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-8">
+
+            <div class="w-full h-0.5 bg-gradient-to-r 
+              from-transparent 
+              via-gray-200 
+              to-transparent">
+            </div>
+
+        </div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-12">
+
+            <div>
+
+                <!-- <h3 class="text-3xl font-bold"> -->
+                <h3 class="text-3xl md:text-4xl font-bold leading-tight ">
+
+                    Comparte tu agenda en segundos
+
+                </h3>
+
+                <p class="mt-5 text-gray-500">
+
+                    Cada negocio obtiene su propia página pública
+                    para recibir citas automáticamente.
+
+                </p>
+
+                <ul class="mt-8 space-y-3">
+
+                    <li>✓ URL personalizada</li>
+                    <li>✓ Código QR imprimible</li>
+                    <li>✓ Branding propio</li>
+                    <li>✓ Citas automáticas</li>
+
+                </ul>
+
+            </div>
+
+            <!-- Mockup booking público -->
+            <div class="flex items-center justify-center py-8">
+
+                <div class="relative">
+
+                    <!-- PHONE FRAME -->
+                    <div class="w-[290px]
+                    md:w-[340px]
+                    bg-gray-900
+                    rounded-[2.8rem]
+                    p-3
+                    shadow-2xl">
+
+                        <!-- SCREEN -->
+                        <div class="rounded-[2.2rem] overflow-hidden bg-white">
+                            <!-- images/booking-public-demo.webp -->
+                            <img src="images/img_2.png" alt="Booking público ROMBI" class="w-full h-auto object-cover">
+
+                        </div>
+
+                    </div>
+
+                    <!-- FLOATING QR -->
+                    <div class="absolute
+                    -bottom-5
+                    left-0 md:-left-6
+                    bg-white
+                    rounded-2xl
+                    shadow-xl
+                    p-3">
+
+                        <img src="images/agenda-punto-de-calma-principal.png" class="w-20 h-20 object-cover rounded-lg">
+
+                    </div>
+
+
+                    <!-- FLOATING BADGE -->
+                    <div class="absolute
+                    -top-4
+                    right-1 md:-right-5
+                    bg-white
+                    shadow-lg
+                    rounded-2xl
+                    px-4 py-3">
+
+                        <p class="text-xs text-gray-500">
+                            Disponible
+                        </p>
+
+                        <p class="font-bold text-[var(--brand-primary)]">
+                            24/7
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- PLANES -->
+    <section id="pricing" class="py-14 md:py-24 bg-white">
+
+        <!-- Divider -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-12">
+
+            <div class="w-full h-0.5 bg-gradient-to-r 
+              from-transparent 
+              via-gray-200 
+              to-transparent">
+            </div>
+
+        </div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+            <div class="text-center mb-16">
+
+                <h3 class="text-3xl md:text-4xl font-bold leading-tight text-center">
+
+                    Elige tu plan
+
+                </h3>
+
+                <p class="mt-4 text-gray-500 text-lg">
+
+                    Empieza gratis y crece a tu ritmo.
+
+                </p>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+
+                @for (plan of plans; track plan.key) {
+
+                <article
+                    class="relative rounded-3xl border border-gray-200 bg-white p-5 md:p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+
+                    <!-- Badge -->
+
+                    @if(plan.key === 'pro') {
+
+                    <span
+                        class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[var(--brand-primary)] text-white text-xs font-semibold">
+
+                        Más popular
+
+                    </span>
+
+                    }
+
+                    @if(plan.key === 'founder') {
+
+                    <span
+                        class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-500 text-white text-xs font-semibold">
+
+                        Founder
+
+                    </span>
+
+                    }
+
+                    @if(plan.key === 'free') {
+
+                    <span
+                        class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-green-500 text-white text-xs font-semibold">
+
+                        Prueba gratuita
+
+                    </span>
+
+                    }
+
+                    <!-- Header -->
+
+                    <div class="text-center">
+
+                        <h4 class="text-4xl font-bold">
+                            {{ plan.name }}
+                        </h4>
+
+                        <p class="text-gray-500 mt-3 min-h-[72px]">
+                            {{ plan.description }}
+                        </p>
+
+                        <div class="mt-6">
+
+                            <!-- PREMIUM -->
+
+                            @if(plan.key === 'premium') {
+
+                            <div class="text-2xl md:text-4xl font-extrabold leading-tight">
+                                Precio personalizado
+                            </div>
+
+                            <p class="text-sm text-gray-500 mt-2">
+                                Cotización según sucursales y necesidades
+                            </p>
+
+                            }
+
+                            <!-- FREE -->
+
+                            @else if (+plan.price === 0) {
+
+                            <div class="text-4xl md:text-4xl font-extrabold leading-tight">
+                                Gratis
+                            </div>
+
+                            <p class="text-sm text-gray-500 mt-2">
+                                <!-- {{ plan.trial_days }} días de prueba -->
+                                Sin tarjeta
+                            </p>
+
+                            }
+
+                            <!-- PLAN NORMAL -->
+
+                            @else {
+
+                            @if(plan.hasDiscount){
+
+                            <div class="text-gray-400 line-through text-lg">
+
+                                ${{ plan.original_price | number }}
+
+                            </div>
+
+                            }
+
+                            <div class="text-4xl font-extrabold" [class.text-amber-600]="plan.key === 'founder'">
+
+                                ${{ plan.price }}
+
+                            </div>
+
+                            <p class="text-sm text-gray-500 mt-1">
+
+                                @if(plan.key === 'founder') {
+
+                            <p>Equivale a 2 meses gratis</p>
+                            <p>Precio Founder · renovación anual</p>
+
+                            } @else {
+
+                            MXN / mes
+
+                            }
+
+                            </p>
+
+
+                            }
+
+                        </div>
+
+                    </div>
+
+                    <!-- Highlights -->
+
+                    <div class="mt-6 flex flex-wrap gap-2 justify-center">
+
+                        @if(plan.support_level === 'vip') {
+
+                        <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-medium">
+                            Soporte VIP
+                        </span>
+
+                        }
+
+                        @if(plan.support_level === 'priority') {
+
+                        <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">
+                            Soporte prioritario
+                        </span>
+
+                        }
+
+                        @if(plan.key === 'founder') {
+
+                        <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium">
+                            Precio congelado de por vida
+                        </span>
+
+                        }
+
+                    </div>
+
+                    <!-- Features -->
+
+                    <div class="mt-8">
+
+                        <ul class="space-y-3">
+
+                            @for (feature of plan.features.slice(0,9); track feature.key) {
+
+                            <li class="flex items-start gap-3">
+
+                                <span
+                                    class="w-5 h-5 flex items-center justify-center rounded-full bg-green-100 text-green-600 text-xs font-bold">
+
+                                    ✓
+
+                                </span>
+
+                                <div>
+
+                                    <span class="font-medium">
+
+                                        {{ feature.name }}
+
+                                    </span>
+
+                                    @if(plan.key === 'premium' && (feature.key === 'team' || feature.key === 'branches'
+                                    || feature.key === 'reminders') ){
+
+                                    <span class="text-gray-500 text-sm">
+
+                                        · escalable
+
+                                    </span>
+                                    }
+
+                                    @else{
+
+                                    @if(feature.limit_type === 'quantity') {
+
+                                    <span class="text-gray-500 text-sm">
+
+                                        · hasta {{ feature.limit }}
+
+                                    </span>
+
+                                    }
+
+                                    @if(feature.limit_type === 'unlimited') {
+
+                                    <span class="text-green-600 text-sm font-medium">
+
+                                        · ilimitado
+
+                                    </span>
+
+                                    }
+                                    }
+
+                                </div>
+
+                            </li>
+
+                            }
+
+                        </ul>
+
+                        @if(plan.features.length > 9){
+
+                        <p class="mt-4 text-sm text-gray-500">
+
+                            + {{ plan.features.length - 9 }} funciones adicionales
+
+                        </p>
+
+                        }
+
+                    </div>
+
+                    <!-- Founder extras -->
+
+                    @if(plan.key === 'founder'){
+
+                    <div class="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-200">
+
+                        <p class="text-sm font-semibold text-amber-700">
+
+                            {{ plan.metadata?.max_slots }} lugares disponibles
+
+                        </p>
+
+                        <p class="text-xs text-amber-600 mt-1">
+                            20 negocios fundadores recibirán acceso anticipado, soporte VIP y precio congelado mientras
+                            mantengan su suscripción activa.
+
+                        </p>
+
+                    </div>
+
+                    }
+
+                    <!-- Premium extras -->
+
+                    @if(plan.key === 'premium'){
+
+                    <div class="mt-6 p-4 rounded-2xl bg-blue-50 border border-blue-200">
+
+                        <p class="text-sm font-semibold text-blue-700">
+
+                            Ideal para clínicas y cadenas
+
+                        </p>
+
+                        <p class="text-xs text-blue-600 mt-1">
+
+                            Implementación personalizada, múltiples sucursales e integraciones.
+
+                        </p>
+
+                    </div>
+
+                    }
+
+
+
+                    <!-- CTA -->
+
+                    <div class="mt-8">
+
+                        <button (click)="openPlan(plan)"
+                            class="w-full py-4 rounded-2xl bg-[var(--brand-primary)] text-white font-semibold hover:opacity-90 transition-all cursor-pointer">
+
+                            @if(plan.key === 'premium') {
+
+                            Contactar ventas
+
+                            } @else if(plan.key === 'founder') {
+
+                            Reservar mi lugar
+
+                            } @else if(plan.key === 'free') {
+
+                            Crear cuenta gratis
+
+                            } @else {
+
+                            Comenzar ahora
+
+                            }
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+                }
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-14 md:py-24 bg-white">
+
+        <!-- Divider -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-12">
+
+            <div class="w-full h-0.5 bg-gradient-to-r 
+            from-transparent 
+            via-gray-200 
+            to-transparent">
+            </div>
+
+        </div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+            <div class="text-center mb-16">
+
+                <h3 class="text-3xl md:text-4xl font-bold leading-tight text-center">
+
+                    Preguntas frecuentes
+
+                </h3>
+
+                <p class="mt-4 text-gray-500 text-lg">
+
+                    Resolvemos las dudas más comunes antes de comenzar.
+
+                </p>
+
+            </div>
+
+            <div class="grid gap-4">
+
+                <div class="p-6 rounded-3xl border border-gray-200 bg-white">
+
+                    <h4 class="font-semibold text-lg">
+
+                        ¿Puedo usar ROMBI gratis?
+
+                    </h4>
+
+                    <p class="mt-3 text-gray-500">
+
+                        Sí. Puedes crear tu cuenta y comenzar a gestionar citas sin costo.
+
+                    </p>
+
+                </div>
+
+                <div class="p-6 rounded-3xl border border-gray-200 bg-white">
+
+                    <h4 class="font-semibold text-lg">
+
+                        ¿Necesito tarjeta para comenzar?
+
+                    </h4>
+
+                    <p class="mt-3 text-gray-500">
+
+                        No. Puedes registrarte y explorar la plataforma sin proporcionar información bancaria.
+
+                    </p>
+
+                </div>
+
+                <div class="p-6 rounded-3xl border border-gray-200 bg-white">
+
+                    <h4 class="font-semibold text-lg">
+
+                        ¿Puedo cancelar cuando quiera?
+
+                    </h4>
+
+                    <p class="mt-3 text-gray-500">
+
+                        Sí. No existen contratos forzosos ni permanencias obligatorias.
+
+                    </p>
+
+                </div>
+
+                <div class="p-6 rounded-3xl border border-gray-200 bg-white">
+
+                    <h4 class="font-semibold text-lg">
+
+                        ¿ROMBI funciona para varias sucursales?
+
+                    </h4>
+
+                    <p class="mt-3 text-gray-500">
+
+                        Sí. Los planes profesionales y empresariales permiten operar una o varias sucursales desde una
+                        sola plataforma.
+
+                    </p>
+
+                </div>
+
+                <div class="p-6 rounded-3xl border border-gray-200 bg-white">
+
+                    <h4 class="font-semibold text-lg">
+
+                        ¿Me ayudan a configurar mi negocio?
+
+                    </h4>
+
+                    <p class="mt-3 text-gray-500">
+
+                        Sí. Nuestro equipo puede orientarte durante el proceso de implementación para que empieces a
+                        recibir citas lo antes posible.
+
+                    </p>
+
+                </div>
+
+                <div class="p-6 rounded-3xl border border-gray-200 bg-white">
+
+                    <h4 class="font-semibold text-lg">
+
+                        ¿Qué incluye el programa Founder?
+
+                    </h4>
+
+                    <p class="mt-3 text-gray-500">
+
+                        Acceso anticipado, beneficios exclusivos, soporte prioritario y precio preferencial para los
+                        primeros negocios que confíen en ROMBI.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contact" class="py-14 md:py-24">
+
+        <!-- Divider -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-12">
+
+            <div class="w-full h-0.5 bg-gradient-to-r 
+              from-transparent 
+              via-gray-200 
+              to-transparent">
+            </div>
+
+        </div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+            <div class="rounded-[36px]
+                    bg-[var(--brand-primary)]
+                    text-white
+                    p-6 md:p-12 text-center shadow-2xl">
+
+                <h3 class="text-3xl font-bold">
+
+                    ¿Listo para recibir más citas?
+
+                </h3>
+
+                <p class="mt-5 text-lg text-white/80">
+
+                    Cuéntanos cómo funciona tu negocio y te ayudaremos a configurar ROMBI de acuerdo a tus necesidades.
+
+                </p>
+
+
+                <div class="mt-10 flex flex-col lg:flex-row justify-center gap-5">
+
+                    <button (click)="openWa('', 'contact')" class="px-8 py-4 rounded-2xl
+
+        bg-white
+        text-gray-800
+        font-semibold
+
+        inline-flex items-center justify-center gap-3
+
+        shadow-lg
+        hover:shadow-2xl
+        hover:-translate-y-1
+        hover:scale-[1.02]
+
+        transition-all duration-200
+        cursor-pointer">
+
+                        <lucide-icon [name]="MessageCircle" class="w-5 h-5">
+                        </lucide-icon>
+
+                        <span>
+                            Hablar con un asesor
+                        </span>
+
+                    </button>
+
+                    <!-- DEMO -->
+                    <button (click)="openDemoBooking()" class="px-8 py-4 rounded-2xl
+
+        bg-white/20
+        backdrop-blur-sm
+
+        border border-white/60
+
+        font-semibold
+
+        inline-flex items-center justify-center gap-3
+
+        hover:bg-white/30
+        hover:border-white
+        hover:-translate-y-1
+
+        transition-all duration-200
+        cursor-pointer">
+
+                        <lucide-icon [name]="Presentation" class="w-5 h-5">
+                        </lucide-icon>
+
+                        <span>
+                            Ver demo en vivo
+                        </span>
+
+                    </button>
+
+
+                    <!-- SECUNDARIO -->
+                    <button (click)="openContactModal()" class="px-8 py-4 rounded-2xl
+
+        bg-transparent
+
+        border border-white/30
+
+        text-white/90
+        font-medium
+
+        inline-flex items-center justify-center gap-3
+
+        hover:bg-white/10
+        hover:border-white/60
+        hover:-translate-y-1
+
+        transition-all duration-200
+        cursor-pointer">
+
+                        <lucide-icon [name]="Mail" class="w-5 h-5">
+                        </lucide-icon>
+
+                        <span>
+                            Solicitar asesoría
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <div class="mt-10 text-sm opacity-80">
+
+                    Respuesta normalmente en menos de 24 horas.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- CTA final -->
+    <section class="py-14 md:py-24">
+
+        <!-- Divider -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-8">
+
+            <div class="w-full h-0.5 bg-gradient-to-r 
+              from-transparent 
+              via-gray-200 
+              to-transparent">
+            </div>
+
+        </div>
+
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6">
+
+            <h3 class="text-3xl md:text-4xl font-bold leading-tight text-center">
+
+
+                Dedica menos tiempo a administrar y más tiempo a atender clientes.
+
+            </h3>
+
+            <p class="mt-5 text-gray-500 text-lg">
+
+                Crea tu cuenta gratuita y comienza a aceptar citas en minutos.
+
+            </p>
+
+            <button (click)="goToRombi()"
+                class="mt-8 px-8 py-4 rounded-2xl bg-[var(--brand-primary)] text-white 
+        cursor-pointer transition-all duration-200 box-shadow: var(--shadow-soft) hover:bg-[var(--brand-primary-light)] ">
+
+                Crear mi cuenta gratis
+
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12
+grid md:grid-cols-3 gap-10
+text-center md:text-left">
+
+            <!-- marca -->
+
+            <div>
+
+                <h4 class="font-bold text-lg">
+
+                    ROMBI
+
+                </h4>
+
+                <p class="text-sm text-gray-500 mt-2">
+
+                    La forma inteligente de agendar
+
+                </p>
+
+                <p class="text-xs text-gray-400 mt-4">
+                    Una solución de
+                </p>
+
+                <a href="https://www.marcorp.mx" target="_blank" rel="noopener noreferrer" class="app-link mt-1">
+
+                    <span class="app-link__text">
+                        MarCorp
+                    </span>
+
+                    <lucide-icon [name]="ExternalLink" class="app-link__icon">
+                    </lucide-icon>
+
+                </a>
+
+            </div>
+
+            <!-- legal -->
+
+            <div>
+
+                <p class="font-semibold mb-3">
+
+                    Legal
+
+                </p>
+
+                <div class="flex flex-col gap-2 text-sm text-gray-500">
+
+                    <a routerLink="/legal/privacidad"
+                        class="hover:translate-x-1 transition-colors hover:text-[var(--brand-primary)]  cursor-pointer">
+                        Aviso de privacidad
+                    </a>
+
+                    <a routerLink="/legal/terminos"
+                        class="hover:translate-x-1 transition-colors hover:text-[var(--brand-primary)]  cursor-pointer">
+                        Términos y condiciones
+                    </a>
+
+                    <a routerLink="/legal/cookies"
+                        class="hover:translate-x-1 transition-colors hover:text-[var(--brand-primary)]  cursor-pointer">
+                        Política de cookies
+                    </a>
+
+                    <a routerLink="/legal/cancelaciones"
+                        class="hover:translate-x-1 transition-colors hover:text-[var(--brand-primary)]  cursor-pointer">
+                        Cancelaciones y reembolsos
+                    </a>
+
+                    <a routerLink="/legal/disclaimer"
+                        class="hover:translate-x-1 transition-colors hover:text-[var(--brand-primary)]  cursor-pointer">
+                        Disclaimer legal
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- social -->
+
+            <div>
+
+                <p class="font-semibold mb-3">
+
+                    Síguenos
+
+                </p>
+
+                <div class="flex justify-center md:justify-start gap-3">
+
+                    <a href="https://www.facebook.com/profile.php?id=61585221730768" target="_blank" class="w-10 h-10 rounded-xl border border-gray-200
+              flex items-center justify-center
+              hover:bg-gray-50 transition-all">
+                        <img src="https://cdn-icons-png.flaticon.com/24/733/733547.png" width="24" height="24"
+                            style="display:block;">
+                    </a>
+
+                    <a href="https://www.instagram.com/marcorp_99" target="_blank" class="w-10 h-10 rounded-xl border border-gray-200
+              flex items-center justify-center
+              hover:bg-gray-50 transition-all">
+                        <img src="https://cdn-icons-png.flaticon.com/24/733/733558.png" width="24" height="24"
+                            style="display:block;">
+                    </a>
+
+                    <!-- <a href="https://wa.me/5217702021345">
+                        <img src="https://cdn-icons-png.flaticon.com/24/733/733585.png" width="24" height="24"
+                            style="display:block;">
+                    </a> -->
+
+
+
+
+                </div>
+
+                <p class="text-sm text-gray-600 mt-6 font-medium">
+                    ¿Tienes dudas?
+                </p>
+
+                <button (click)="openWa('', 'footer')"
+                    class="mt-2 text-sm font-semibold text-[var(--brand-primary)] hover:underline cursor-pointer">
+
+                    Hablar con un asesor
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="border-t py-6 text-center text-xs text-gray-400">
+            © {{ anioActual }} ROMBI. Todos los derechos reservados.
+        </div>
+
+    </footer>
+
+</section>
+}
+
+@if(showDemo){
+
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8">
+
+    <!-- backdrop -->
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="showDemo = false">
+    </div>
+
+    <!-- modal -->
+    <div class="relative w-full max-w-6xl rounded-3xl overflow-hidden shadow-2xl">
+
+        <!-- close -->
+        <button (click)="showDemo = false" class="absolute top-4 right-4 z-10
+                   w-10 h-10 rounded-xl
+                   bg-black/40 text-white
+                   cursor-pointer">
+
+            ✕
+
+        </button>
+
+        <video controls autoplay class="w-full h-auto max-h-[85vh] object-contain bg-black">
+
+            <source src="videos/Mar_1.mp4" type="video/mp4">
+
+        </video>
+
+    </div>
+
+</div>
+
+}
+
+@if(showContactModal){
+
+<div class="fixed inset-0 sm:inset-y-0 sm:right-0
+    z-50 flex items-end sm:items-center justify-center
+    p-0 sm:p-4">
+
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeContactModal()">
+    </div>
+
+
+    <!-- MODAL -->
+    <div class="relative w-full h-full sm:h-auto
+        sm:max-w-2xl
+        bg-white
+        border-0 sm:border border-gray-200
+        rounded-none sm:rounded-3xl
+        shadow-2xl
+        flex flex-col
+        max-h-screen sm:max-h-[90vh]">
+
+        <!-- ================= HEADER ================= -->
+        <div class="p-5 sm:p-7
+    border-b border-gray-100
+    flex items-start gap-4
+    shrink-0">
+
+            <div class="flex-1">
+
+                <h3 class="text-2xl font-bold text-gray-800">
+                    Solicitar asesoría
+                </h3>
+
+                <p class="text-sm text-gray-500 mt-2">
+                    Queremos entender tu negocio para ayudarte a automatizar tus citas.
+                </p>
+
+            </div>
+
+            <button (click)="closeContactModal()" class="w-10 h-10 shrink-0 rounded-xl
+        bg-gray-50 border border-gray-200
+        flex items-center justify-center
+        hover:bg-gray-100
+        transition cursor-pointer">
+
+                <lucide-icon [name]="X" class="w-4 h-4 text-gray-500">
+                </lucide-icon>
+
+            </button>
+
+        </div>
+
+
+        <!-- ================= FORM ================= -->
+        <form [formGroup]="form" (ngSubmit)="sendMessage()" class="flex flex-col flex-1 min-h-0">
+
+            <!-- ================= BODY ================= -->
+            <div class="flex-1 overflow-y-auto
+                p-5 sm:p-7
+                space-y-5">
+
+                <!-- Nombre -->
+                <div>
+
+                    <label class="block text-sm text-gray-600 mb-2">
+
+                        Nombre *
+
+                    </label>
+
+                    <input type="text" formControlName="first_name" placeholder="Ej. Margarita" class="w-full rounded-2xl
+  border border-gray-200
+  bg-gray-50
+  px-4 py-3
+  text-gray-800
+  placeholder:text-gray-400
+  placeholder:font-normal
+  focus:bg-white
+  focus:border-[var(--brand-primary)]
+  transition-all
+  outline-none">
+
+                    @if (getError('first_name')) {
+                    <small class="text-red-400 text-xs mt-1 block">
+
+                        {{ getError('first_name') }}
+
+                    </small>
+                    }
+
+                </div>
+
+
+                <!-- Email -->
+                <div>
+
+                    <label class="block text-sm text-gray-600 mb-2">
+
+                        Correo electrónico *
+
+                    </label>
+
+                    <input type="email" formControlName="email" placeholder="Ej. hola@email.com" class="w-full rounded-2xl
+  border border-gray-200
+  bg-gray-50
+  px-4 py-3
+  text-gray-800
+  placeholder:text-gray-400
+  placeholder:font-normal
+  focus:bg-white
+  focus:border-[var(--brand-primary)]
+  transition-all
+  outline-none">
+
+                    @if (getError('email')) {
+                    <small class="text-red-400 text-xs mt-1 block">
+
+                        {{ getError('email') }}
+
+                    </small>
+                    }
+
+                </div>
+
+                <!-- Nicho -->
+                <div>
+                    <label class="block text-sm text-gray-600 mb-2">
+
+                        ¿A qué se dedica tu negocio? *
+
+                    </label>
+
+                    <select formControlName="business_niche" class="w-full rounded-2xl
+  border border-gray-200
+  bg-gray-50
+  px-4 py-3
+
+  cursor-pointer
+  text-gray-800
+  placeholder:text-gray-400
+  placeholder:font-normal
+  focus:bg-white
+  focus:border-[var(--brand-primary)]
+  transition-all
+  outline-none">
+
+
+                        <option value="" disabled>
+                            Selecciona una categoría
+                        </option>
+
+                        @for (item of niches; track item.value) {
+                        <option [value]="item.value">
+                            {{ item.label }}
+                        </option>
+                        }
+
+                    </select>
+
+                    @if (getError('business_niche')) {
+                    <small class="text-red-400 text-xs mt-1 block">
+
+                        {{ getError('business_niche') }}
+
+                    </small>
+                    }
+                </div>
+
+                <!-- Negocio -->
+                <div>
+
+                    <label class="block text-sm text-gray-600 mb-2">
+
+                        Nombre del negocio
+
+                    </label>
+
+                    <input type="text" formControlName="business_name" placeholder="Ej. Barbería Elite" class="w-full rounded-2xl
+  border border-gray-200
+  bg-gray-50
+  px-4 py-3
+  text-gray-800
+  placeholder:text-gray-400
+  placeholder:font-normal
+  focus:bg-white
+  focus:border-[var(--brand-primary)]
+  transition-all
+  outline-none">
+
+                    <small class="text-red-400 text-xs mt-1 block">
+
+                        {{ getError('business_name') }}
+
+                    </small>
+
+                </div>
+
+
+                <!-- Mensaje -->
+                <div class="md:col-span-2">
+
+                    <label class="block text-sm text-gray-600 mb-2">
+
+                        ¿En qué podemos ayudarte? *
+
+                    </label>
+
+                    <textarea rows="5" formControlName="message" placeholder="Cuéntanos un poco sobre tu negocio..."
+                        class="w-full rounded-2xl
+  border border-gray-200
+  bg-gray-50
+  px-4 py-3
+  text-gray-800
+  placeholder:text-gray-400
+  placeholder:font-normal
+  focus:bg-white
+  focus:border-[var(--brand-primary)]
+  transition-all
+  outline-none">
+
+                    </textarea>
+
+                    <div class="flex justify-between items-center mt-2 min-h-[20px]">
+
+                        <small class="text-red-400 text-xs">
+
+                            {{ getError('message') || '' }}
+
+                        </small>
+
+                        <small class="text-gray-500 text-xs">
+
+                            {{ form.get('message')?.value?.length || 0 }}/500
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <div class="text-xs text-gray-400">
+
+                    Tus datos serán utilizados únicamente para responder tu solicitud.
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= FOOTER ================= -->
+            <div class="p-5 sm:p-7
+                border-t border-gray-100
+                flex flex-col sm:flex-row
+                justify-end gap-3 shrink-0">
+
+                <!-- Cancel -->
+                <button type="button" (click)="closeContactModal()" class="px-6 py-3 rounded-xl
+                    border border-gray-200
+                    text-gray-600
+                    hover:bg-gray-50
+                    transition cursor-pointer">
+
+                    Cancelar
+
+                </button>
+
+
+                <!-- Submit -->
+                <button type="submit" [disabled]="submitted" class="px-6 py-3 rounded-xl
+                    bg-[var(--brand-primary)]
+                    text-white
+                    hover:opacity-90
+                    transition" [class.cursor-pointer]="!submitted" [class.opacity-80]="submitted"
+                    [class.cursor-not-allowed]="submitted" [class.hover\:opacity-90]="!submitted">
+
+                    {{ submitted ? 'Enviando...' : 'Enviar mensaje' }}
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+}
+
+@if(showMessageReceived){
+<div class="fixed inset-0 sm:inset-y-0 sm:right-0
+    z-50 flex items-end sm:items-center justify-center
+    p-0 sm:p-4">
+
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeMessageReceived()">
+    </div>
+
+
+    <!-- MODAL -->
+    <div class="relative w-full h-full sm:h-auto
+        sm:max-w-2xl
+        bg-white
+        border-0 sm:border border-gray-200
+        rounded-none sm:rounded-3xl
+        shadow-2xl
+        flex flex-col
+        max-h-screen sm:max-h-[90vh]">
+
+        <!-- ================= HEADER ================= -->
+        <div class="p-5 sm:p-7
+    border-b border-gray-100
+    flex items-start gap-4
+    shrink-0">
+
+            <div class="flex-1">
+
+                <div class="w-14 h-14 rounded-2xl
+    bg-green-100
+    ring-8 ring-green-50
+    flex items-center justify-center">
+
+                    <lucide-icon [name]="Check" class="text-green-600 w-7 h-7">
+                    </lucide-icon>
+
+                </div>
+
+                <h3 class="text-2xl font-bold text-gray-800">
+                    Mensaje enviado correctamente
+                </h3>
+
+            </div>
+
+            <button (click)="closeMessageReceived()" class="w-10 h-10 shrink-0 rounded-xl
+        bg-gray-50 border border-gray-200
+        flex items-center justify-center
+        hover:bg-gray-100
+        transition cursor-pointer">
+
+                <lucide-icon [name]="X" class="w-4 h-4 text-gray-500">
+                </lucide-icon>
+
+            </button>
+
+        </div>
+
+
+        <!-- ================= BODY ================= -->
+        <div class="flex-1 overflow-y-auto
+        p-5 sm:p-7
+        space-y-5">
+
+            <div class="space-y-3">
+
+                <p class="text-lg font-medium text-gray-800">
+                    Recibimos tu mensaje correctamente.
+                </p>
+
+                <p class="text-gray-500 leading-7">
+                    Nuestro equipo revisará tu mensaje y en breve nos pondremos en contacto contigo.
+
+                    Estamos listos para mostrarte cómo
+                    <span class="font-semibold text-[var(--brand-primary)]">
+                        ROMBI
+                    </span>
+                    puede ayudarte a organizar, automatizar y hacer crecer tu negocio.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= FOOTER ================= -->
+        <div class="p-5 sm:p-7
+                border-t border-gray-100
+                flex flex-col sm:flex-row
+                justify-end gap-3 shrink-0">
+
+            <!-- Cancel -->
+            <button type="button" (click)="closeMessageReceived()" class="px-6 py-3 rounded-xl
+                    bg-[var(--brand-primary)]
+                    text-white
+                    hover:opacity-90
+                    transition cursor-pointer">
+
+                Entendido
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+</div>
+}

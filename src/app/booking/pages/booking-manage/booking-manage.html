@@ -1,0 +1,307 @@
+@if(isLoading){
+<div class="fixed inset-0 z-50 flex flex-col items-center justify-center
+            bg-[var(--brand-bg)] px-6 text-center">
+
+    <!-- LOGO -->
+    <img *ngIf="organization?.logo_url" [src]="organization?.logo_url" class="h-14 mb-6 rounded-xl opacity-90">
+
+    <!-- SPINNER -->
+    <div class="relative mb-6">
+        <div class="w-12 h-12 rounded-full border-4 border-gray-200"></div>
+        <div class="w-12 h-12 rounded-full border-4 border-transparent border-t-[var(--brand-primary)]
+                animate-spin absolute top-0 left-0">
+        </div>
+    </div>
+
+    <!-- TEXTO -->
+    <h2 class="text-base font-semibold text-[var(--brand-text)] mb-1">
+        Procesando acción...
+    </h2>
+
+    <p class="text-sm text-gray-500">
+        Estamos confirmando la solicitud
+    </p>
+
+</div>
+}
+
+
+@if(!isLoading){
+<div class="min-h-screen bg-[var(--brand-bg)] flex flex-col">
+
+    <!-- PRIORIDAD: ESTADOS NO EDITABLES -->
+    <!-- <app-booking-result *ngIf="appointment && appointment.status !== 'pending' && appointment.status !== 'confirmed'" 
+        [statusInput]="appointment.status">
+    </app-booking-result> -->
+
+    <app-booking-result *ngIf="appointment && isLockedStatus(appointment.status)" [statusInput]="appointment.status">
+    </app-booking-result>
+
+    <!-- @if(!appointment || appointment.status === 'pending' || appointment.status === 'confirmed'){ -->
+    @if(!appointment || !isLockedStatus(appointment.status)){
+    <!-- HEADER reutilizable -->
+    <header class="py-6 text-center">
+        <img *ngIf="organization?.logo_url" [src]="organization?.logo_url" class="h-12 mx-auto mb-2 rounded-xl">
+
+        <h2 class="text-sm text-gray-500">
+            {{ organization?.name }}
+        </h2>
+    </header>
+
+    <main class="flex-1 flex items-center justify-center px-4">
+
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-md p-6">
+
+            <!-- BUSCADOR -->
+            <div *ngIf="!appointment">
+                <h1 class="text-lg font-semibold mb-4 text-center">
+                    Gestionar cita
+                </h1>
+
+                <p class="text-xs text-gray-500 text-center mb-4">
+                    Ingresa el código que recibiste por correo
+                </p>
+
+                <input [(ngModel)]="referenceCode" placeholder="ID de referencia"
+                    class="w-full border rounded-xl px-4 py-2 text-sm mb-3" />
+
+                <button (click)="searchAppointment()"
+                    class="w-full py-2 rounded-xl text-white text-sm transition hover:opacity-90 cursor-pointer"
+                    style="background: var(--brand-primary)">
+                    Buscar
+                </button>
+            </div>
+
+            <!-- DETALLE -->
+            <div *ngIf="appointment && !isRescheduling">
+
+                <h1 class="text-lg font-semibold text-center mb-4">
+                    Tu cita
+                </h1>
+
+                <!-- SERVICIO -->
+                <div class="text-center mb-4">
+                    <p class="font-semibold text-gray-800">
+                        {{ appointment.service?.name }}
+                    </p>
+
+                    <p class="text-sm text-gray-500">
+                        {{ appointment.variant?.name }} · {{ appointment.variant?.duration }} min
+                    </p>
+                </div>
+
+                <!-- FECHA -->
+                <div class="bg-gray-50 rounded-xl p-3 text-center mb-4">
+                    <p class="text-sm text-gray-600">
+                        {{ appointment.date }} · {{ appointment.time }}
+                    </p>
+
+                    <p class="text-xs text-gray-400 mt-1">
+                        Finaliza a las {{ appointment.end_time }}
+                    </p>
+                </div>
+
+                <!-- MODO 🔥 -->
+                <div class="text-center mb-4">
+                    <span class="text-xs px-3 py-1 rounded-full" [ngClass]="{
+                'bg-green-100 text-green-700': appointment.mode === 'presential',
+                'bg-blue-100 text-blue-700': appointment.mode === 'online',
+                'bg-purple-100 text-purple-700': appointment.mode === 'hybrid'
+              }">
+                        {{ appointment.mode === 'online' ? 'En línea' :
+                        appointment.mode === 'presential' ? 'Presencial' : 'Híbrido' }}
+                    </span>
+                </div>
+
+                <!-- CLIENTE -->
+                <div class="text-center mb-6">
+                    <p class="text-sm text-gray-600">
+                        {{ appointment.client?.first_name }} {{ appointment.client?.last_name }}
+                    </p>
+
+                    <p class="text-xs text-gray-400">
+                        {{ appointment.client?.email }}
+                    </p>
+                </div>
+
+                <!-- CÓDIGO -->
+                <p class="text-xs text-gray-400 text-center mb-6">
+                    Código: {{ appointment.reference_code }}
+                </p>
+
+
+                <!-- ACCIONES -->
+                <div class="space-y-3">
+                    <button (click)="showCancelModal = true" [disabled]="isCancelling"
+                        class="w-full py-2 rounded-xl text-sm border border-red-300 text-red-600 hover:bg-red-50 transition cursor-pointer">
+                        {{ isCancelling ? 'Cancelando...' : 'Cancelar cita' }}
+                    </button>
+
+                    <button (click)="startReschedule()"
+                        class="w-full py-2 rounded-xl text-white text-sm transition hover:opacity-90 cursor-pointer"
+                        style="background: var(--brand-primary)">
+                        Reagendar
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- REAGENDAR -->
+            <div *ngIf="isRescheduling">
+
+                <h1 class="text-lg font-semibold text-center mb-4">
+                    Reagendar cita
+                </h1>
+
+                <p class="text-xs text-gray-500 text-center mb-3">
+                    Selecciona una nueva fecha y horario
+                </p>
+
+                <app-date-time-selector [selectedVariant]="appointment.variant" [organization]="organization"
+                    [excludeAppointmentId]="appointment.id" (dateSelected)="onDateSelected($event)"
+                    (timeSelected)="onTimeSelected($event)">
+                </app-date-time-selector>
+
+                <!-- VOLVER -->
+                <div class="flex gap-2 mt-4">
+
+                    <!-- VOLVER -->
+                    <button (click)="isRescheduling = false" [disabled]="isCancelling" class="flex-1 py-2 rounded-xl text-sm border border-gray-300 cursor-pointer 
+           transition hover:opacity-80 active:scale-[0.98] disabled:opacity-50"
+                        style="background: var(--brand-secondary)">
+                        Volver
+                    </button>
+
+                    <!-- CONFIRMAR -->
+                    <button (click)="openRescheduleModal()" class="flex-1 py-2 rounded-xl text-white text-sm
+        transition hover:opacity-90 active:scale-[0.98] cursor-pointer" style="background: var(--brand-primary)">
+                        Confirmar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    @if(showCancelModal){
+    <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
+
+        <!-- BACKDROP -->
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="showCancelModal = false"></div>
+
+        <!-- MODAL -->
+        <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-6 animate-fade-in">
+
+            <!-- HEADER -->
+            <h2 class="text-lg font-semibold text-center mb-2">
+                Cancelar cita
+            </h2>
+
+            <p class="text-xs text-gray-500 text-center mb-5">
+                Ayúdanos a entender el motivo (opcional)
+            </p>
+
+            <!-- OPCIONES -->
+            <div class="space-y-2 mb-4">
+                <label *ngFor="let option of cancelOptions" class="flex items-center gap-2 text-sm cursor-pointer">
+
+                    <input type="radio" name="cancelReason" [value]="option" [(ngModel)]="cancelReason"
+                        class="accent-[var(--brand-primary)]" />
+
+                    {{ option }}
+                </label>
+            </div>
+
+            <!-- TEXTAREA -->
+            <textarea [(ngModel)]="cancelNote" rows="3" placeholder="Comentario adicional (opcional)"
+                class="w-full border rounded-xl px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]">
+    </textarea>
+
+            <!-- ACTIONS -->
+            <div class="flex gap-2">
+
+                <!-- VOLVER -->
+                <button (click)="showCancelModal = false" [disabled]="isCancelling" class="flex-1 py-2 rounded-xl text-sm border border-gray-300 cursor-pointer 
+           transition hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+                    style="background: var(--brand-secondary)">
+                    Volver
+                </button>
+
+                <!-- CONFIRMAR -->
+                <button (click)="confirmCancel()" [disabled]="isCancelling" class="flex-1 py-2 rounded-xl text-white text-sm cursor-pointer
+           transition hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
+                    style="background: var(--brand-primary)">
+
+                    {{ isCancelling ? 'Cancelando...' : 'Confirmar' }}
+                </button>
+
+            </div>
+        </div>
+    </div>
+    }
+
+
+    }
+</div>
+}
+
+@if(showRescheduleModal){
+<div class="fixed inset-0 z-50 flex items-center justify-center px-4">
+
+    <!-- BACKDROP -->
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="showRescheduleModal = false"></div>
+
+    <!-- MODAL -->
+    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-6 animate-fade-in">
+
+        <!-- HEADER -->
+        <h2 class="text-lg font-semibold text-center mb-2">
+            Reagendar cita
+        </h2>
+
+        <p class="text-xs text-gray-500 text-center mb-5">
+            ¿Por qué deseas cambiar el horario? (opcional)
+        </p>
+
+        <!-- OPCIONES -->
+        <div class="space-y-2 mb-4">
+            <label *ngFor="let option of rescheduleOptions" class="flex items-center gap-2 text-sm cursor-pointer">
+
+                <input type="radio" name="rescheduleReason" [value]="option" [(ngModel)]="rescheduleReason"
+                    class="accent-[var(--brand-primary)]" />
+
+                {{ option }}
+            </label>
+        </div>
+
+        <!-- TEXTAREA -->
+        <textarea [(ngModel)]="rescheduleNote" rows="3" placeholder="Comentario adicional (opcional)"
+            class="w-full border rounded-xl px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]">
+    </textarea>
+
+        <!-- ACTIONS -->
+        <div class="flex gap-2">
+
+            <!-- VOLVER -->
+            <button (click)="showRescheduleModal = false" [disabled]="isLoading" class="flex-1 py-2 rounded-xl text-sm border border-gray-300 cursor-pointer 
+           transition hover:opacity-80 active:scale-[0.98] disabled:opacity-50"
+                style="background: var(--brand-secondary)">
+                Volver
+            </button>
+
+
+            <!-- CONFIRMAR -->
+
+            <button (click)="confirmReschedule()" [disabled]="isLoading" class="flex-1 py-2 rounded-xl text-white text-sm
+        transition hover:opacity-90 active:scale-[0.98] cursor-pointer" style="background: var(--brand-primary)">
+                {{ isLoading ? 'Procesando...' : 'Confirmar' }}
+            </button>
+
+        </div>
+
+    </div>
+</div>
+}

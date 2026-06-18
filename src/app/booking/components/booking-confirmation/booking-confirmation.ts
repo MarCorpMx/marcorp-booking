@@ -19,7 +19,7 @@ export class BookingConfirmation {
 
   @Output() confirm = new EventEmitter<void>();
 
-  loading = false;
+  @Input() loading = false;
 
   getVariantDisplayName(name?: string) {
     if (!name) return '';
@@ -32,8 +32,6 @@ export class BookingConfirmation {
 
   confirmBooking() {
     if (this.loading) return;
-
-    this.loading = true;
 
     this.confirm.emit();
   }

@@ -19,6 +19,7 @@ import { TimeSlot } from '../../../core/models/date-time.model';
 
 import { Title } from '@angular/platform-browser';
 import { NotificationService } from '../../../core/services/notification.service';
+import { BrandingService } from '../../../core/services/branding.service';
 
 import { MatButtonModule } from '@angular/material/button';
 
@@ -57,11 +58,15 @@ export class BookingPage implements OnInit {
 
   formLoadedAt!: number;
 
+  referenceCode?: string;
+  category?: string;
+
   constructor(
     private route: ActivatedRoute,
     private organizationService: OrganizationService,
     private bookingService: BookingService,
     private title: Title,
+    private branding: BrandingService,
     private notify: NotificationService
   ) { }
 
@@ -69,45 +74,19 @@ export class BookingPage implements OnInit {
     this.notify.error('No se pudo crear la cita. Intenta nuevamente en unos minutos.');
   }*/
 
-  setBranding(org: OrganizationModel) {
 
-    // TITLE
-    const title = org?.name
-      ? `${org.name} | Agenda`
-      : 'MarCorp | Agenda';
-
-    this.title.setTitle(title);
-
-
-    // FAVICON
-    const favicon = document.getElementById('app-favicon') as HTMLLinkElement;
-
-    if (favicon) {
-      favicon.href = org?.logo_url ?? 'ico_logo.jpg';
-    }
-
-    // COLORES (CSS variables)
-    if (org?.primary_color) {
-      document.documentElement.style
-        .setProperty('--brand-primary', org.primary_color);
-    }
-
-    if (org?.secondary_color) {
-      document.documentElement.style
-        .setProperty('--brand-secondary', org.secondary_color);
-    }
-
-  }
 
   ngOnInit(): void {
     this.formLoadedAt = Date.now();
-    const slug = this.route.snapshot.paramMap.get('slug')!;
+    const slug = this.route.snapshot.paramMap.get('organizationSlug')!;
 
     this.organizationService
       .loadOrganization(slug)
       .subscribe(org => {
         this.organization = org;
-        this.setBranding(org);
+        
+        //this.branding.apply(org); // FALTA HACER CHINGON LA PETICON CON LA RESPUESTA PARA QUE SEA VERGA MAN
+        
         this.loadServices(slug);
       });
   }
@@ -116,6 +95,7 @@ export class BookingPage implements OnInit {
     this.bookingService
       .getServices(slug)
       .subscribe((services: any) => {
+        
         this.services = this.transformServices(services);
         this.servicesLoading = false;
       });
@@ -258,7 +238,6 @@ export class BookingPage implements OnInit {
       service_variant_id: this.selectedVariant.id,
       staff_member_id: this.staff_member_id,
 
-      //date: this.selectedDate?.toISOString().split('T')[0],
       date: this.selectedDate?.toLocaleDateString('en-CA'),
       time: this.selectedTime,
 
@@ -286,36 +265,28 @@ export class BookingPage implements OnInit {
       .createAppointment(slug, payload)
       .subscribe({
 
-        next: () => {
+        next: (response) => {
           this.isSubmitting = false;
           this.bookingCompleted = true;
+
+          this.referenceCode = response?.data?.reference_code;
+
+          //console.log('RESPONSE BACKEND:', response);
+          //console.log('Confirm URL:', response.debug_urls?.confirm);
+          //console.log('Cancel URL:', response.debug_urls?.cancel);
 
           setTimeout(() => {
             document.getElementById('booking-success')
               ?.scrollIntoView({ behavior: 'smooth' });
           }, 200);
-
         },
+
         error: (error) => {
           this.isSubmitting = false;
 
           console.error(error);
           const message = error.error?.message || error.message || 'Error inesperado';
           this.notify.error(message);
-
-          /*if (error.status === 409) {
-            this.notify.error(error.error?.message);
-            return;
-          }
-          if (error.status === 422) {
-            this.notify.error(error.error?.message ?? 'Datos inválidos');
-            return;
-          }
-          this.notify.error('No se pudo crear la cita. Intenta nuevamente en algunos minutos.');*/
-
-          //console.log('Full error', error);
-          //console.log('Backend message', error.error?.message);
-          //this.notify.error(error.error?.message ?? 'No se pudo crear la cita.');
         }
 
       });
@@ -349,6 +320,31 @@ export class BookingPage implements OnInit {
     }
 
     return count.toString();
+  }
+
+  getSeoTagline(): string {
+    const city = this.organization?.city || '';
+    const name = this.organization?.name || '';
+
+    switch (this.category) {
+      case 'spa':
+        return `Relájate y renueva tu energía en ${city}`;
+      case 'psicologo':
+        return `Atención emocional profesional en ${city}`;
+      case 'medico':
+        return `Cuidado de tu salud con profesionales en ${city}`;
+      default:
+        return `Agenda tu cita fácilmente en ${name}`;
+    }
+  }
+
+  getTopServices(): string {
+    if (!this.services?.length) return '';
+
+    return this.services
+      .slice(0, 2)
+      .map(s => s.name)
+      .join(' · ');
   }
 
 }

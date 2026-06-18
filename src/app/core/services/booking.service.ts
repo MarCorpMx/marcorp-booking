@@ -1,6 +1,34 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 
+export interface CreateAppointmentResponse {
+  message: string;
+  data: any; // luego puedes tiparlo mejor si quieres
+  debug_urls?: {
+    confirm: string;
+    cancel: string;
+  };
+}
+
+export interface AppointmentActionResponse {
+  status:
+  | 'confirmed'
+  | 'cancelled'
+  | 'expired'
+  | 'already_used'
+  | 'already_confirmed'
+  | 'already_cancelled'
+  | 'invalid_token';
+
+  message: string;
+
+  appointment?: {
+    date: string;
+    time: string;
+    service: string;
+  };
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -45,7 +73,51 @@ export class BookingService {
 
   // Crear cita
   createAppointment(slug: string, payload: any) {
-    return this.api.post(`v1/public/${slug}/appointments`, payload);
+    return this.api.post<CreateAppointmentResponse>(`v1/public/${slug}/appointments`, payload);
   }
+
+  // booking-result (cuando realizan una acción desde email)
+  processAppointmentAction(token: string) {
+    return this.api.post<AppointmentActionResponse>(
+      `v1/public/appointment-actions/${token}`,
+      {}
+    );
+  }
+
+  // OBTENER CITA POR REFERENCE
+  getByReference(referenceCode: string) {
+    return this.api.get(`v1/public/appointments/manage/${referenceCode}`);
+  }
+
+  // CANCELAR POR REFERENCE
+  cancelByReference(
+    referenceCode: string,
+    payload: {
+      reason?: string;
+      note?: string;
+    }
+  ) {
+    return this.api.post(
+      `v1/public/appointments/manage/${referenceCode}/cancel`,
+      payload
+    );
+  }
+
+  // REAGENDAR
+  rescheduleByReference(
+    referenceCode: string,
+    payload: {
+      date: string;
+      time: string;
+      reason?: string;
+      note?: string;
+    }
+  ) {
+    return this.api.post(
+      `v1/public/appointments/manage/${referenceCode}/reschedule`,
+      payload
+    );
+  }
+  
 
 }

@@ -16,6 +16,11 @@ export class OrganizationService {
 
   loadOrganization(slug: string) {
 
+    const message = 'loadOrganization ESTA ROTO';
+    console.log(message);
+    alert(message);
+
+
     if (this.organization) {
       return of(this.organization);
     }

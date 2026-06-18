@@ -16,8 +16,9 @@ export class DateTimeSelector implements OnInit, OnChanges {
   @Input() selectedVariant: any;
   @Input() organization: any;
   @Output() dateSelected = new EventEmitter<Date>();
-  //@Output() timeSelected = new EventEmitter<string>();
   @Output() timeSelected = new EventEmitter<TimeSlot>();
+
+  @Input() excludeAppointmentId?: number; // rombi
 
   loadingDays = false;
   loadingTimes = false;
@@ -141,6 +142,9 @@ export class DateTimeSelector implements OnInit, OnChanges {
         formattedDate
       )
       .subscribe((res: any) => {
+
+        console.log(res);
+
         this.times = res.available_slots ?? [];
 
         this.loadingTimes = false;

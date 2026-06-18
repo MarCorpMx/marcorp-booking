@@ -1,0 +1,106 @@
+<div class="min-h-screen bg-[var(--brand-bg)] flex flex-col">
+
+    <!-- HEADER -->
+    <header class="py-6 md:py-8 text-center">
+
+
+        <img [src]="logoUrl" class="h-12 mx-auto mb-3 rounded-xl">
+
+        @if(rombiBranding){
+
+        <div class="mb-2">
+
+            <h1 class="text-3xl md:text-5xl
+               font-extrabold
+               tracking-[0.14em]
+               text-gray-800">
+
+                RO<span class="text-[#10b981] font-black">M</span>BI
+
+            </h1>
+
+            <p class="text-[10px]
+              uppercase
+              tracking-[0.35em]
+              text-gray-500 mt-1">
+
+                La forma inteligente de agendar
+
+            </p>
+
+        </div>
+
+        }
+
+        @if(!rombiBranding){
+
+        <div class="mb-2">
+
+            <h1 class="text-2xl md:text-3xl
+               font-bold
+               text-gray-800">
+
+                {{ orgName }}
+
+            </h1>
+
+            <p class="text-sm text-gray-500 mt-2">
+
+                {{ slogan }}
+
+            </p>
+
+        </div>
+
+        }
+
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex-1 flex items-start md:items-center justify-center px-4 pb-10">
+
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-md p-8 text-center">
+
+            <!-- ICON -->
+            <div class="mx-auto mb-5
+            w-16 h-16 rounded-2xl
+            flex items-center justify-center
+            bg-gray-100">
+
+                <lucide-icon [name]="config.icon" class="w-8 h-8 text-gray-400">
+                </lucide-icon>
+
+            </div>
+
+            <!-- TITLE -->
+            <h1 class="text-xl font-semibold text-gray-800 mb-3">
+                {{ config.title }}
+            </h1>
+
+            <!-- DESCRIPTION -->
+            <p class="text-sm text-gray-500 leading-relaxed mb-6 whitespace-pre-line">
+
+                {{ config.description }}
+
+            </p>
+
+            <!-- ACTION -->
+            <button (click)="gotoHome()" class="w-full py-3 rounded-xl text-white text-sm
+                       transition hover:opacity-90 cursor-pointer" style="background: var(--brand-primary)">
+
+                {{ config.buttonText }}
+
+            </button>
+
+            <!-- SMALL TEXT -->
+            <p class="text-xs text-gray-400 mt-5">
+
+               {{ config.footerText }}
+
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
