@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ClipboardList, Calendar, Clock, User, ShieldCheck, ClipboardCopy, RotateCcw, X, Download } from 'lucide-angular';
 
 import { NotificationService } from '../../../core/services/notification.service';
-import { OrganizationModel } from '../../../core/models/organization.model';
+//import { OrganizationModel } from '../../../core/models/organization.model';
 
 @Component({
   selector: 'app-booking-success',
@@ -28,7 +28,8 @@ export class BookingSuccess {
   @Input() time: string | null = null;
   @Input() customer: any;
   @Input() referenceCode?: string;
-  @Input() organization?: OrganizationModel;
+  //@Input() organization?: OrganizationModel;
+  @Input() organization?: any;
 
   @Output() restart = new EventEmitter<void>();
 

@@ -1,0 +1,977 @@
+@if(loading){
+<app-services-skeleton />
+}
+
+@if(!loading){
+<div class="space-y-5">
+
+    @for(service of services; track service.id){
+
+    <!-- SERVICE CARD -->
+    <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+
+        <!-- HEADER -->
+        <div (click)="toggleService(service.id)" class="p-5 cursor-pointer hover:bg-slate-50 transition">
+
+            <div class="flex items-start justify-between gap-4">
+
+                <div>
+
+                    <h3 class="font-bold text-lg text-slate-900">
+
+                        {{ service.name }}
+
+                    </h3>
+
+                    @if(service.description){
+
+                    <p class="text-sm text-slate-500 mt-2 leading-relaxed">
+
+                        {{ service.description }}
+
+                    </p>
+
+                    }
+
+                </div>
+
+                <lucide-angular [name]="icons.ChevronDown" class="w-5 h-5 text-slate-400 transition duration-300"
+                    [class.rotate-180]="expandedServiceId === service.id">
+                </lucide-angular>
+
+            </div>
+
+        </div>
+
+        <!-- VARIANTS -->
+        @if(expandedServiceId === service.id){
+
+        <div class="border-t border-slate-100 bg-slate-50 p-4 space-y-3">
+
+            @for(variant of service.variants; track variant.id){
+
+            <div class="bg-white rounded-2xl p-4 border transition-all" [ngClass]="{
+    'border-[var(--brand-primary)] bg-[var(--brand-primary)]/5':
+      selectedVariantId === variant.id,
+
+    'border-slate-200':
+      selectedVariantId !== variant.id
+  }">
+
+                <div class="flex flex-col sm:flex-row gap-4">
+
+                    @if(variant.image_url){
+
+                    <div class="shrink-0">
+
+                        <img [src]="variant.image_url" class="
+w-full
+h-44
+sm:w-24
+sm:h-24
+rounded-2xl
+object-cover
+border border-slate-200">
+
+                    </div>
+
+                    }
+
+                    <div class="flex-1">
+
+                        <!-- NAME -->
+                        <h4 class="font-semibold text-slate-900">
+
+                            {{ variant.name }}
+
+                        </h4>
+
+                        <!-- DESCRIPTION -->
+                        @if(variant.description){
+
+                        <p class="text-sm text-slate-500 mt-2">
+
+                            {{ variant.description }}
+
+                        </p>
+
+                        }
+
+                        <!-- BADGES -->
+                        <div class="flex flex-wrap gap-2 mt-3">
+
+                            <div class="inline-flex items-center gap-1.5
+           px-2.5 py-1 rounded-lg
+           bg-slate-100 text-slate-600 text-xs">
+
+                                <lucide-angular [name]="icons.Clock3" class="w-3.5 h-3.5">
+                                </lucide-angular>
+
+                                {{ variant.duration_minutes }} min
+
+                            </div>
+
+                            <div class="inline-flex items-center gap-1.5
+           px-2.5 py-1 rounded-lg
+           bg-blue-50 text-blue-600 text-xs">
+
+                                <lucide-angular [name]="getModeIcon(variant.mode)" class="w-3.5 h-3.5">
+                                </lucide-angular>
+
+                                {{ getModeLabel(variant.mode) }}
+
+                            </div>
+
+                        </div>
+
+                        @if(hybridVariantId === variant.id){
+
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+
+                            <button (click)="selectHybridMode('presential'); $event.stopPropagation()" class="
+  relative
+  border
+  rounded-2xl
+  p-4
+  transition
+  cursor-pointer
+  " [ngClass]="{
+    'border-[var(--brand-primary)] bg-[var(--brand-primary)]/5':
+      pendingMode === 'presential',
+
+    'border-slate-200 hover:border-[var(--brand-primary)]':
+      pendingMode !== 'presential'
+  }">
+
+
+                                <div class="flex items-center gap-3">
+
+                                    <lucide-angular [name]="icons.MapPin" class="w-5 h-5">
+                                    </lucide-angular>
+
+                                    @if(pendingMode === 'presential'){
+
+                                    <div
+                                        class=" absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
+
+                                        <lucide-angular [name]="icons.Check" class="w-2.5 h-2.5 text-white">
+                                        </lucide-angular>
+
+                                    </div>
+
+                                    }
+
+                                    <div class="flex-1">
+
+                                        <div class="font-medium">
+
+                                            Presencial
+
+                                        </div>
+
+                                        <div class="text-xs text-slate-400">
+
+                                            En sucursal
+
+                                        </div>
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </button>
+
+                            <button (click)="selectHybridMode('online'); $event.stopPropagation()" class="
+  relative
+  border
+  rounded-2xl
+  p-4
+  transition
+  cursor-pointer
+  " [ngClass]="{
+    'border-[var(--brand-primary)] bg-[var(--brand-primary)]/5':
+      pendingMode === 'online',
+
+    'border-slate-200 hover:border-[var(--brand-primary)]':
+      pendingMode !== 'online'
+  }">
+
+                                <div class="flex items-center gap-3">
+
+                                    <lucide-angular [name]="icons.Monitor" class="w-5 h-5">
+                                    </lucide-angular>
+
+                                    @if(pendingMode === 'online'){
+
+                                    <div
+                                        class=" absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
+
+                                        <lucide-angular [name]="icons.Check" class="w-2.5 h-2.5 text-white">
+                                        </lucide-angular>
+
+                                    </div>
+
+                                    }
+
+
+                                    <div class="flex-1">
+
+                                        <div class="font-medium">
+
+                                            En línea
+
+                                        </div>
+
+                                        <div class="text-xs text-slate-400">
+
+                                            Videollamada
+
+                                        </div>
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </button>
+
+                        </div>
+
+                        }
+
+                        <!-- PENDIENTES DEL USUARIO -->
+
+                        @if(needsModeSelection(variant)){
+
+                        <div class="mt-4">
+
+                            <div class="
+        rounded-2xl
+        border border-amber-200
+        bg-amber-50
+        px-4 py-3">
+
+                                <div class="flex items-start gap-3">
+
+                                    <!-- ICON -->
+                                    <div class="
+    w-7 h-7
+    rounded-xl
+    bg-amber-100
+    flex items-center justify-center
+    shrink-0">
+
+                                        <lucide-angular [name]="icons.TriangleAlert" class="w-3.5 h-3.5 text-amber-600">
+                                        </lucide-angular>
+
+                                    </div>
+
+                                    <!-- TEXT -->
+                                    <div class="min-w-0">
+
+                                        <div class="text-xs font-semibold text-amber-700">
+
+                                            Falta elegir modalidad
+
+                                        </div>
+
+                                        <div class="text-xs text-amber-600 mt-1 leading-relaxed">
+
+                                            Presencial o videollamada
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        }
+
+
+                        @if(needsStaffSelection(variant)){
+
+                        <div class="mt-3">
+
+                            <div class="
+        rounded-2xl
+        border border-orange-200
+        bg-orange-50
+        px-4 py-3">
+
+                                <div class="flex items-start gap-3">
+
+                                    <!-- ICON -->
+                                    <div class="
+    w-7 h-7
+    rounded-xl
+    bg-amber-100
+    flex items-center justify-center
+    shrink-0">
+
+                                        <lucide-angular [name]="icons.UserRoundSearch" class="w-4 h-4 text-orange-600">
+                                        </lucide-angular>
+
+                                    </div>
+
+                                    <!-- TEXT -->
+                                    <div class="min-w-0">
+
+                                        <div class="text-xs font-semibold text-orange-700">
+
+                                            Falta seleccionar especialista
+
+                                        </div>
+
+                                        <div class="text-xs text-orange-600 mt-1 leading-relaxed">
+
+                                            {{ variant.staff_members_count }}
+                                            disponibles
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        }
+
+                        <!-- STAFF -->
+                        <div class="mt-3">
+
+                            @if(!variant.requires_staff_selection){
+
+                            <div class="mt-4">
+
+                                <div class="
+        rounded-2xl
+        border border-emerald-100
+        bg-gradient-to-r
+        from-emerald-50
+        to-white
+        px-4
+        py-3">
+
+                                    <div class="flex items-center justify-between gap-4">
+
+                                        <div class="min-w-0">
+
+                                            <div class="
+                    text-[11px]
+                    uppercase
+                    tracking-wide
+                    font-semibold
+                    text-emerald-600">
+
+                                                {{ getStaffLabel() }}
+
+                                            </div>
+
+                                            <div class="
+                    mt-1
+                    font-semibold
+                    text-slate-900">
+
+                                                {{ variant.default_staff_member?.name }}
+
+                                            </div>
+
+                                            @if(variant.default_staff_member?.title){
+
+                                            <div class="
+                    text-xs
+                    text-slate-500
+                    mt-0.5">
+
+                                                {{ variant.default_staff_member?.title }}
+
+                                            </div>
+
+                                            }
+
+                                        </div>
+
+                                        <button (click)="openStaffProfile(variant.default_staff_member)" class="
+                    shrink-0
+                    px-3
+                    py-2
+                    rounded-xl
+                    bg-white
+                    border border-slate-200
+                    text-xs
+                    font-medium
+                    text-slate-600
+                    hover:border-[var(--brand-primary)]
+                    hover:bg-[var(--brand-primary)]/5
+                    transition
+                    cursor-pointer">
+
+                                            Ver perfil
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            }
+
+                            @if(variant.requires_staff_selection){
+
+                            <button (click)="openStaffSelector(service,variant); $event.stopPropagation()" class="
+inline-flex
+items-center
+gap-2
+px-3 py-2
+rounded-full
+bg-orange-50
+text-orange-600
+text-xs
+font-medium
+cursor-pointer
+hover:bg-orange-100
+transition">
+
+                                <lucide-angular [name]="icons.Users" class="w-4 h-4">
+                                </lucide-angular>
+
+                                @if(
+                                pendingVariant?.id === variant.id
+                                && pendingStaff
+                                ){
+
+                                {{ pendingStaff.name }}
+
+                                <lucide-angular [name]="icons.Check" class="w-4 h-4">
+                                </lucide-angular>
+
+                                }@else{
+
+                                Elegir especialista
+
+                                }
+
+                            </button>
+
+                            }
+
+                        </div>
+
+                    </div>
+
+                    <!-- PRICE -->
+                    <!-- <div class="text-right flex flex-col justify-between">
+
+                        <div class="font-black text-lg text-[var(--brand-primary)]">
+
+                            ${{ variant.price }}
+
+                        </div>
+
+                    </div> -->
+                    <!-- PRICE + ACTION -->
+
+                    <div class="flex flex-row sm:flex-col justify-between items-center sm:items-end gap-3">
+                        <div class="font-black text-lg text-[var(--brand-primary)]">
+
+                            ${{ variant.price }}
+
+                        </div>
+
+                        <button (click)="selectVariant(service, variant)" class="
+px-4
+py-2
+rounded-xl
+bg-[var(--brand-primary)]
+text-white
+text-sm
+font-semibold
+hover:opacity-90
+transition
+cursor-pointer
+">
+                            Seleccionar
+                        </button>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            }
+
+        </div>
+
+        }
+
+    </div>
+
+    }
+
+</div>
+}
+
+@if(staffSelectionVariant){
+
+<div class="fixed inset-0 sm:inset-y-0 sm:right-0
+    z-[100] flex items-end sm:items-center justify-center
+    p-0 sm:p-4">
+
+    <!-- OVERLAY -->
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeStaffModal()">
+
+    </div>
+
+
+    <!-- MODAL -->
+    <div class="relative w-full h-full sm:h-auto
+        sm:max-w-2xl
+        bg-white
+        border-0 sm:border border-gray-200
+        rounded-none sm:rounded-3xl
+        shadow-2xl
+        flex flex-col
+        max-h-screen sm:max-h-[90vh]">
+
+
+        <!-- ================= HEADER ================= -->
+        <div class="p-5 sm:p-7
+            border-b border-gray-100
+            flex items-start gap-4
+            shrink-0">
+
+            <div class="flex-1">
+
+                <h3 class="text-2xl font-bold text-gray-800">
+
+                    Selecciona especialista
+
+                </h3>
+
+                <p class="text-sm text-gray-500 mt-2">
+
+                    Elige quién realizará tu servicio
+
+                </p>
+
+                <div class="mt-2 text-sm font-medium text-[var(--brand-primary)]">
+
+                    {{staffSelectionService?.name}} - {{ staffSelectionVariant.name }}
+
+                </div>
+
+            </div>
+
+
+            <!-- CLOSE -->
+            <button (click)="closeStaffModal()" class="w-10 h-10 shrink-0 rounded-xl
+                    bg-gray-50 border border-gray-200
+                    flex items-center justify-center
+                    hover:bg-gray-100
+                    transition cursor-pointer">
+
+                <lucide-angular [name]="icons.X" class="w-4 h-4 text-gray-500">
+
+                </lucide-angular>
+
+            </button>
+
+        </div>
+
+
+
+        <!-- ================= BODY ================= -->
+        <div class="flex-1 overflow-y-auto
+            p-5 sm:p-7
+            space-y-4">
+
+
+            @for(staff of staffSelectionVariant.staff_members; track staff.id){
+
+
+
+            <div class="rounded-3xl border p-5">
+
+                <!-- INFO -->
+                <div class="flex gap-4">
+
+
+
+                    <div class="flex items-center gap-4">
+
+
+                        <!-- AVATAR -->
+                        <div class="w-14 h-14 rounded-2xl
+                        bg-slate-100
+                        overflow-hidden
+                        shrink-0
+                        border border-slate-200">
+
+                            @if(staff.avatar){
+
+                            <img [src]="staff.avatar" class="w-full h-full object-cover">
+
+                            }@else{
+
+                            <div class="w-full h-full flex items-center justify-center">
+
+                                <lucide-angular [name]="icons.User" class="w-5 h-5 text-slate-400">
+
+                                </lucide-angular>
+
+                            </div>
+
+                            }
+
+                        </div>
+
+
+                        <!-- INFO -->
+                        <div class="flex-1 min-w-0">
+
+                            <div class="font-semibold text-slate-900">
+
+                                {{ staff.name }}
+
+                            </div>
+
+                            @if(staff.title){
+
+                            <div class="text-sm text-slate-500 mt-1">
+
+                                {{ staff.title }}
+
+                            </div>
+
+                            }
+
+                            @if(staff.specialty){
+
+                            <div class="text-xs text-[var(--brand-primary)] mt-1">
+                                {{ staff.specialty }}
+                            </div>
+
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <div class="flex gap-3 mt-4">
+
+                    <button (click)="openStaffProfile(staff); $event.stopPropagation()" class="flex-1 py-3 rounded-xl
+             border border-slate-200 cursor-pointer hover:bg-slate-100">
+
+                        Ver perfil
+
+                    </button>
+
+                    <button (click)="selectStaff(staff); $event.stopPropagation()" class="flex-1 py-3 rounded-xl
+             bg-[var(--brand-primary)]
+             text-white cursor-pointer hover:opacity-90">
+
+
+
+                        Elegir
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            }
+
+        </div>
+
+
+
+        <!-- ================= FOOTER ================= -->
+        <div class="p-5 sm:p-7
+            border-t border-gray-100
+            flex justify-end
+            shrink-0">
+
+            <button (click)="closeStaffModal()" class="px-6 py-3 rounded-xl
+                    border border-gray-200
+                    text-gray-600
+                    hover:bg-slate-100
+                    transition cursor-pointer">
+
+                Cancelar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+}
+
+@if(staffProfile){
+
+<div class="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4">
+
+    <!-- OVERLAY -->
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeStaffProfile()">
+    </div>
+
+    <!-- MODAL -->
+    <div class="
+        relative
+        w-full
+        h-full
+        sm:h-auto
+        sm:max-w-2xl
+        bg-white
+        rounded-none
+        sm:rounded-3xl
+        shadow-2xl
+        overflow-hidden
+        flex
+        flex-col
+        max-h-screen
+        sm:max-h-[90vh]
+    ">
+
+        <!-- HEADER -->
+        <div class="
+            sticky
+            top-0
+            z-10
+            bg-white
+            border-b
+            border-slate-100
+            px-5
+            py-4
+            flex
+            justify-between
+            items-center">
+
+            <div>
+
+                <div class="text-sm text-slate-500">
+
+                    Perfil profesional
+
+                </div>
+
+                <div class="font-bold text-lg text-slate-900">
+
+                    {{ staffProfile.name }}
+
+                </div>
+
+            </div>
+
+            <button (click)="closeStaffProfile()" class="
+                w-10 h-10
+                rounded-xl
+                bg-slate-100
+                hover:bg-slate-200
+                transition
+                cursor-pointer">
+
+                <lucide-angular [name]="icons.X" class="w-4 h-4 mx-auto">
+                </lucide-angular>
+
+            </button>
+
+        </div>
+
+        <!-- BODY -->
+        <div class="flex-1 overflow-y-auto">
+
+            <!-- HERO -->
+            <div class="
+                px-6
+                py-8
+                text-center
+                border-b
+                border-slate-100">
+
+                <!-- AVATAR -->
+                <div class="
+                    mx-auto
+                    w-28
+                    h-28
+                    rounded-full
+                    overflow-hidden
+                    border-4
+                    border-white
+                    shadow-lg
+                    bg-slate-100">
+
+                    @if(staffProfile.avatar){
+
+                    <img [src]="staffProfile.avatar" class="w-full h-full object-cover">
+
+                    }@else{
+
+                    <div class="
+                        w-full
+                        h-full
+                        flex
+                        items-center
+                        justify-center">
+
+                        <lucide-angular [name]="icons.User" class="w-10 h-10 text-slate-400">
+                        </lucide-angular>
+
+                    </div>
+
+                    }
+
+                </div>
+
+                <!-- NAME -->
+                <h2 class="
+                    mt-5
+                    text-2xl
+                    font-bold
+                    text-slate-900">
+
+                    {{ staffProfile.name }}
+
+                </h2>
+
+                <!-- TITLE -->
+                @if(staffProfile.title){
+
+                <div class="
+                    mt-2
+                    text-base
+                    text-slate-600">
+
+                    {{ staffProfile.title }}
+
+                </div>
+
+                }
+
+                <!-- SPECIALTY -->
+                @if(staffProfile.specialty){
+
+                <div class="
+                    mt-3
+                    inline-flex
+                    items-center
+                    px-4
+                    py-2
+                    rounded-full
+                    bg-[var(--brand-primary)]/10
+                    text-[var(--brand-primary)]
+                    text-sm
+                    font-medium">
+
+                    {{ staffProfile.specialty }}
+
+                </div>
+
+                }
+
+            </div>
+
+            <!-- BIO -->
+            @if(staffProfile.bio){
+
+            <div class="p-6">
+
+                <div class="
+                    text-xs
+                    uppercase
+                    tracking-wider
+                    text-slate-400
+                    font-semibold
+                    mb-3">
+
+                    Acerca de
+
+                </div>
+
+                <div class="
+                    text-slate-700
+                    leading-relaxed
+                    whitespace-pre-line">
+
+                    {{ staffProfile.bio }}
+
+                </div>
+
+            </div>
+
+            }@else{
+
+            <div class="p-6">
+
+                <div class="
+                    rounded-2xl
+                    bg-slate-50
+                    border
+                    border-slate-200
+                    p-5
+                    text-center">
+
+                    <div class="text-slate-500">
+
+                        Este especialista aún no ha agregado una biografía.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            }
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="
+            border-t
+            border-slate-100
+            p-5
+            bg-white">
+
+            <button (click)="closeStaffProfile()" class="
+                w-full
+                py-3
+                rounded-2xl
+                bg-[var(--brand-primary)]
+                text-white
+                font-semibold
+                hover:opacity-90
+                transition
+                cursor-pointer">
+
+                Cerrar perfil
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+}

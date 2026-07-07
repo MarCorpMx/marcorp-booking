@@ -1,182 +1,362 @@
-<div class="min-h-screen flex flex-col">
-    <!-- HEADER - Sticky  -->
-    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <!-- Logo -->
-                <div class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden">
+@if( loading.isLoading(BookingLoader.Organization) ){
 
-                    <img *ngIf="organization?.logo_url" [src]="organization?.logo_url"
-                        class="w-full h-full object-cover">
+<app-booking-shell-skeleton />
 
-                    <span *ngIf="!organization?.logo_url" class="text-lg font-semibold text-gray-400">
-                        {{ organization?.name?.charAt(0) }}
-                    </span>
+}
+
+@if( !loading.isLoading(BookingLoader.Organization) ){
+
+<div class="min-h-screen flex flex-col bg-slate-50">
+
+    <!-- ========================= -->
+    <!-- HEADER COMPACTO -->
+    <!-- ========================= -->
+    <header class="
+        sticky top-0 z-50
+        bg-white/90 backdrop-blur-md
+        border-b border-slate-100">
+
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+
+            <!-- LOGO -->
+            <div class="w-10 h-10 rounded-xl overflow-hidden border border-slate-100 shrink-0">
+
+                @if(header?.logoUrl){
+                <img [src]="header?.logoUrl" class="w-full h-full object-cover">
+                }@else{
+                <div class="w-full h-full flex items-center justify-center" [style.background]="nicheColor + '15'">
+                    <lucide-icon [img]="nicheIcon" size="18" [style.color]="nicheColor"></lucide-icon>
                 </div>
-                <div>
-                    <h1 class="font-black text-slate-900 leading-none">{{ organization?.name }}</h1>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="flex items-center gap-0.5 text-[10px] font-bold text-amber-500">
-                            <lucide-angular [name]="Star" class="h-3 w-3 fill-current"></lucide-angular>
-                            <!-- 4.9 (1.2k) -->
-                            {{ (organization?.rating ?? 0) | number:'1.1-1' }}
-                            ({{ formatReviews(organization?.reviews_count) }})
-                        </span>
-                        <span class="text-[10px] font-bold text-slate-400 flex items-center gap-0.5">
-                            <lucide-angular [name]="MapPin" class="h-3 w-3"></lucide-angular>
-                            {{
-                            organization?.city && organization?.state
-                            ? organization?.city + ', ' + organization?.state
-                            : organization?.city || organization?.state || 'Ubicación'
-                            }}
-                        </span>
-                    </div>
-                </div>
+                }
+
             </div>
 
-            <div class="hidden md:flex flex-col items-end max-w-xs">
-                <p class="text-xs text-slate-500 leading-tight">
-                    {{ getSeoTagline() }}
-                </p>
+            <!-- NAME -->
+            <div class="flex flex-col leading-tight">
+                <h1 class="text-sm font-black text-slate-900">
+                    {{ header?.organizationName }}
+                </h1>
+                <span class="text-sm font-semibold text-emerald-600 mt-1">
+                    {{ header?.branchName }}
+                </span>
 
-                <p class="text-[11px] text-slate-400 mt-1">
-                    {{ getTopServices() }}
+                <!-- SLOGAN -->
+                @if(organization?.slogan){
+                <p class="mt-1 text-xs uppercase tracking-wide text-slate-400">
+
+                    {{ organization?.slogan }}
+
                 </p>
+                }
+            </div>
+
+            <!-- BADGE -->
+            <div class="ml-auto hidden sm:flex">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold"
+                    [style.background]="nicheColor + '15'" [style.color]="nicheColor">
+
+                    <lucide-icon [img]="nicheIcon" size="14">
+                    </lucide-icon>
+
+                    {{ nicheLabel }}
+
+                </div>
             </div>
 
         </div>
     </header>
 
-    <!-- SOLO MOBILE -->
-    <div class="md:hidden px-4 pt-3 pb-2">
-        <p class="text-xs text-slate-500 leading-tight">
-            {{ getSeoTagline() }}
-        </p>
 
-        <p class="text-[11px] text-slate-400 mt-1">
-            {{ getTopServices() }}
-        </p>
-    </div>
+    <!-- ========================= -->
+    <!-- BUSINESS CARD (INFO REAL) -->
+    <!-- ========================= -->
+    <section class="px-4 pt-6 pb-4 max-w-6xl mx-auto w-full">
 
-    <!-- <button matButton (click)="pruebaMensajes()">Basic</button>  -->
-
-    <!-- MAIN CONTENT  -->
-    @if (!bookingCompleted) {
-    <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-            <!-- FORMULARIO - Scroll  -->
-            <div class="lg:col-span-8">
-
-                <app-stepper-indicator [currentStep]="currentStep">
-                </app-stepper-indicator>
-
-                <div class="space-y-10">
-
-                    <!-- STEP 1 -->
-                    <section class="space-y-4 animate-fade-in scroll-mt-40">
-
-                        <h2 class="text-lg font-semibold text-slate-900">
-                            1. Selecciona un servicio
-                        </h2>
-
-                        <!-- SKELETON -->
-                        <div *ngIf="servicesLoading" class="space-y-4">
-
-                            <div *ngFor="let i of [1,2,3]" class="h-24 rounded-2xl bg-slate-200 animate-pulse">
-                            </div>
-
-                        </div>
-
-                        <app-service-selector *ngIf="!servicesLoading" [services]="services"
-                            (variantSelected)="onVariantSelected($event)">
-                        </app-service-selector>
-
-                    </section>
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-5 space-y-4">
 
 
-                    <!-- STEP 2 -->
-                    @if (selectedVariant) {
+            <!-- SUBTITLE -->
+            <p class="text-base font-medium text-slate-800">
+                {{ header?.subtitle }}
+            </p>
 
-                    <section id="dateTimeSection"
-                        class="space-y-4 pt-6 border-t border-slate-200 animate-fade-in scroll-mt-40">
+            <!-- DESCRIPTION -->
+            <p class="text-xs text-slate-500 leading-relaxed">
+                {{ header?.description }}
+            </p>
 
-                        <h2 class="text-lg font-semibold text-slate-900">
-                            2. Selecciona fecha y hora
-                        </h2>
+            <!-- STATS -->
+            <div class="flex flex-wrap gap-3 text-xs">
 
-                        <app-date-time-selector [selectedVariant]="selectedVariant" [organization]="organization"
-                            (dateSelected)="onDateSelected($event)" (timeSelected)="onTimeSelected($event)">
-                        </app-date-time-selector>
+                @if(header?.stats?.rating){
+                <span class="text-amber-500 font-bold">
+                    ⭐ {{ header?.stats?.rating }} ({{ header?.stats?.reviews_count || 0 }})
+                </span>
+                }
 
-                    </section>
+                @if(header?.location){
+                <span class="text-slate-500">
+                    📍 {{ header?.location }}
+                </span>
+                }
 
-                    }
-
-
-                    <!-- STEP 3  -->
-                    @if (selectedVariant && selectedDate && selectedTime) {
-
-                    <section id="customerSection"
-                        class="space-y-4 pt-6 border-t border-slate-200 animate-fade-in scroll-mt-40">
-
-                        <h2 class="text-lg font-semibold text-slate-900">
-                            3. Tus datos
-                        </h2>
-
-                        <app-customer-form (formCompleted)="onCustomerCompleted($event)">
-                        </app-customer-form>
-
-                    </section>
-
-                    }
-
-                    <!-- STEP 4 -->
-                    @if (showConfirmation) {
-
-                    <section id="booking-confirmation" class="space-y-4 pt-6 border-t border-slate-200 animate-fade-in">
-
-                        <h2 class="text-lg font-semibold text-slate-900">
-                            4. Confirmar cita
-                        </h2>
-
-                        <app-booking-confirmation [service]="selectedService" [variant]="selectedVariant"
-                            [date]="selectedDate" [time]="selectedTime" [customer]="customerData"
-                            [loading]="isSubmitting" (confirm)="createBooking()">
-                        </app-booking-confirmation>
-
-                    </section>
-
-                    }
-
-                </div>
             </div>
 
-            <!-- SUMMARY - Sticky on Desktop  -->
+            <!-- ACTIONS -->
+            <div class="flex flex-wrap gap-2 pt-2">
+
+                @if(header?.actions?.whatsapp){
+                <button (click)="openWa(header?.actions?.whatsapp)" class="inline-flex items-center gap-2
+           px-3 py-2 rounded-xl
+           bg-green-50 text-green-700 text-sm
+           hover:bg-green-100 transition cursor-pointer">
+
+                    <img src="https://cdn-icons-png.flaticon.com/24/733/733585.png" class="w-4 h-4 shrink-0"
+                        alt="WhatsApp">
+
+                    <span>WhatsApp</span>
+
+                </button>
+                }
+
+                @if(header?.actions?.phone){
+                <a [href]="'tel:' + header?.actions?.phone" class="px-3 py-2 rounded-xl bg-slate-50 text-sm">
+                    📞 Llamar
+                </a>
+                }
+
+                @if(header?.actions?.website){
+                <a [href]="header?.actions?.website" target="_blank" class="px-3 py-2 rounded-xl bg-slate-50 text-sm">
+                    🌐 Web
+                </a>
+                }
+
+                @if(header?.actions?.mapsUrl){
+                <a [href]="header?.actions?.mapsUrl" target="_blank" class="px-3 py-2 rounded-xl bg-slate-50 text-sm">
+                    📍 Cómo llegar
+                </a>
+                }
+
+            </div>
+
+            <!-- SOCIAL -->
+            @if(header?.actions?.socialLinks){
+            <div class="flex gap-3 pt-2 border-t border-slate-100">
+
+                @if(header?.actions?.socialLinks?.instagram){
+                <a [target]="'_blank'" [href]="header?.actions?.socialLinks?.instagram" class="w-10 h-10 rounded-xl border border-gray-200
+              flex items-center justify-center
+              hover:bg-gray-50 transition-all">
+                    <img src="https://cdn-icons-png.flaticon.com/24/733/733558.png" alt="Instagram" width="24"
+                        height="24" style="display:block;">
+                </a>
+                }
+
+                @if(header?.actions?.socialLinks?.facebook){
+                <a [target]="'_blank'" [href]="header?.actions?.socialLinks?.facebook" class="w-10 h-10 rounded-xl border border-gray-200
+              flex items-center justify-center
+              hover:bg-gray-50 transition-all">
+                    <img src="https://cdn-icons-png.flaticon.com/24/733/733547.png" alt="Facebook" width="24"
+                        height="24" style="display:block;">
+                </a>
+                }
+
+                @if(header?.actions?.socialLinks?.tiktok){
+                <a [target]="'_blank'" [href]="header?.actions?.socialLinks?.tiktok" class="w-10 h-10 rounded-xl border border-gray-200
+              flex items-center justify-center
+              hover:bg-gray-50 transition-all">
+                    <img src="https://cdn-icons-png.flaticon.com/24/3046/3046121.png" alt="Tiktok" width="24"
+                        height="24" style="display:block;">
+                </a>
+                }
+
+                @if(header?.actions?.socialLinks?.youtube){
+                <a [target]="'_blank'" [href]="header?.actions?.socialLinks?.youtube" class="w-10 h-10 rounded-xl border border-gray-200
+              flex items-center justify-center
+              hover:bg-gray-50 transition-all">
+                    <img src="https://cdn-icons-png.flaticon.com/24/1384/1384060.png" alt="Youtube" width="24"
+                        height="24" style="display:block;">
+                </a>
+                }
+
+                @if(header?.actions?.socialLinks?.x){
+                <a [target]="'_blank'" [href]="header?.actions?.socialLinks?.x" class="w-10 h-10 rounded-xl border border-gray-200
+              flex items-center justify-center
+              hover:bg-gray-50 transition-all">
+                    <img src="https://cdn-icons-png.flaticon.com/24/5969/5969020.png" alt="X" width="24" height="24"
+                        style="display:block;">
+                </a>
+                }
+
+            </div>
+            }
+
+            <!-- ROMBI BRANDING -->
+            @if(header?.showRombiBranding){
+            <div class="bg-slate-50 rounded-xl p-3 border-t border-slate-100">
+                Reservas impulsadas por
+                <button (click)="goToBookingRombi()" class="font-bold text-emerald-600 cursor-pointer">
+
+                    ROMBI
+
+                </button>
+            </div>
+            }
+
+        </div>
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- BOOKING SECTION -->
+    <!-- ========================= -->
+    @if (!bookingCompleted) {
+
+    <main class="flex-1 max-w-6xl mx-auto w-full px-4 pb-24 lg:pb-8">
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- FORM -->
+            <div class="lg:col-span-8 space-y-8">
+
+                <!-- HERO TITLE -->
+                <div>
+                    <h2 class="text-xl lg:text-3xl font-black text-slate-900">
+                        {{ bookingCtaTitle }}
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">
+                        {{ bookingCtaSubtitle }}
+                    </p>
+                </div>
+
+                <!-- STEPPER -->
+                <app-stepper-indicator [currentStep]="currentStep"></app-stepper-indicator>
+
+                <!-- STEP 1 -->
+                @if( loading.isLoading(BookingLoader.Services) ){
+
+                <app-services-skeleton />
+
+                }
+                @else {
+
+                <section class="space-y-4 animate-fade-in scroll-mt-40">
+
+                    <h2 class="text-lg font-semibold text-slate-900">
+                        1. Selecciona un servicio
+                    </h2>
+
+                    <app-service-selector [businessNiche]="organization?.business_niche ?? null" [services]="services"
+                        (variantSelected)="onVariantSelected($event)">
+                    </app-service-selector>
+
+                </section>
+
+
+                }
+
+
+                <!-- STEP 2 -->
+                <!-- @if (selectedVariant) { -->
+                @if (canShowDateStep) {
+
+                @if(loading.isLoading(BookingLoader.Availability)){
+
+                <app-date-time-skeleton />
+
+                }
+                @else if (availability) {
+
+                <section id="date-selector"
+                    class="space-y-4 pt-6 border-t border-slate-200 animate-fade-in scroll-mt-40">
+
+                    <h2 class="text-lg font-semibold text-slate-900">
+                        2. Selecciona fecha y hora
+                    </h2>
+
+                    <app-date-time-selector [availability]="availability" [selectedDate]="selectedDate"
+                        [timeSlots]="timeSlots" (dateSelected)="onDateSelected($event)"
+                        (timeSelected)="onTimeSelected($event)">
+
+                    </app-date-time-selector>
+
+                    <!-- <app-date-time-selector [selectedVariant]="selectedVariant" [organization]="organization"
+                        (dateSelected)="onDateSelected($event)" (timeSelected)="onTimeSelected($event)">
+                    </app-date-time-selector> -->
+
+                </section>
+
+                }
+
+                }
+
+                <!-- STEP 3 -->
+                <!-- @if( loading.isLoading(BookingLoader.NOSE) ){
+                    <app-customerNOSE-skeleton />
+                }@else{
+                @if (selectedVariant && selectedDate && selectedTime) {
+                <app-customer-form (formCompleted)="onCustomerCompleted($event)">
+                </app-customer-form>
+                }
+                } -->
+
+                <!-- STEP 4 -->
+                @if (showConfirmation) {
+                <!-- <app-booking-confirmation [service]="selectedService" [variant]="selectedVariant" [date]="selectedDate"
+                    [time]="selectedTime" [customer]="customerData" [loading]="isSubmitting"
+                    (confirm)="createBooking()">
+                </app-booking-confirmation> -->
+                }
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- SUMMARY DESKTOP -->
+            <!-- ========================= -->
             @if (!showConfirmation) {
-            <aside class="lg:col-span-4 lg:sticky lg:top-16 h-fit">
+            <aside class="hidden lg:block lg:col-span-4 lg:sticky lg:top-20 h-fit">
 
                 <app-booking-summary [service]="selectedService" [variant]="selectedVariant"
-                    [selectedDate]="selectedDate" [selectedTime]="selectedTime" [customer]="customerData"
-                    (confirm)="goToConfirmation()">
+                    [selectedMode]="selectedMode" [selectedStaff]="selectedStaff" [selectedDate]="selectedDate"
+                    [selectedTime]="selectedTime" [customer]="customerData" (confirm)="goToConfirmation()">
                 </app-booking-summary>
 
             </aside>
             }
+
         </div>
     </main>
     }
 
+
+    <!-- ========================= -->
+    <!-- MOBILE BOTTOM SUMMARY -->
+    <!-- ========================= -->
+    @if(selectedVariant && !showConfirmation){
+
+
+    <app-mobile-booking-summary [service]="selectedService" [variant]="selectedVariant" [selectedMode]="selectedMode"
+        [selectedStaff]="selectedStaff" [selectedDate]="selectedDate" [selectedTime]="selectedTime"
+        [customer]="customerData" (continue)="goToConfirmation()">
+
+    </app-mobile-booking-summary>
+
+    }
+
+
     @if (bookingCompleted) {
-    <section id="booking-success" class="mt-10">
+    <!-- <section id="booking-success" class="mt-10">
 
         <app-booking-success [service]="selectedService" [variant]="selectedVariant" [date]="selectedDate"
             [time]="selectedTime" [customer]="customerData" [referenceCode]="referenceCode"
             [organization]="organization" (restart)="resetBooking()">
         </app-booking-success>
 
-    </section>
+    </section> -->
     }
 
 
 </div>
+
+}

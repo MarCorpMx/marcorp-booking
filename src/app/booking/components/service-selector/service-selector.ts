@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ServiceModel } from '../../../core/models/service.model';
+//import { ServiceModel } from '../../../core/models/service.model';
 
 @Component({
   selector: 'app-service-selector',
@@ -11,7 +11,8 @@ import { ServiceModel } from '../../../core/models/service.model';
 
 export class ServiceSelector {
   @Output() variantSelected = new EventEmitter<any>();
-  @Input() services: ServiceModel[] = [];
+  //@Input() services: ServiceModel[] = [];
+  @Input() services: any[] = [];
 
   expandedIndex: number | null = null;
 

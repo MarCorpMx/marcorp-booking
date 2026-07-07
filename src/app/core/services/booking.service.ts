@@ -38,6 +38,11 @@ export class BookingService {
 
   // Obtiene los servicios de las organizaciones
   getServices(slug: string) {
+
+    const message = 'getServices ESTA ROTO';
+    console.log(message);
+    alert(message);
+
     return this.api.get(`v1/public/${slug}/services`);
   }
 
@@ -47,6 +52,11 @@ export class BookingService {
     serviceVariantId: number,
     date: string
   ) {
+
+    const message = 'getAvailability ESTA ROTO';
+    console.log(message);
+    alert(message);
+
     return this.api.get(`v1/public/${slug}/availability`, {
       params: {
         service_variant_id: serviceVariantId,
@@ -62,6 +72,11 @@ export class BookingService {
     startDate: string,
     days: number = 9
   ) {
+
+    const message = 'getAvailabilityRange ESTA ROTO';
+    console.log(message);
+    alert(message);
+
     return this.api.get(`v1/public/${slug}/availability-range`, {
       params: {
         service_variant_id: serviceVariantId,
@@ -73,11 +88,22 @@ export class BookingService {
 
   // Crear cita
   createAppointment(slug: string, payload: any) {
+
+    const message = 'createAppointment ESTA ROTO';
+    console.log(message);
+    alert(message);
+
     return this.api.post<CreateAppointmentResponse>(`v1/public/${slug}/appointments`, payload);
   }
 
   // booking-result (cuando realizan una acción desde email)
   processAppointmentAction(token: string) {
+
+
+    const message = 'processAppointmentAction ESTA ROTO';
+    console.log(message);
+    alert(message);
+
     return this.api.post<AppointmentActionResponse>(
       `v1/public/appointment-actions/${token}`,
       {}
@@ -86,6 +112,11 @@ export class BookingService {
 
   // OBTENER CITA POR REFERENCE
   getByReference(referenceCode: string) {
+
+    const message = 'getByReference ESTA ROTO';
+    console.log(message);
+    alert(message);
+
     return this.api.get(`v1/public/appointments/manage/${referenceCode}`);
   }
 
@@ -97,6 +128,12 @@ export class BookingService {
       note?: string;
     }
   ) {
+
+
+    const message = 'cancelByReference ESTA ROTO';
+    console.log(message);
+    alert(message);
+
     return this.api.post(
       `v1/public/appointments/manage/${referenceCode}/cancel`,
       payload
@@ -113,11 +150,17 @@ export class BookingService {
       note?: string;
     }
   ) {
+
+
+    const message = 'rescheduleByReference ESTA ROTO';
+    console.log(message);
+    alert(message);
+
     return this.api.post(
       `v1/public/appointments/manage/${referenceCode}/reschedule`,
       payload
     );
   }
-  
+
 
 }

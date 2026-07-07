@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { PublicBookingOrganization } from '../models/public-booking-entry.model';
 
+//import { BookingOrganizationEntryResponse } from '../models/booking-entry.models';
+
 @Injectable({
   providedIn: 'root',
 })

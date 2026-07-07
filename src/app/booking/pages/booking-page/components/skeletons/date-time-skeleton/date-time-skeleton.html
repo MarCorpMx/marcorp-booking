@@ -1,0 +1,26 @@
+<!-- MAIN -->
+<main class="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+        <!-- LEFT -->
+        <div class="lg:col-span-8 space-y-10">
+            <!-- FAKE NEXT SECTION PREVIEW -->
+            <div class="pt-6 border-t border-slate-100 space-y-4">
+
+                <div class="h-5 w-56 rounded bg-slate-100"></div>
+
+                <div class="grid grid-cols-4 gap-3">
+
+                    @for(day of [1,2,3,4]; track day){
+
+                    <div class="h-16 rounded-xl bg-slate-100"></div>
+
+                    }
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>

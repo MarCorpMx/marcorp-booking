@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
-import { OrganizationModel } from '../../../core/models/organization.model';
+//import { OrganizationModel } from '../../../core/models/organization.model';
 import { OrganizationService } from '../../../core/services/organization.service';
 import { BrandingService } from '../../../core/services/branding.service';
 import { BookingService } from '../../../core/services/booking.service';
@@ -25,7 +25,8 @@ export class BookingManage implements OnInit {
   isLoading = true;
 
   organizationSlug!: string;
-  organization?: OrganizationModel;
+  //organization?: OrganizationModel;
+  organization?: any;
 
   referenceCode = '';
   appointment: any = null;

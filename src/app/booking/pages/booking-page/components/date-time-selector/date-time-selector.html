@@ -1,0 +1,104 @@
+<div class="space-y-6">
+
+    <div>
+        <p class="text-slate-500">
+            Elige un día disponible
+        </p>
+
+    </div>
+
+    <div class="flex gap-2 overflow-x-auto pb-2">
+
+        @for(day of days; track day.date){
+
+        <button (click)="selectDate(day)" [disabled]="!day.enabled" class="flex flex-col items-center
+                   min-w-[72px]
+                   p-3
+                   rounded-2xl
+                   border-2
+                   transition-all" [ngClass]="{
+
+                'border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white shadow-lg':
+                    isSelected(day),
+
+                'border-white bg-white hover:border-slate-200 shadow-sm cursor-pointer':
+                    !isSelected(day) && day.enabled,
+
+                'opacity-40 bg-slate-100 cursor-not-allowed':
+                    !day.enabled
+
+            }">
+
+            <span class="text-[10px] uppercase font-bold">
+
+                {{ day.date | date:'EEE' }}
+
+            </span>
+
+            <span class="text-lg font-black">
+
+                {{ day.date | date:'d' }}
+
+            </span>
+
+        </button>
+
+        }
+
+    </div>
+
+    @if(selectedDate){
+
+    <div class="space-y-4">
+
+        <p class="text-slate-500">
+            Elige un horario
+        </p>
+
+        @if(timeSlots.length){
+
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+
+            @for(slot of timeSlots; track slot.time){
+
+            <button (click)="selectTime(slot)" [disabled]="!slot.available" class="rounded-xl
+                   border-2
+                   p-3
+                   text-sm
+                   font-semibold
+                   transition-all" [ngClass]="{
+
+                'border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white shadow-lg':
+                    selectedTime?.time === slot.time,
+
+                'border-white bg-white hover:border-slate-300 cursor-pointer':
+                    slot.available && selectedTime?.time !== slot.time,
+
+                'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed':
+                    !slot.available
+
+            }">
+
+                {{slot.time}}
+
+            </button>
+
+            }
+
+        </div>
+
+        } @else {
+
+        <div class="text-center py-8 text-slate-500">
+
+            No hay horarios disponibles.
+
+        </div>
+
+        }
+
+    </div>
+
+    }
+
+</div>

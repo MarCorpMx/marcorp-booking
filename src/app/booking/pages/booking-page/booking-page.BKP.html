@@ -1,0 +1,180 @@
+<div class="min-h-screen flex flex-col">
+    <!-- HEADER - Sticky  -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <!-- Logo -->
+                <div class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden">
+
+                    <img *ngIf="organization?.logo_url" [src]="organization?.logo_url"
+                        class="w-full h-full object-cover">
+
+                    <span *ngIf="!organization?.logo_url" class="text-lg font-semibold text-gray-400">
+                        {{ organization?.name?.charAt(0) }}
+                    </span>
+                </div>
+                <div>
+                    <h1 class="font-black text-slate-900 leading-none">{{ organization?.name }}</h1>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="flex items-center gap-0.5 text-[10px] font-bold text-amber-500">
+                            <lucide-angular [name]="Star" class="h-3 w-3 fill-current"></lucide-angular>
+                            <!-- 4.9 (1.2k) -->
+                            {{ (organization?.rating ?? 0) | number:'1.1-1' }}
+                            ({{ formatReviews(organization?.reviews_count) }})
+                        </span>
+                        <span class="text-[10px] font-bold text-slate-400 flex items-center gap-0.5">
+                            <lucide-angular [name]="MapPin" class="h-3 w-3"></lucide-angular>
+                            {{
+                            organization?.city && organization?.state
+                            ? organization?.city + ', ' + organization?.state
+                            : organization?.city || organization?.state || 'Ubicación'
+                            }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden md:flex flex-col items-end max-w-xs">
+                <p class="text-xs text-slate-500 leading-tight">
+                    {{ getSeoTagline() }}
+                </p>
+
+                <p class="text-[11px] text-slate-400 mt-1">
+                    {{ getTopServices() }}
+                </p>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- SOLO MOBILE -->
+    <div class="md:hidden px-4 pt-3 pb-2">
+        <p class="text-xs text-slate-500 leading-tight">
+            {{ getSeoTagline() }}
+        </p>
+
+        <p class="text-[11px] text-slate-400 mt-1">
+            {{ getTopServices() }}
+        </p>
+    </div>
+
+    <!-- MAIN CONTENT  -->
+    @if (!bookingCompleted) {
+    <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- FORMULARIO - Scroll  -->
+            <div class="lg:col-span-8">
+
+                <app-stepper-indicator [currentStep]="currentStep">
+                </app-stepper-indicator>
+
+                <div class="space-y-10">
+
+                    <!-- STEP 1 -->
+                    <section class="space-y-4 animate-fade-in scroll-mt-40">
+
+                        <h2 class="text-lg font-semibold text-slate-900">
+                            1. Selecciona un servicio
+                        </h2>
+
+                        <!-- SKELETON -->
+                        <div *ngIf="servicesLoading" class="space-y-4">
+
+                            <div *ngFor="let i of [1,2,3]" class="h-24 rounded-2xl bg-slate-200 animate-pulse">
+                            </div>
+
+                        </div>
+
+                        <app-service-selector *ngIf="!servicesLoading" [services]="services"
+                            (variantSelected)="onVariantSelected($event)">
+                        </app-service-selector>
+
+                    </section>
+
+
+                    <!-- STEP 2 -->
+                    @if (selectedVariant) {
+
+                    <section id="dateTimeSection"
+                        class="space-y-4 pt-6 border-t border-slate-200 animate-fade-in scroll-mt-40">
+
+                        <h2 class="text-lg font-semibold text-slate-900">
+                            2. Selecciona fecha y hora
+                        </h2>
+
+                        <app-date-time-selector [selectedVariant]="selectedVariant" [organization]="organization"
+                            (dateSelected)="onDateSelected($event)" (timeSelected)="onTimeSelected($event)">
+                        </app-date-time-selector>
+
+                    </section>
+
+                    }
+
+
+                    <!-- STEP 3  -->
+                    @if (selectedVariant && selectedDate && selectedTime) {
+
+                    <section id="customerSection"
+                        class="space-y-4 pt-6 border-t border-slate-200 animate-fade-in scroll-mt-40">
+
+                        <h2 class="text-lg font-semibold text-slate-900">
+                            3. Tus datos
+                        </h2>
+
+                        <app-customer-form (formCompleted)="onCustomerCompleted($event)">
+                        </app-customer-form>
+
+                    </section>
+
+                    }
+
+                    <!-- STEP 4 -->
+                    @if (showConfirmation) {
+
+                    <section id="booking-confirmation" class="space-y-4 pt-6 border-t border-slate-200 animate-fade-in">
+
+                        <h2 class="text-lg font-semibold text-slate-900">
+                            4. Confirmar cita
+                        </h2>
+
+                        <app-booking-confirmation [service]="selectedService" [variant]="selectedVariant"
+                            [date]="selectedDate" [time]="selectedTime" [customer]="customerData"
+                            [loading]="isSubmitting" (confirm)="createBooking()">
+                        </app-booking-confirmation>
+
+                    </section>
+
+                    }
+
+                </div>
+            </div>
+
+            <!-- SUMMARY - Sticky on Desktop  -->
+            @if (!showConfirmation) {
+            <aside class="lg:col-span-4 lg:sticky lg:top-16 h-fit">
+
+                <app-booking-summary [service]="selectedService" [variant]="selectedVariant"
+                    [selectedDate]="selectedDate" [selectedTime]="selectedTime" [customer]="customerData"
+                    (confirm)="goToConfirmation()">
+                </app-booking-summary>
+
+            </aside>
+            }
+        </div>
+    </main>
+    }
+
+    @if (bookingCompleted) {
+    <section id="booking-success" class="mt-10">
+
+        <app-booking-success [service]="selectedService" [variant]="selectedVariant" [date]="selectedDate"
+            [time]="selectedTime" [customer]="customerData" [referenceCode]="referenceCode"
+            [organization]="organization" (restart)="resetBooking()">
+        </app-booking-success>
+
+    </section>
+    }
+
+
+</div>

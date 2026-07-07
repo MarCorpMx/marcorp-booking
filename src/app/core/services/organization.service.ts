@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { tap, shareReplay, of } from 'rxjs';
 
 import { ApiService } from '../../core/services/api.service';
-import { OrganizationModel } from '../models/organization.model';
+//import { OrganizationModel } from '../models/organization.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,9 +10,10 @@ import { OrganizationModel } from '../models/organization.model';
 
 export class OrganizationService {
 
-  private organization?: OrganizationModel;
+  //private organization?: OrganizationModel;
+  private organization?: any;
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) { }
 
   loadOrganization(slug: string) {
 
@@ -26,7 +27,7 @@ export class OrganizationService {
     }
 
     return this.api
-      .get<OrganizationModel>(`v1/public/${slug}`)
+      .get<any>(`v1/public/${slug}`)
       .pipe(
         tap((org) => {
           this.organization = org;
@@ -40,7 +41,7 @@ export class OrganizationService {
     return this.organization;
   }
 
-  private applyBranding(org: OrganizationModel) {
+  private applyBranding(org: any) {
 
     if (org.primary_color) {
       document.documentElement.style.setProperty(

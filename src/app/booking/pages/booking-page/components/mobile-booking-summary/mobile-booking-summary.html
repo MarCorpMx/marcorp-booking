@@ -1,0 +1,314 @@
+<div class="fixed bottom-0 left-0 right-0 lg:hidden z-50">
+
+    <div class="
+        bg-white
+        rounded-t-3xl
+        shadow-2xl
+        border-t
+        flex
+        flex-col
+        max-h-[80vh]
+    ">
+
+        <!-- HEADER (siempre visible) -->
+        <button (click)="toggleMobileSummary()" class="
+shrink-0
+w-full
+flex
+items-center
+justify-between
+p-4
+cursor-pointer
+">
+
+            <div class="text-left">
+
+                <div class="flex items-center gap-2">
+
+                    <lucide-angular [name]="icons.Receipt" class="w-4 h-4 text-[var(--brand-primary)]">
+
+                    </lucide-angular>
+
+                    <span class="text-xs text-slate-400">
+
+                        Mi cita
+
+                    </span>
+
+                </div>
+
+                <div class="font-bold text-slate-900">
+
+                    {{ service?.name }}
+
+                </div>
+
+                <div class="text-xs text-slate-500">
+
+                    {{ variant?.name }}
+
+                </div>
+
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <div class="text-right">
+
+                    <div class="font-black text-lg">
+
+                        ${{ variant?.price }}
+
+                    </div>
+
+                    <div class="text-[11px] text-slate-400">
+
+                        Total
+
+                    </div>
+
+                </div>
+
+                <lucide-angular [name]="icons.ChevronUp" class="w-5 h-5 transition"
+                    [class.rotate-180]="!mobileSummaryExpanded">
+                </lucide-angular>
+
+            </div>
+
+        </button>
+
+
+        <!-- CONTENIDO -->
+        @if(mobileSummaryExpanded){
+
+        <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4 border-t ">
+
+            <!-- Servicio -->
+
+            <div class="flex gap-3">
+
+                <lucide-angular [name]="icons.CircleCheckBig" class="w-5 h-5 text-emerald-500 mt-0.5">
+                </lucide-angular>
+
+                <div>
+
+                    <div class="text-xs text-slate-400">
+
+                        Servicio
+
+                    </div>
+
+                    <div class="font-semibold text-slate-900">
+
+                        {{ service?.name }}
+
+                    </div>
+
+                    <div class="text-sm text-slate-500">
+
+                        {{ variant?.name }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Modalidad -->
+
+            <div class="flex gap-3">
+
+                <lucide-angular [name]="hasMode() ? icons.CircleCheckBig : icons.Circle" class="w-5 h-5 mt-0.5"
+                    [class.text-emerald-500]="hasMode()" [class.text-slate-300]="!hasMode()">
+                </lucide-angular>
+
+                <div>
+
+                    <div class="text-xs text-slate-400">
+
+                        Modalidad
+
+                    </div>
+
+                    <div class="font-medium">
+
+                        {{ getModeLabel() }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Especialista -->
+
+            <div class="flex gap-3">
+
+                <lucide-angular [name]="hasStaff() ? icons.CircleCheckBig : icons.Circle" class="w-5 h-5 mt-0.5"
+                    [class.text-emerald-500]="hasStaff()" [class.text-slate-300]="!hasStaff()">
+                </lucide-angular>
+
+                <div>
+
+                    <div class="text-xs text-slate-400">
+
+                        Especialista
+
+                    </div>
+
+                    <div class="font-medium">
+
+                        {{ selectedStaff?.name || 'Pendiente' }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Fecha -->
+            <div class="flex gap-3">
+
+                <lucide-angular [name]="hasDate()
+            ? icons.CircleCheckBig
+            : icons.Circle" class="w-5 h-5 mt-0.5" [class.text-emerald-500]="hasDate()"
+                    [class.text-slate-300]="!hasDate()">
+
+                </lucide-angular>
+
+                <div>
+
+                    <div class="text-xs text-slate-400">
+
+                        Fecha
+
+                    </div>
+
+                    <div class="font-medium">
+
+                        @if(selectedDate){
+
+                        {{ selectedDate | date:'dd MMM yyyy' }}
+
+                        }@else{
+
+                        Pendiente
+
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Hora -->
+            <div class="flex gap-3">
+
+                <lucide-angular [name]="hasTime()
+            ? icons.CircleCheckBig
+            : icons.Circle" class="w-5 h-5 mt-0.5" [class.text-emerald-500]="hasTime()"
+                    [class.text-slate-300]="!hasTime()">
+
+                </lucide-angular>
+
+                <div>
+
+                    <div class="text-xs text-slate-400">
+
+                        Hora
+
+                    </div>
+
+                    <div class="font-medium">
+
+                        @if(selectedTime){
+
+                        {{ selectedTime }}
+
+                        }@else{
+
+                        Pendiente
+
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Cliente -->
+            <div class="flex gap-3">
+
+                <lucide-angular [name]="hasCustomer()
+            ? icons.CircleCheckBig
+            : icons.Circle" class="w-5 h-5 mt-0.5" [class.text-emerald-500]="hasCustomer()"
+                    [class.text-slate-300]="!hasCustomer()">
+
+                </lucide-angular>
+
+                <div>
+
+                    <div class="text-xs text-slate-400">
+
+                        Cliente
+
+                    </div>
+
+                    <div class="font-medium">
+
+                        @if(customer){
+
+                        {{ customer }}
+
+                        }@else{
+
+                        Pendiente
+
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+        </div>
+
+
+
+        <div class="
+shrink-0
+border-t
+border-slate-100
+bg-white
+p-4
+">
+
+            <button (click)="continueBooking()" class="
+    w-full
+    py-3
+    rounded-xl
+    bg-[var(--brand-primary)]
+    text-white
+    font-bold">
+
+                Continuar
+
+            </button>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>

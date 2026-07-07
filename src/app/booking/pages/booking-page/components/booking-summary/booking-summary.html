@@ -27,25 +27,38 @@
                         Servicio
                     </p>
 
-                    <!--<p *ngIf="service; else noService" class="font-bold text-slate-900 leading-tight">
-                        {{service?.name}} - {{variant?.name}}
-                    </p>-->
 
                     <div *ngIf="service; else noService">
 
-                        <p class="font-bold text-slate-900 leading-tight">
-                            {{ service?.name }} - {{ getVariantDisplayName(variant?.name) }}
+                        <p class="font-bold text-slate-900">
+                            {{ service?.name }}
                         </p>
 
-                        <span
-                            class="inline-flex items-center mt-1 px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wide"
-                            [ngClass]="variant?.mode === 'presential'
-            ? 'bg-emerald-50 text-[var(--brand-secondary)]'
-            : 'bg-indigo-50 text-[var(--brand-secondary)]'">
+                        <p class="text-sm text-slate-500 mt-0.5">
+                            {{ variant?.name }}
+                        </p>
 
-                            {{ variant?.mode === 'presential' ? 'Presencial' : 'En línea' }}
+                        <div class="mt-2">
 
-                        </span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
+                                [ngClass]="{
+            'bg-emerald-100 text-emerald-700': selectedMode === 'presential',
+            'bg-indigo-100 text-indigo-700': selectedMode === 'online',
+            'bg-amber-100 text-amber-700': selectedMode === 'hybrid'
+        }">
+
+                                <lucide-angular [name]="selectedMode === 'online'
+                ? icons.Monitor
+                : selectedMode === 'presential'
+                    ? icons.MapPin
+                    : icons.Layers" class="w-3.5 h-3.5">
+                                </lucide-angular>
+
+                                {{ getModeLabel() }}
+
+                            </span>
+
+                        </div>
 
                     </div>
 
@@ -53,6 +66,43 @@
                     <ng-template #noService>
                         <p class="text-sm text-slate-400 italic">No seleccionado</p>
                     </ng-template>
+
+                </div>
+
+            </div>
+
+            <!-- STAFF -->
+
+            <div class="flex items-start gap-3">
+
+                <div class="p-2 rounded-xl" [ngClass]="selectedStaff
+            ? 'bg-[var(--brand-bg)] text-[var(--brand-primary)]'
+            : 'bg-slate-50 text-slate-300'">
+
+                    <lucide-angular [name]="icons.UserRound" class="h-5 w-5">
+                    </lucide-angular>
+
+                </div>
+
+                <div class="flex-1">
+
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Especialista
+                    </p>
+
+                    @if(selectedStaff){
+
+                    <p class="font-bold text-slate-900">
+                        {{ selectedStaff.name }}
+                    </p>
+
+                    }@else{
+
+                    <p class="text-sm italic text-slate-400">
+                        Pendiente
+                    </p>
+
+                    }
 
                 </div>
 

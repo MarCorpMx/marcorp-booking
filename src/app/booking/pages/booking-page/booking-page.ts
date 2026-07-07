@@ -1,350 +1,640 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { LucideAngularModule, Star, MapPin } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Sparkles, Scissors, Hand, Brain, Stethoscope, Heart, Flower, Dumbbell, GraduationCap, Presentation,
+  Target, PawPrint, PenTool, Circle, Apple, ShieldPlus
+} from 'lucide-angular';
 
-import { StepperIndicator } from '../../components/stepper-indicator/stepper-indicator';
-import { BookingSummary } from '../../components/booking-summary/booking-summary';
-import { ServiceSelector } from '../../components/service-selector/service-selector';
-import { DateTimeSelector } from '../../components/date-time-selector/date-time-selector';
-import { CustomerForm } from '../../components/customer-form/customer-form';
-import { BookingConfirmation } from '../../components/booking-confirmation/booking-confirmation';
-import { BookingSuccess } from '../../components/booking-success/booking-success';
-
-import { OrganizationService } from '../../../core/services/organization.service';
-import { OrganizationModel } from '../../../core/models/organization.model';
-import { BookingService } from '../../../core/services/booking.service';
-import { ServiceModel } from '../../../core/models/service.model';
-import { TimeSlot } from '../../../core/models/date-time.model';
+import { ICONS } from '../../../core/config/icons.config';
 
 import { Title } from '@angular/platform-browser';
-import { NotificationService } from '../../../core/services/notification.service';
-import { BrandingService } from '../../../core/services/branding.service';
 
-import { MatButtonModule } from '@angular/material/button';
+import { environment } from '../../../../environments/environment';
+import { BookingPublicService } from '../../../core/services/booking-public.service';
+import { ErrorHandlerService } from '../../../core/services/error-handler.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { BookingOrganization, BookingBranch, BookingPlan } from '../../../core/models/booking-entry.models';
+import { BusinessCatalogService } from '../../../core/services/business-catalog.service';
+import { BookingHeaderViewModel } from '../../../core/models/booking-header.model';
+import { BUSINESS_NICHE_UI } from '../../../core/config/business-niche-ui';
+import { BookingContextService } from '../../../core/services/booking-context.service';
+
+import { BookingLoader } from './enums/booking-loaders.enum';
+import { BookingLoadingService } from '../../../core/services/booking-loading.service';
+import { BookingService, BookingServiceVariant, BookingStaffMember } from '../../../core/models/booking-service.models';
+import { BookingVariantSelection } from '../../../core/models/booking-selection.models';
+import { BookingAvailability, BookingTimeSlot } from '../../../core/models/booking-availability.models';
+
+// Skeletons
+import { BookingShellSkeleton } from './components/skeletons/booking-shell-skeleton/booking-shell-skeleton';
+import { ServicesSkeleton } from './components/skeletons/services-skeleton/services-skeleton';
+import { DateTimeSkeleton } from './components/skeletons/date-time-skeleton/date-time-skeleton';
+
+// Componentes
+import { StepperIndicator } from './components/stepper-indicator/stepper-indicator';
+import { BookingSummary } from './components/booking-summary/booking-summary';
+import { MobileBookingSummary } from './components/mobile-booking-summary/mobile-booking-summary';
+import { ServiceSelector } from './components/service-selector/service-selector';
+import { DateTimeSelector } from './components/date-time-selector/date-time-selector';
+
+// Solo en desarrollo para delay de peticiones
+import { delay } from 'rxjs';
+
 
 @Component({
   selector: 'app-booking-page',
-  imports: [CommonModule, LucideAngularModule, StepperIndicator, BookingSummary, ServiceSelector,
-    DateTimeSelector, CustomerForm, BookingConfirmation, BookingSuccess, MatButtonModule
+  imports: [CommonModule, LucideAngularModule,
+    BookingShellSkeleton, ServicesSkeleton, DateTimeSkeleton,
+    StepperIndicator, BookingSummary, MobileBookingSummary, ServiceSelector, DateTimeSelector
   ],
   templateUrl: './booking-page.html',
   styleUrl: './booking-page.css',
 })
 
 export class BookingPage implements OnInit {
-  readonly Star = Star;
-  readonly MapPin = MapPin;
+  icons = ICONS;
 
-  servicesLoading = true;
+  readonly BookingLoader = BookingLoader;
 
-  organization?: OrganizationModel;
-  services: ServiceModel[] = [];
+  private bookingPublicService = inject(BookingPublicService);
+  private route = inject(ActivatedRoute);
+  private errorHandler = inject(ErrorHandlerService);
+  private notify = inject(NotificationService);
+  public loading = inject(BookingLoadingService);
+  public businessCatalog = inject(BusinessCatalogService);
+  private bookingContext = inject(BookingContextService);
 
-  selectedService: any = null;
-  selectedVariant: any = null;
+  private landingRombiURL = environment.bookingBaseUrl;
 
-  selectedDate: Date | null = null;
-  selectedTime: string | null = null;
-  staff_member_id: number = 0;
+  readonly NICHE_ICON_MAP: Record<string, any> = {
+    sparkles: Sparkles,
+    scissors: Scissors,
+    hand: Hand,
+    brain: Brain,
+    stethoscope: Stethoscope,
+    heart: Heart,
+    flower: Flower,
+    dumbbell: Dumbbell,
+    'graduation-cap': GraduationCap,
+    presentation: Presentation,
+    target: Target,
+    'paw-print': PawPrint,
+    'pen-tool': PenTool,
+    circle: Circle,
+    apple: Apple,
+    'shield-plus': ShieldPlus
+  };
 
-  currentStep = 1;
+
+  //currentStep = 1;
+  bookingCompleted = false;
   showConfirmation = false;
 
+  // Data para servicio
+  selectedService: BookingService | null = null;
+  selectedVariant: BookingServiceVariant | null = null;
+  selectedMode: 'online' | 'presential' | 'hybrid' | null = null;
+  selectedStaff: BookingStaffMember | null = null;
+
+  // Data para date-time-selector
+  availability: BookingAvailability | null = null;
+  //timeSlots: BookingTimeSlot[] = [];
+  timeSlots: any = [];
+
+  selectedDate: Date | null = null;
+  selectedTime: BookingTimeSlot | null = null;
+  //staff_member_id: number = 0;
   customerData: any = null;
 
-  bookingCompleted = false;
-  isSubmitting = false;
 
-  formLoadedAt!: number;
+  // Organization + brach data
+  organization?: BookingOrganization;
+  branch?: BookingBranch;
+  plan?: BookingPlan;
 
-  referenceCode?: string;
-  category?: string;
+  services: BookingService[] = [];
 
-  constructor(
-    private route: ActivatedRoute,
-    private organizationService: OrganizationService,
-    private bookingService: BookingService,
-    private title: Title,
-    private branding: BrandingService,
-    private notify: NotificationService
-  ) { }
-
-  /*pruebaMensajes() {
-    this.notify.error('No se pudo crear la cita. Intenta nuevamente en unos minutos.');
-  }*/
-
-
+  header?: BookingHeaderViewModel;
 
   ngOnInit(): void {
-    this.formLoadedAt = Date.now();
-    const slug = this.route.snapshot.paramMap.get('organizationSlug')!;
 
-    this.organizationService
-      .loadOrganization(slug)
-      .subscribe(org => {
-        this.organization = org;
-        
-        //this.branding.apply(org); // FALTA HACER CHINGON LA PETICON CON LA RESPUESTA PARA QUE SEA VERGA MAN
-        
-        this.loadServices(slug);
+    this.loadOrganization();
+
+  }
+
+  loadOrganization() {
+    const organizationSlug = this.route.snapshot.paramMap.get('organizationSlug');
+    const branchSlug = this.route.snapshot.paramMap.get('branchSlug');
+
+
+    if (!organizationSlug || !branchSlug) {
+      this.notify.error('Error en la ruta');
+      return;
+    }
+
+    this.loading
+      .wrap(
+
+        BookingLoader.Organization,
+
+        this.bookingPublicService
+          .getBranchBookingEntry(
+            organizationSlug,
+            branchSlug
+          )
+
+      )
+      .subscribe({
+
+        next: (res) => {
+
+          //console.log('dataBackend :', JSON.stringify(res, null, 2));
+
+          this.organization = res.organization;
+
+          // Reset contexto
+          if (
+            this.bookingContext.organization()?.slug !== res.organization.slug
+          ) {
+            this.bookingContext.clear();
+          }
+
+          this.bookingContext.setOrganization(res);
+
+          this.branch = res.branch;
+
+          this.plan = res.plan;
+
+          this.buildHeader();
+
+          this.loadServices();
+        },
+
+        error: (err) => {
+
+          this.errorHandler.handle(err);
+        }
+      });
+
+  }
+
+  loadServices() {
+
+    if (!this.organization?.slug || !this.branch?.slug) {
+      console.error('Falla en detectar slugs');
+      return;
+    }
+
+    this.loading
+      .wrap(
+
+        BookingLoader.Services,
+
+        this.bookingPublicService
+          .getServices(this.organization?.slug, this.branch?.slug)
+
+      )
+      // .pipe(
+      //   delay(5000) // solo para testing UI
+      // )
+      .subscribe({
+
+        next: (res) => {
+
+          console.log('dataBackend-Services :', JSON.stringify(res, null, 2));
+
+          this.services = res.data;
+
+          //console.log('servicios chingones:', JSON.stringify(this.services, null, 2));
+
+        },
+
+        error: (err) => {
+
+          this.errorHandler.handle(err);
+        }
       });
   }
 
-  loadServices(slug: string) {
-    this.bookingService
-      .getServices(slug)
-      .subscribe((services: any) => {
-        
-        this.services = this.transformServices(services);
-        this.servicesLoading = false;
-      });
-  }
+  // Disponibilidad
+  loadAvailability(): void {
 
-  transformServices(services: ServiceModel[]): ServiceModel[] {
-    return services.map(service => ({
-      ...service,
-      variants: service.variants.flatMap(variant => {
-        if (variant.mode !== 'hybrid') {
-          return {
-            ...variant,
-            originalVariantId: variant.id
-          };
+    if (!this.selectedVariant || !this.selectedStaff) {
+      this.notify.error('Error al seleccionar servicio-staff');
+      return;
+    }
+
+    this.loading.wrap(
+
+      BookingLoader.Availability,
+
+      this.bookingPublicService.getAvailability(
+        this.selectedVariant.id,
+        this.selectedStaff?.id
+      )
+
+    )
+      .subscribe({
+
+        next: (res) => {
+
+          this.availability = res;
+
+          this.scrollToDateSelector();
+
+          /*console.log(
+            'availability:',
+            JSON.stringify(res, null, 2)
+          );*/
+
+        },
+
+        error: (err) => {
+
+          this.errorHandler.handle(err);
+
         }
 
-        return [
-          {
-            ...variant,
-            originalVariantId: variant.id,
-            name: `${variant.name} — Presencial`,
-            mode: 'presential'
-          },
-
-          {
-            ...variant,
-            originalVariantId: variant.id,
-            name: `${variant.name} — En línea`,
-            mode: 'online'
-          }
-        ];
-      })
-    }));
-  }
-
-
-  onVariantSelected(data: any) {
-    this.selectedService = data.service;
-    this.selectedVariant = data.variant;
-
-    this.updateStep();
-
-    setTimeout(() => {
-
-      const el = document.getElementById('dateTimeSection');
-
-      el?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
       });
 
-    }, 300);
   }
 
-  scrollToCustomer() {
-    setTimeout(() => {
-      const el = document.getElementById('customerSection');
+  onDateSelected(date: string) {
 
-      if (el) {
-        el.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    }, 300);
+    this.selectedDate = new Date(date);
+
+    this.loadTimeSlots(date);
+
   }
 
-  onDateSelected(date: Date) {
-    this.selectedDate = date;
-    this.updateStep();
-  }
+  loadTimeSlots(date: string) {
 
-  onTimeSelected(slot: TimeSlot) {
-    this.selectedTime = slot.time;
-    this.staff_member_id = slot.staff_member_id;
-
-    this.updateStep();
-
-    if (this.selectedDate && this.selectedTime) {
-      this.scrollToCustomer();
-    }
-  }
-
-  onCustomerCompleted(data: any) {
-    this.customerData = data;
-    this.currentStep = 4;
-    this.updateStep();
-
-    setTimeout(() => {
-      document.getElementById('booking-confirmation')
-        ?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  }
-
-  updateStep() {
     if (!this.selectedVariant) {
-      this.currentStep = 1;
       return;
     }
 
-    if (this.selectedVariant && (!this.selectedDate || !this.selectedTime)) {
-      this.currentStep = 2;
+    //console.log('la variante', this.selectedVariant.id);
+    //console.log('el date', date);
+    //console.log('el staff', this.selectedStaff?.id);
+
+    this.loading.wrap(
+
+      BookingLoader.Timeslots,
+
+      this.bookingPublicService.getTimeSlots(
+        this.selectedVariant.id,
+        date,
+        this.selectedStaff?.id
+      )
+
+    )
+      .subscribe({
+
+        next: (res: any) => {
+
+
+          console.log(
+            'timeslots disponibles:',
+            JSON.stringify(res, null, 2)
+          );
+
+          this.timeSlots = res?.data ?? res ?? [];
+
+        },
+
+        error: (err) => {
+          this.errorHandler.handle(err);
+        }
+
+      });
+
+  }
+
+  onTimeSelected(slot: BookingTimeSlot) {
+
+    this.selectedTime = slot;
+
+  }
+
+  private buildHeader(): void {
+
+    if (!this.organization || !this.branch || !this.plan) {
       return;
     }
 
-    if (this.selectedVariant && this.selectedDate && this.selectedTime && !this.customerData) {
-      this.currentStep = 3;
-      return;
+    this.header = {
+
+      organizationName:
+        this.organization.name,
+
+      branchName:
+        this.branch.name,
+
+      logoUrl:
+        this.branch.branding?.logo_url
+        ||
+        this.organization.logo_url
+        ||
+        null,
+
+      subtitle:
+        this.buildHeaderSubtitle(),
+
+      description:
+        this.buildHeaderDescription(),
+
+      location:
+        this.buildLocation(),
+
+      stats: {
+
+        rating:
+          this.branch.metadata?.rating ?? null,
+
+        reviews_count:
+          this.branch.metadata?.reviews_count ?? null
+      },
+
+      actions: {
+
+        phone:
+          this.branch.contact?.phone?.internationalNumber ?? null,
+
+        whatsapp:
+          this.branch.contact?.whatsapp?.e164Number ?? null,
+
+        website:
+          this.branch.contact?.website ?? null,
+
+        /*
+        si luego agregas maps_url desde backend
+        */
+        mapsUrl:
+          this.branch.location?.maps_url ?? null,
+
+        socialLinks:
+          this.branch.contact?.social_links ?? null
+      },
+
+      showRombiBranding:
+        this.plan.is_free
+    };
+  }
+
+  private resolveBusinessUI() {
+
+    if (!this.organization) {
+      return BUSINESS_NICHE_UI.other;
     }
 
-    if (this.customerData) {
-      this.currentStep = 4;
+    return (
+
+      BUSINESS_NICHE_UI[
+      this.organization.business_niche as keyof typeof BUSINESS_NICHE_UI
+      ]
+
+      ||
+
+      BUSINESS_NICHE_UI.other
+    );
+  }
+
+  get nicheIcon() {
+
+    const niche =
+      this.organization?.business_niche ?? 'other';
+
+    const iconName =
+      this.businessCatalog.getIcon(niche);
+
+    return this.NICHE_ICON_MAP[iconName] || Circle;
+  }
+
+  get nicheColor() {
+
+    const niche =
+      this.organization?.business_niche ?? 'other';
+
+    return this.businessCatalog.getColor(niche);
+
+  }
+
+  get nicheLabel() {
+    const niche =
+      this.organization?.business_niche ?? 'other';
+
+    return this.businessCatalog.getLabel(niche);
+  }
+
+  private buildLocation(): string | null {
+
+    if (!this.branch) {
+      return null;
     }
+
+    const city = this.branch.location?.city;
+
+    const state = this.branch.location?.state;
+
+    if (city && state) {
+      return `${city}, ${state}`;
+    }
+
+    if (city) {
+      return city;
+    }
+
+    if (state) {
+      return state;
+    }
+
+    return null;
+  }
+
+  private buildHeaderSubtitle(): string {
+
+    if (
+      this.branch?.tagline &&
+      this.branch.tagline.trim().length > 0
+    ) {
+      return this.branch.tagline;
+    }
+
+    return this.resolveBusinessUI()
+      .branchTaglineFallback;
+  }
+
+  private buildHeaderDescription(): string {
+
+    if (
+      this.branch?.description &&
+      this.branch.description.trim().length > 0
+    ) {
+      return this.branch.description;
+    }
+
+    return this.resolveBusinessUI()
+      .branchDescriptionFallback;
+  }
+
+  get bookingCtaTitle(): string {
+
+    return this.resolveBusinessUI()
+      .bookingCtaTitle;
+  }
+
+  get bookingCtaSubtitle(): string {
+
+    return this.resolveBusinessUI()
+      .bookingCtaSubtitle;
+  }
+
+  openWa(numberWhats: any): void {
+
+    const message =
+      this.buildWhatsappMessage();
+
+    const encodedMessage =
+      encodeURIComponent(message);
+
+    window.open(
+      `https://wa.me/${numberWhats}?text=${encodedMessage}`,
+      '_blank'
+    );
+  }
+
+  private buildWhatsappMessage(): string {
+
+    return this.resolveBusinessUI()
+      .whatsappInquiryMessage;
+  }
+
+  goToBookingRombi(): void {
+    window.open(
+      `${this.landingRombiURL}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
   }
 
   goToConfirmation() {
-    this.showConfirmation = true;
-
-    setTimeout(() => {
-      document.getElementById('booking-confirmation')?.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }, 50);
+    alert("FALTA CÓDIGO");
   }
 
+  get currentStep(): number {
 
-  createBooking() {
-    if (!this.organization) return;
-    if (!this.selectedVariant || !this.selectedDate || !this.selectedTime) {
-      return;
+    if (this.showConfirmation) {
+      return 4;
     }
 
-    form_time: this.formLoadedAt
-    this.isSubmitting = true;
+    if (this.customerData) {
+      return 4;
+    }
 
-    const slug = this.organization.slug;
-    const phone = this.customerData.phone;
+    if (
+      this.selectedVariant &&
+      this.selectedDate &&
+      this.selectedTime
+    ) {
+      return 3;
+    }
 
-    const payload = {
-      service_variant_id: this.selectedVariant.id,
-      staff_member_id: this.staff_member_id,
+    if (this.selectedVariant) {
+      return 2;
+    }
 
-      date: this.selectedDate?.toLocaleDateString('en-CA'),
-      time: this.selectedTime,
-
-      first_name: this.customerData.first_name,
-      last_name: this.customerData.last_name,
-      email: this.customerData.email,
-
-      phone: phone ? {
-        number: phone.nationalNumber,
-        e164Number: phone.e164Number,
-        countryCode: phone.countryCode,
-        dialCode: phone.dialCode
-      } : null,
-
-      notes: this.customerData.notes,
-
-      mode: this.selectedVariant.mode,
-
-      // honeypot
-      website: null,
-      form_time: this.formLoadedAt
-    };
-
-    this.bookingService
-      .createAppointment(slug, payload)
-      .subscribe({
-
-        next: (response) => {
-          this.isSubmitting = false;
-          this.bookingCompleted = true;
-
-          this.referenceCode = response?.data?.reference_code;
-
-          //console.log('RESPONSE BACKEND:', response);
-          //console.log('Confirm URL:', response.debug_urls?.confirm);
-          //console.log('Cancel URL:', response.debug_urls?.cancel);
-
-          setTimeout(() => {
-            document.getElementById('booking-success')
-              ?.scrollIntoView({ behavior: 'smooth' });
-          }, 200);
-        },
-
-        error: (error) => {
-          this.isSubmitting = false;
-
-          console.error(error);
-          const message = error.error?.message || error.message || 'Error inesperado';
-          this.notify.error(message);
-        }
-
-      });
-
+    return 1;
   }
 
-  resetBooking() {
-    this.bookingCompleted = false;
-    this.showConfirmation = false;
+  get canShowDateStep(): boolean {
+    return !!this.selectedVariant;
+  }
 
-    this.selectedService = null;
-    this.selectedVariant = null;
+  get canShowCustomerStep(): boolean {
+    return !!(
+      this.selectedVariant &&
+      this.selectedDate &&
+      this.selectedTime
+    );
+  }
+
+  get canShowConfirmationStep(): boolean {
+    return this.showConfirmation;
+  }
+
+  private resetBookingFlow(): void {
+
     this.selectedDate = null;
     this.selectedTime = null;
     this.customerData = null;
+    this.showConfirmation = false;
+  }
 
-    this.currentStep = 1;
+  // Seleccionar servicio - variante - staff
+  onVariantSelected(
+    selection: BookingVariantSelection
+  ): void {
 
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    this.selectedService =
+      selection.service;
+
+    this.selectedVariant =
+      selection.variant;
+
+    this.selectedStaff =
+      selection.staffMember;
+
+    this.selectedMode =
+      selection.selectedMode
+      ?? selection.variant.mode;
+
+    // reset flujo dependiente
+    this.resetBookingFlow();
+
+    //console.log('servicio seleccionado:', JSON.stringify(selection, null, 2));
+
+    this.loadAvailability();
 
   }
 
-  formatReviews(count?: number): string {
-    if (!count) return '0';
+  private scrollToDateSelector(): void {
 
-    if (count >= 1000) {
-      return (count / 1000).toFixed(1).replace('.0', '') + 'k';
-    }
+    setTimeout(() => {
 
-    return count.toString();
+      document
+        .getElementById('date-selector')
+        ?.scrollIntoView({
+
+          behavior: 'smooth',
+
+          block: 'start'
+
+        });
+
+    }, 100);
+
   }
 
-  getSeoTagline(): string {
-    const city = this.organization?.city || '';
-    const name = this.organization?.name || '';
 
-    switch (this.category) {
-      case 'spa':
-        return `Relájate y renueva tu energía en ${city}`;
-      case 'psicologo':
-        return `Atención emocional profesional en ${city}`;
-      case 'medico':
-        return `Cuidado de tu salud con profesionales en ${city}`;
-      default:
-        return `Agenda tu cita fácilmente en ${name}`;
-    }
-  }
 
-  getTopServices(): string {
-    if (!this.services?.length) return '';
+  /*
+  /api/v1 / public - booking /
 
-    return this.services
-      .slice(0, 2)
-      .map(s => s.name)
-      .join(' · ');
-  }
+  
+
+GET / variants / { variant } / timeslots ? date =...
+
+POST / bookings
+    → crear reserva
+
+POST / bookings / validate - customer
+    → validar customer existente
+
+POST / bookings / { reference } / cancel
+
+POST / bookings / { reference } / reschedule
+*/
 
 }

@@ -5,7 +5,7 @@ import { finalize } from 'rxjs/operators';
 import { LucideAngularModule, CheckCircle, XCircle, AlertTriangle, AlertCircle } from 'lucide-angular';
 
 import { OrganizationService } from '../../../core/services/organization.service';
-import { OrganizationModel } from '../../../core/models/organization.model';
+//import { OrganizationModel } from '../../../core/models/organization.model';
 import { BrandingService } from '../../../core/services/branding.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { BookingService, AppointmentActionResponse } from '../../../core/services/booking.service';
@@ -55,7 +55,8 @@ export class BookingResult implements OnInit {
   isLoading = true;
 
   organizationSlug!: string;
-  organization?: OrganizationModel;
+  //organization?: OrganizationModel;
+  organization?: any;
 
   @Input() statusInput?: StatusType; // Llega desde booking-manage
   status: StatusType = 'invalid'; // Llega desde Url (token)

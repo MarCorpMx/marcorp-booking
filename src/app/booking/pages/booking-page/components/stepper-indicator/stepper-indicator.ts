@@ -11,7 +11,9 @@ type StepIcon = 'ClipboardList' | 'Calendar' | 'User' | 'CreditCard';
   templateUrl: './stepper-indicator.html',
   styleUrl: './stepper-indicator.css',
 })
+
 export class StepperIndicator {
+
   @Input() currentStep = 1;
 
   icons = {
@@ -28,4 +30,5 @@ export class StepperIndicator {
     { id: 3, name: 'Tus datos', icon: 'User' },
     { id: 4, name: 'Confirmar', icon: 'CreditCard' }
   ];
+
 }

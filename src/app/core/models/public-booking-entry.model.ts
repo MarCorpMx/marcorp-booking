@@ -26,7 +26,7 @@ export interface PublicBookingOrganization {
 
     timezone: string;
 
-    plan?: string;
+    plan: string;
 
 }
 

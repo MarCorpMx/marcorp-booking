@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 
 import { BookingService } from '../../../core/services/booking.service';
-import { TimeSlot } from '../../../core/models/date-time.model';
+//import { TimeSlot } from '../../../core/models/date-time.model';
 
 
 @Component({
@@ -16,7 +16,8 @@ export class DateTimeSelector implements OnInit, OnChanges {
   @Input() selectedVariant: any;
   @Input() organization: any;
   @Output() dateSelected = new EventEmitter<Date>();
-  @Output() timeSelected = new EventEmitter<TimeSlot>();
+  //@Output() timeSelected = new EventEmitter<TimeSlot>();
+  @Output() timeSelected = new EventEmitter<any>();
 
   @Input() excludeAppointmentId?: number; // rombi
 
@@ -29,7 +30,8 @@ export class DateTimeSelector implements OnInit, OnChanges {
   availableDays: Record<string, boolean> = {};
 
   days: Date[] = [];
-  times: TimeSlot[] = [];
+  //times: TimeSlot[] = [];
+  times: any[] = [];
 
   showNumDays: number = 9;
 
@@ -96,29 +98,6 @@ export class DateTimeSelector implements OnInit, OnChanges {
   }
 
 
-  /*loadAvailabilityRange(startDate: Date) {
-    this.loadingDays = true;
-    const formattedDate = startDate.toLocaleDateString('en-CA');
-
-    this.bookingService
-      .getAvailabilityRange(
-        this.organization.slug,
-        this.selectedVariant.id,
-        formattedDate,
-        this.showNumDays
-      )
-      .subscribe((res: any) => {
-
-        this.availableDays = {};
-
-        res.days.forEach((day: any) => {
-          this.availableDays[day.date] = day.available;
-        });
-
-        this.loadingDays = false;
-
-      });
-  }*/
 
   isDayAvailable(date: Date) {
     //const key = date.toISOString().split('T')[0];
@@ -160,7 +139,8 @@ export class DateTimeSelector implements OnInit, OnChanges {
     this.dateSelected.emit(date);
   }
 
-  selectTime(slot: TimeSlot) {
+  //selectTime(slot: TimeSlot) {
+  selectTime(slot: any) {
     this.selectedTime = slot.time;
 
     // emitir fecha actual si no se ha emitido
