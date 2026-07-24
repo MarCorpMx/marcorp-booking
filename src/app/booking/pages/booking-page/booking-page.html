@@ -1,10 +1,10 @@
-@if( loading.isLoading(BookingLoader.Organization) ){
+@if( loading.isLoading(BookingLoader.Organization) || restarting){
 
 <app-booking-shell-skeleton />
 
 }
 
-@if( !loading.isLoading(BookingLoader.Organization) ){
+@if( !loading.isLoading(BookingLoader.Organization)  && !restarting){
 
 <div class="min-h-screen flex flex-col bg-slate-50">
 
@@ -70,6 +70,7 @@
     <!-- ========================= -->
     <!-- BUSINESS CARD (INFO REAL) -->
     <!-- ========================= -->
+    @if (!bookingCompleted) {
     <section class="px-4 pt-6 pb-4 max-w-6xl mx-auto w-full">
 
         <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-5 space-y-4">
@@ -205,6 +206,7 @@
 
         </div>
     </section>
+    }
 
 
     <!-- ========================= -->
@@ -240,7 +242,7 @@
                 }
                 @else {
 
-                <section class="space-y-4 animate-fade-in scroll-mt-40">
+                <section id="services-section" class="space-y-4 animate-fade-in scroll-mt-40">
 
                     <h2 class="text-lg font-semibold text-slate-900">
                         1. Selecciona un servicio
@@ -257,7 +259,6 @@
 
 
                 <!-- STEP 2 -->
-                <!-- @if (selectedVariant) { -->
                 @if (canShowDateStep) {
 
                 @if(loading.isLoading(BookingLoader.Availability)){
@@ -280,9 +281,6 @@
 
                     </app-date-time-selector>
 
-                    <!-- <app-date-time-selector [selectedVariant]="selectedVariant" [organization]="organization"
-                        (dateSelected)="onDateSelected($event)" (timeSelected)="onTimeSelected($event)">
-                    </app-date-time-selector> -->
 
                 </section>
 
@@ -291,21 +289,60 @@
                 }
 
                 <!-- STEP 3 -->
-                <!-- @if( loading.isLoading(BookingLoader.NOSE) ){
-                    <app-customerNOSE-skeleton />
-                }@else{
-                @if (selectedVariant && selectedDate && selectedTime) {
-                <app-customer-form (formCompleted)="onCustomerCompleted($event)">
-                </app-customer-form>
+                @if (canShowCustomerStep) {
+
+                <section id="customer-section"
+                    class="space-y-4 pt-6 border-t border-slate-200 animate-fade-in scroll-mt-40">
+
+                    <h2 class="text-lg font-semibold text-slate-900">
+                        3. Tus datos
+                    </h2>
+
+                    @if(loading.isLoading(BookingLoader.CustomerForm)){
+
+                    <app-customer-form-skeleton />
+
+                    }
+                    @else{
+
+                    <app-customer-form [organization]="organization!" [branch]="branch!"
+                        [businessNiche]="organization?.business_niche ?? 'other'" [variant]="selectedVariant!"
+                        (formCompleted)="onCustomerCompleted($event)">
+                    </app-customer-form>
+
+                    }
+
+                </section>
+
                 }
-                } -->
 
                 <!-- STEP 4 -->
                 @if (showConfirmation) {
-                <!-- <app-booking-confirmation [service]="selectedService" [variant]="selectedVariant" [date]="selectedDate"
-                    [time]="selectedTime" [customer]="customerData" [loading]="isSubmitting"
-                    (confirm)="createBooking()">
-                </app-booking-confirmation> -->
+
+                <section id="booking-confirmation"
+                    class="space-y-4 pt-6 border-t border-slate-200 animate-fade-in scroll-mt-40">
+
+                    <h2 class="text-lg font-semibold text-slate-900">
+                        4. Confirma tu cita
+                    </h2>
+
+                    @if(loading.isLoading(BookingLoader.Confirmation)){
+
+                    <app-booking-confirmation-skeleton />
+
+                    } @else {
+
+                    <app-booking-confirmation [service]="selectedService" [variant]="selectedVariant"
+                        [selectedMode]="selectedMode" [selectedStaff]="selectedStaff" [selectedDate]="selectedDate"
+                        [selectedTime]="selectedTime" [customer]="customerData"
+                        [businessNiche]="organization?.business_niche ?? 'other'"
+                        [loading]="loading.isLoading(BookingLoader.CreateBooking)" (confirm)="createBooking()">
+                    </app-booking-confirmation>
+
+                    }
+
+                </section>
+
                 }
 
             </div>
@@ -314,7 +351,7 @@
             <!-- ========================= -->
             <!-- SUMMARY DESKTOP -->
             <!-- ========================= -->
-            @if (!showConfirmation) {
+            <!-- @if (!showConfirmation) { -->
             <aside class="hidden lg:block lg:col-span-4 lg:sticky lg:top-20 h-fit">
 
                 <app-booking-summary [service]="selectedService" [variant]="selectedVariant"
@@ -323,7 +360,7 @@
                 </app-booking-summary>
 
             </aside>
-            }
+            <!-- } -->
 
         </div>
     </main>
@@ -333,7 +370,8 @@
     <!-- ========================= -->
     <!-- MOBILE BOTTOM SUMMARY -->
     <!-- ========================= -->
-    @if(selectedVariant && !showConfirmation){
+    <!-- @if(selectedVariant && !showConfirmation){ -->
+    @if(selectedVariant && !bookingCompleted){
 
 
     <app-mobile-booking-summary [service]="selectedService" [variant]="selectedVariant" [selectedMode]="selectedMode"
@@ -346,14 +384,28 @@
 
 
     @if (bookingCompleted) {
-    <!-- <section id="booking-success" class="mt-10">
 
-        <app-booking-success [service]="selectedService" [variant]="selectedVariant" [date]="selectedDate"
-            [time]="selectedTime" [customer]="customerData" [referenceCode]="referenceCode"
-            [organization]="organization" (restart)="resetBooking()">
+    <!-- <section id="booking-success" class="mt-10"> -->
+
+
+    <section id="booking-success" class="flex-1 flex items-center justify-center px-4 py-10 animate-fade-in">
+
+
+
+        <app-booking-success [service]="selectedService" [variant]="selectedVariant" [selectedMode]="selectedMode"
+            [selectedStaff]="selectedStaff" [selectedDate]="selectedDate" [selectedTime]="selectedTime"
+            [customer]="customerData" [referenceCode]="referenceCode" [organization]="organization"
+            (restart)="resetBooking()">
+
         </app-booking-success>
 
-    </section> -->
+
+        <!-- <app-booking-success [service]="selectedService" [variant]="selectedVariant" [date]="selectedDate"
+            [time]="selectedTime" [customer]="customerData" [referenceCode]="referenceCode"
+            [organization]="organization" (restart)="resetBooking()">
+        </app-booking-success> -->
+
+    </section>
     }
 
 

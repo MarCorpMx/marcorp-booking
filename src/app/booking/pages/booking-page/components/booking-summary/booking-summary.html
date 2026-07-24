@@ -130,11 +130,12 @@
 
                         <p>{{selectedDate | date:'d MMMM'}}</p>
 
-                        <p class="text-sm text-[var(--brand-secondary)] flex items-center gap-1 mt-0.5">
+                        <!-- <p class="text-sm text-[var(--brand-secondary)] flex items-center gap-1 mt-0.5"> -->
+                        <p class="text-sm font-semibold text-[var(--brand-primary)] flex items-center gap-1 mt-0.5">
 
-                            <lucide-angular [name]="icons.Clock" class="h-3 w-3"></lucide-angular>
+                        <lucide-angular [name]="icons.Clock" class="h-3 w-3"></lucide-angular>
 
-                            {{selectedTime}}
+                        {{ selectedTime?.time }}
 
                         </p>
 
@@ -198,7 +199,7 @@
 
         </div>
 
-        <button (click)="confirmBooking()" [disabled]="!service || !selectedDate || !selectedTime || !customer"
+        <!-- <button (click)="confirmBooking()" [disabled]="!service || !selectedDate || !selectedTime || !customer"
             [ngClass]="{
     'cursor-pointer hover:opacity-90': service && selectedDate && selectedTime && customer,
     'cursor-not-allowed': !service || !selectedDate || !selectedTime || !customer
@@ -209,7 +210,7 @@
 
             Confirmar cita
 
-        </button>
+        </button> -->
 
         <div
             class="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 rounded-xl">

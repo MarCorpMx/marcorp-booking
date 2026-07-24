@@ -244,6 +244,8 @@ export class Home implements OnInit {
   anioActual: number;
   fechaCompleta: Date;
 
+  formLoadedAt = Math.floor(Date.now() / 1000);
+
   constructor() {
     this.fechaCompleta = new Date();
     this.anioActual = this.fechaCompleta.getFullYear();
@@ -274,6 +276,9 @@ export class Home implements OnInit {
   }
 
   initForm() {
+
+    this.formLoadedAt = Math.floor(Date.now() / 1000);
+
     this.form = this.fb.group({
       first_name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(250)]],
       email: ['', [Validators.required, Validators.email]],
@@ -488,19 +493,17 @@ export class Home implements OnInit {
 
       custom_fields: {
         business_niche: this.form.value.business_niche ?? null
-      }
+      },
+
+      // honeypot
+      website: '',
+      form_time: this.formLoadedAt
+
     };
 
     this.contactService.sendMessage(payload)
       .subscribe({
         next: (res) => {
-
-          //const message = res.message
-
-          // this.notify.success(
-          //   'Hemos recibido tu mensaje. Te responderemos pronto.'
-          // );
-
 
           this.submitted = false;
 

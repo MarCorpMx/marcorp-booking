@@ -6,6 +6,8 @@ import { BookingOrganizationEntryResponse, BookingOrganizationBranchResponse } f
 import { BookingServicesResponse } from '../models/booking-service.models';
 import { BookingAvailability } from '../models/booking-availability.models';
 
+import { CreateBookingRequest, CreateBookingResponse } from '../models/booking-create.models';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -86,15 +88,95 @@ export class BookingPublicService {
 
 
   // booking creation
-  createBooking() { }
+  createBooking(
+    payload: CreateBookingRequest
+  ): Observable<CreateBookingResponse> {
 
-  // customer validation
-  validateCustomer() { }
+    return this.api.post<CreateBookingResponse>(
+      'v1/public-booking/bookings',
+      payload
+    );
 
-  // cancel
-  cancelBooking() { }
+  }
 
-  // reschedule
-  rescheduleBooking() { }
+  /*
+|--------------------------------------------------------------------------
+| Customer validation (Future)
+|--------------------------------------------------------------------------
+|
+| Este endpoint NO es requerido para el flujo inicial de reservas.
+| El endpoint de creación de citas ya es responsable de:
+|
+| - Buscar clientes existentes.
+| - Crear el cliente si no existe.
+| - Evitar duplicados.
+|
+| En una segunda etapa este endpoint permitirá mejorar la experiencia
+| del usuario antes de confirmar la cita.
+|
+| Casos de uso:
+|
+| ✔ Detectar si el cliente ya existe mediante su correo electrónico.
+| ✔ Autocompletar nombre, teléfono y demás información.
+| ✔ Recuperar información específica del negocio
+|   (por ejemplo mascotas, pacientes, vehículos, etc.).
+| ✔ Mostrar mensajes como:
+|      "¡Bienvenido de nuevo Omar!"
+| ✔ Reducir el tiempo necesario para reservar una nueva cita.
+|
+| Ejemplo:
+|
+| POST /v1/public-booking/customers/validate
+|
+| Request:
+| {
+|   "email": "omar@mail.com"
+| }
+|
+| Response:
+| {
+|   "exists": true,
+|   "customer_id": 15,
+|   "customer": { ... }
+| }
+|
+*/
+  validateCustomer(
+    email: string
+  ) {
+
+    return this.api.post(
+      'v1/public-booking/customers/validate',
+      {
+        email
+      }
+    );
+
+  }
+
+  // cancel -> falta saber si esta correcto
+  cancelBooking(
+    referenceCode: string
+  ) {
+
+    return this.api.post(
+      `v1/public-booking/bookings/${referenceCode}/cancel`,
+      {}
+    );
+
+  }
+
+  // reschedule -> falta saber si esta correcto
+  rescheduleBooking(
+    referenceCode: string,
+    payload: any
+  ) {
+
+    return this.api.post(
+      `v1/public-booking/bookings/${referenceCode}/reschedule`,
+      payload
+    );
+
+  }
 
 }

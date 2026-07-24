@@ -32,7 +32,8 @@ export class BookingSummary {
   selectedStaff: BookingStaffMember | null = null;
 
   @Input()
-  selectedDate: Date | null = null;
+  //selectedDate: Date | null = null;
+  selectedDate: string | null = null;
 
   @Input()
   selectedTime: BookingTimeSlot | null = null;

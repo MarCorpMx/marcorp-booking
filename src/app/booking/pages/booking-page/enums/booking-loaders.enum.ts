@@ -10,7 +10,9 @@ export enum BookingLoader {
 
     Timeslots = 'timeslots',
 
-    CustomerValidation = 'customer_validation',
+    CustomerForm = 'customer_form',
+
+    Confirmation = 'confirmation',
 
     CreateBooking = 'create_booking'
 }

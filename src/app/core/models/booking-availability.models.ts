@@ -19,6 +19,8 @@ export interface BookingCalendarDay {
 // Horarios
 export interface BookingTimeSlot {
 
+    staff_member_id: number;
+
     time: string;
 
     available: boolean;

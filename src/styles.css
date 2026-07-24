@@ -133,7 +133,26 @@
 }
 
 
+/* =========================
+   5.0 INPUTS
+========================= */
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched {
 
+  border-color: #ef4444;
+
+  box-shadow: 0 0 0 3px rgb(254 202 202);
+
+}
+
+ngx-intl-tel-input.ng-touched.ng-invalid .iti input,
+ngx-intl-tel-input .iti input.ng-touched.ng-invalid {
+
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgb(254 202 202);
+
+}
 
 button {
   transition: all 0.18s ease;
@@ -150,44 +169,60 @@ button {
    SNACKBAR – SUCCESS
 ========================= */
 .snackbar-success {
-  --mat-sys-inverse-surface: #1f2933;
-  /* gris profundo, no negro */
-  --mat-sys-inverse-on-surface: #a7c7b7;
-  /* verde salvia */
-  border-left: 4px solid #7fa89a;
-  /* oliva suave */
+
+  --mat-sys-inverse-surface: #12382d;
+  --mat-sys-inverse-on-surface: #f0fdf4;
+
+  border-left: 5px solid #10b981;
+
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, .18);
+
 }
 
 /* =========================
    SNACKBAR – ERROR
 ========================= */
 .snackbar-error {
-  --mat-sys-inverse-surface: #2b1f1f;
-  /* marrón oscuro cálido */
-  --mat-sys-inverse-on-surface: #f3b4b4;
-  /* rojo suave */
-  border-left: 4px solid #e07a7a;
-}
 
-/* =========================
-   SNACKBAR – INFO
-========================= */
-.snackbar-info {
-  --mat-sys-inverse-surface: #1f2933;
-  --mat-sys-inverse-on-surface: #c7d2d9;
-  /* gris claro */
-  border-left: 4px solid #9ca3af;
+  --mat-sys-inverse-surface: #3b1118;
+  --mat-sys-inverse-on-surface: #fef2f2;
+
+  border-left: 5px solid #ef4444;
+
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, .18);
+
 }
 
 /* =========================
    SNACKBAR – WARNING
 ========================= */
 .snackbar-warning {
-  --mat-sys-inverse-surface: #3b2f1f;
-  /* arena oscuro */
-  --mat-sys-inverse-on-surface: #f5e6c8;
-  /* beige */
-  border-left: 4px solid #d6b98c;
+
+  --mat-sys-inverse-surface: #422006;
+  --mat-sys-inverse-on-surface: #fffbeb;
+
+  border-left: 5px solid #f59e0b;
+
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, .18);
+
+}
+
+/* =========================
+   SNACKBAR – INFO
+========================= */
+.snackbar-info {
+
+  --mat-sys-inverse-surface: #102a43;
+  --mat-sys-inverse-on-surface: #eff6ff;
+
+  border-left: 5px solid #3b82f6;
+
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, .18);
+
 }
 
 /* =========================

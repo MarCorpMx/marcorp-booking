@@ -1,0 +1,83 @@
+<section class="pt-6 p-6 rounded-2xl border border-gray-200 bg-white shadow-sm">
+
+    <div class="animate-pulse">
+
+        <!-- Título -->
+        <div class="h-7 w-36 rounded bg-slate-100 mb-8"></div>
+
+        <!-- Resumen -->
+        <div class="space-y-5">
+
+            @for(item of [1,2,3,4,5]; track item){
+
+            <div class="flex items-center justify-between">
+
+                <div class="h-4 w-20 rounded bg-slate-100"></div>
+
+                <div class="h-4 w-36 rounded bg-slate-100"></div>
+
+            </div>
+
+            }
+
+        </div>
+
+        <!-- Separador -->
+        <div class="border-t border-slate-100 my-6"></div>
+
+        <!-- Cliente -->
+        <div class="space-y-5">
+
+            @for(item of [1,2,3]; track item){
+
+            <div class="flex items-center justify-between">
+
+                <div class="h-4 w-20 rounded bg-slate-100"></div>
+
+                <div class="h-4 w-44 rounded bg-slate-100"></div>
+
+            </div>
+
+            }
+
+        </div>
+
+        <!-- Notas -->
+        <div class="mt-6">
+
+            <div class="h-4 w-16 rounded bg-slate-100 mb-3"></div>
+
+            <div class="h-24 rounded-2xl bg-slate-100"></div>
+
+        </div>
+
+        <!-- Total -->
+        <div class="border-t border-slate-100 mt-8 pt-5">
+
+            <div class="flex items-center justify-between">
+
+                <div class="h-5 w-16 rounded bg-slate-100"></div>
+
+                <div class="h-6 w-28 rounded bg-slate-200"></div>
+
+            </div>
+
+        </div>
+
+        <!-- Botón -->
+        <div class="mt-8">
+
+            <div class="h-12 w-full rounded-xl bg-slate-200"></div>
+
+        </div>
+
+        <!-- Aviso -->
+        <div class="flex justify-center mt-5">
+
+            <div class="h-3 w-64 rounded bg-slate-100"></div>
+
+        </div>
+
+    </div>
+
+</section>

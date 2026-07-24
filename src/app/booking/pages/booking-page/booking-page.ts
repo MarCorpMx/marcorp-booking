@@ -26,11 +26,14 @@ import { BookingLoadingService } from '../../../core/services/booking-loading.se
 import { BookingService, BookingServiceVariant, BookingStaffMember } from '../../../core/models/booking-service.models';
 import { BookingVariantSelection } from '../../../core/models/booking-selection.models';
 import { BookingAvailability, BookingTimeSlot } from '../../../core/models/booking-availability.models';
+import { CreateBookingRequest } from '../../../core/models/booking-create.models';
 
 // Skeletons
 import { BookingShellSkeleton } from './components/skeletons/booking-shell-skeleton/booking-shell-skeleton';
 import { ServicesSkeleton } from './components/skeletons/services-skeleton/services-skeleton';
 import { DateTimeSkeleton } from './components/skeletons/date-time-skeleton/date-time-skeleton';
+import { CustomerFormSkeleton } from './components/skeletons/customer-form-skeleton/customer-form-skeleton';
+import { BookingConfirmationSkeleton } from './components/skeletons/booking-confirmation-skeleton/booking-confirmation-skeleton';
 
 // Componentes
 import { StepperIndicator } from './components/stepper-indicator/stepper-indicator';
@@ -38,6 +41,9 @@ import { BookingSummary } from './components/booking-summary/booking-summary';
 import { MobileBookingSummary } from './components/mobile-booking-summary/mobile-booking-summary';
 import { ServiceSelector } from './components/service-selector/service-selector';
 import { DateTimeSelector } from './components/date-time-selector/date-time-selector';
+import { CustomerForm } from './components/customer-form/customer-form';
+import { BookingConfirmation } from './components/booking-confirmation/booking-confirmation';
+import { BookingSuccess } from './components/booking-success/booking-success';
 
 // Solo en desarrollo para delay de peticiones
 import { delay } from 'rxjs';
@@ -46,8 +52,9 @@ import { delay } from 'rxjs';
 @Component({
   selector: 'app-booking-page',
   imports: [CommonModule, LucideAngularModule,
-    BookingShellSkeleton, ServicesSkeleton, DateTimeSkeleton,
-    StepperIndicator, BookingSummary, MobileBookingSummary, ServiceSelector, DateTimeSelector
+    BookingShellSkeleton, ServicesSkeleton, DateTimeSkeleton, CustomerFormSkeleton, BookingConfirmationSkeleton,
+    StepperIndicator, BookingSummary, MobileBookingSummary, ServiceSelector, DateTimeSelector, CustomerForm,
+    BookingConfirmation, BookingSuccess
   ],
   templateUrl: './booking-page.html',
   styleUrl: './booking-page.css',
@@ -88,6 +95,12 @@ export class BookingPage implements OnInit {
   };
 
 
+  /**
+ * Timestamp en el que el usuario abrió el formulario.
+ * Se utiliza para detectar envíos automáticos demasiado rápidos.
+ */
+  formLoadedAt = Math.floor(Date.now() / 1000);
+
   //currentStep = 1;
   bookingCompleted = false;
   showConfirmation = false;
@@ -103,7 +116,10 @@ export class BookingPage implements OnInit {
   //timeSlots: BookingTimeSlot[] = [];
   timeSlots: any = [];
 
-  selectedDate: Date | null = null;
+
+  selectedDate: string | null = null;
+
+  //selectedDate: Date | null = null;
   selectedTime: BookingTimeSlot | null = null;
   //staff_member_id: number = 0;
   customerData: any = null;
@@ -117,6 +133,10 @@ export class BookingPage implements OnInit {
   services: BookingService[] = [];
 
   header?: BookingHeaderViewModel;
+
+  restarting = false;
+
+  referenceCode: string | null = null;
 
   ngOnInit(): void {
 
@@ -196,18 +216,13 @@ export class BookingPage implements OnInit {
           .getServices(this.organization?.slug, this.branch?.slug)
 
       )
-      // .pipe(
-      //   delay(5000) // solo para testing UI
-      // )
       .subscribe({
 
         next: (res) => {
 
-          console.log('dataBackend-Services :', JSON.stringify(res, null, 2));
+          //console.log('dataBackend-Services :', JSON.stringify(res, null, 2));
 
           this.services = res.data;
-
-          //console.log('servicios chingones:', JSON.stringify(this.services, null, 2));
 
         },
 
@@ -261,9 +276,10 @@ export class BookingPage implements OnInit {
 
   }
 
+
   onDateSelected(date: string) {
 
-    this.selectedDate = new Date(date);
+    this.selectedDate = date;
 
     this.loadTimeSlots(date);
 
@@ -274,10 +290,6 @@ export class BookingPage implements OnInit {
     if (!this.selectedVariant) {
       return;
     }
-
-    //console.log('la variante', this.selectedVariant.id);
-    //console.log('el date', date);
-    //console.log('el staff', this.selectedStaff?.id);
 
     this.loading.wrap(
 
@@ -295,10 +307,10 @@ export class BookingPage implements OnInit {
         next: (res: any) => {
 
 
-          console.log(
+          /*console.log(
             'timeslots disponibles:',
             JSON.stringify(res, null, 2)
-          );
+          );*/
 
           this.timeSlots = res?.data ?? res ?? [];
 
@@ -312,11 +324,40 @@ export class BookingPage implements OnInit {
 
   }
 
-  onTimeSelected(slot: BookingTimeSlot) {
+  onTimeSelected(slot: BookingTimeSlot): void {
 
     this.selectedTime = slot;
 
+    this.loading.start(BookingLoader.CustomerForm);
+
+    this.scrollToCustomer();
+
+    setTimeout(() => {
+
+      this.loading.stop(BookingLoader.CustomerForm);
+
+    }, 500);
+
   }
+
+  private scrollToCustomer(): void {
+
+    setTimeout(() => {
+
+      document
+        .getElementById('customer-section')
+        ?.scrollIntoView({
+
+          behavior: 'smooth',
+
+          block: 'start'
+
+        });
+
+    }, 100);
+
+  }
+
 
   private buildHeader(): void {
 
@@ -519,10 +560,6 @@ export class BookingPage implements OnInit {
     );
   }
 
-  goToConfirmation() {
-    alert("FALTA CÓDIGO");
-  }
-
   get currentStep(): number {
 
     if (this.showConfirmation) {
@@ -617,24 +654,184 @@ export class BookingPage implements OnInit {
 
   }
 
+  onCustomerCompleted(data: any) {
+
+    this.customerData = data;
+
+    this.goToConfirmation();
+
+    //console.log('customerData:', JSON.stringify(this.customerData, null, 2));
+
+  }
+
+  goToConfirmation(): void {
+
+    this.showConfirmation = true;
+
+    this.loading.start(BookingLoader.Confirmation);
+
+    setTimeout(() => {
+
+      this.loading.stop(BookingLoader.Confirmation);
+
+      document
+        .getElementById('booking-confirmation')
+        ?.scrollIntoView({
+
+          behavior: 'smooth',
+
+          block: 'start'
+
+        });
+
+    }, 500);
+
+  }
+
+  createBooking() {
+
+    const payload: CreateBookingRequest = {
+
+      organization_slug: this.organization!.slug,
+
+      branch_slug: this.branch!.slug,
+
+      service_variant_id: this.selectedVariant!.id,
+
+      staff_member_id: this.selectedStaff?.id ?? null,
+
+      booking_date: this.selectedDate!,
+
+      booking_time: this.selectedTime!.time,
+
+      mode: this.selectedMode!,
+
+      customer: this.customerData,
+
+      // honeypot
+      website: '',
+      form_time: this.formLoadedAt
+
+    };
+
+    console.log('payloadEnviar:', JSON.stringify(payload, null, 2));
 
 
-  /*
-  /api/v1 / public - booking /
+    this.loading.start(
+      BookingLoader.CreateBooking
+    );
 
-  
+    this.bookingPublicService
+      .createBooking(payload)
+      .subscribe({
 
-GET / variants / { variant } / timeslots ? date =...
+        next: (response) => {
 
-POST / bookings
-    → crear reserva
+          this.loading.stop(
+            BookingLoader.CreateBooking
+          );
 
-POST / bookings / validate - customer
-    → validar customer existente
+          this.referenceCode =
+            response.appointment.reference_code;
 
-POST / bookings / { reference } / cancel
+          this.bookingCompleted = true;
 
-POST / bookings / { reference } / reschedule
-*/
+          setTimeout(() => {
+
+            window.scrollTo({
+
+              top: 0,
+
+              behavior: 'smooth'
+
+            });
+
+          }, 50);
+
+        },
+
+        error: (err) => {
+
+          this.loading.stop(
+            BookingLoader.CreateBooking
+          );
+
+          this.errorHandler.handle(err);
+
+        }
+
+      });
+  }
+
+  // La puta simulación man
+  /*createBooking(): void {
+
+    this.loading.start(BookingLoader.CreateBooking);
+
+    setTimeout(() => {
+
+      this.loading.stop(BookingLoader.CreateBooking);
+
+      this.referenceCode = 'RB-2026-000001';
+
+      this.bookingCompleted = true;
+
+      // Nos vamos hasta arriba
+      setTimeout(() => {
+
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+
+      }, 50);
+
+    }, 1500);
+
+  }*/
+
+  resetBooking(): void {
+
+    this.formLoadedAt = Math.floor(Date.now() / 1000);
+
+    this.restarting = true;
+
+    setTimeout(() => {
+
+      this.bookingCompleted = false;
+      this.showConfirmation = false;
+
+      // servicio
+      this.selectedService = null;
+      this.selectedVariant = null;
+      this.selectedStaff = null;
+      this.selectedMode = null;
+
+      // fecha
+      this.selectedDate = null;
+      this.selectedTime = null;
+
+      // cliente
+      this.customerData = null;
+
+      // resultado
+      this.referenceCode = null;
+
+      // disponibilidad
+      this.availability = null;
+      this.timeSlots = [];
+
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'instant'
+      });
+
+      this.restarting = false;
+
+    }, 450);
+
+  }
+
 
 }

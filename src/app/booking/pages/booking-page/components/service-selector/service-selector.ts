@@ -54,7 +54,7 @@ export class ServiceSelector {
       this.loading = false;
     }
 
-    console.log('servicios llegaron:', JSON.stringify(value, null, 2));
+    //console.log('servicios llegaron:', JSON.stringify(value, null, 2));
   }
 
   @Output()

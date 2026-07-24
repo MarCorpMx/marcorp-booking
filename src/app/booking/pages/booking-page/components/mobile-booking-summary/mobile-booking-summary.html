@@ -224,9 +224,9 @@ cursor-pointer
 
                     <div class="font-medium">
 
-                        @if(selectedTime){
+                        @if(selectedTime?.time){
 
-                        {{ selectedTime }}
+                        {{ selectedTime?.time }}
 
                         }@else{
 
@@ -262,7 +262,7 @@ cursor-pointer
 
                         @if(customer){
 
-                        {{ customer }}
+                        {{customer?.first_name}} {{customer?.last_name}}
 
                         }@else{
 
@@ -293,7 +293,7 @@ bg-white
 p-4
 ">
 
-            <button (click)="continueBooking()" class="
+            <!-- <button (click)="continueBooking()" class="
     w-full
     py-3
     rounded-xl
@@ -303,7 +303,7 @@ p-4
 
                 Continuar
 
-            </button>
+            </button> -->
 
         </div>
 

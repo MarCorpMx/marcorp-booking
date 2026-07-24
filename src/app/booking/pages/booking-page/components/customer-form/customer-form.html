@@ -1,1 +1,336 @@
-<p>customer-form works!</p>
+<div class="bg-white border border-slate-200 rounded-3xl p-6 lg:p-8 shadow-sm">
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-8">
+
+        <!-- ====================== -->
+        <!-- DATOS PERSONALES -->
+        <!-- ====================== -->
+
+        <section>
+
+            <div class="mb-5">
+                <h3 class="text-lg font-bold text-slate-900">
+                    Datos personales
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Estos datos se utilizarán para gestionar tu cita.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <!-- Nombre -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Nombre *
+                    </label>
+
+                    <input type="text" formControlName="first_name" placeholder="Ej. Margarita"
+                        class="input-primary w-full">
+
+                    @if(getError('first_name')){
+                    <small class="text-red-500 text-xs mt-1 block">
+                        {{ getError('first_name') }}
+                    </small>
+                    }
+                </div>
+
+                <!-- Apellido -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Apellido
+                        <span class="text-slate-400 font-normal">(opcional)</span>
+                    </label>
+
+                    <input type="text" formControlName="last_name" placeholder="Ej. Escobar"
+                        class="input-primary w-full">
+
+                    @if(getError('last_name')){
+                    <small class="text-red-500 text-xs mt-1 block">
+                        {{ getError('last_name') }}
+                    </small>
+                    }
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Correo electrónico *
+                    </label>
+
+                    <input type="email" formControlName="email" placeholder="nombre@correo.com"
+                        class="input-primary w-full">
+
+                    @if(getError('email')){
+                    <small class="text-red-500 text-xs mt-1 block">
+                        {{ getError('email') }}
+                    </small>
+                    }
+                </div>
+
+                <!-- Teléfono -->
+                <div>
+
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Teléfono *
+                    </label>
+
+                    <ngx-intl-tel-input [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true"
+                        [searchCountryFlag]="true" [searchCountryField]="[
+                            SearchCountryField.Name,
+                            SearchCountryField.DialCode,
+                            SearchCountryField.Iso2
+                        ]" [selectedCountryISO]="CountryISO.Mexico" [phoneValidation]="true" [separateDialCode]="true"
+                        [numberFormat]="PhoneNumberFormat.International" formControlName="phone"
+                        [cssClass]="'input-primary w-full'">
+
+                    </ngx-intl-tel-input>
+
+                    @if(getError('phone')){
+                    <small class="text-red-500 text-xs mt-1 block">
+                        {{ getError('phone') }}
+                    </small>
+                    }
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================== -->
+        <!-- MASCOTA -->
+        <!-- ====================== -->
+
+        @if(isPetGrooming){
+
+        <section class="pt-8 border-t border-slate-200">
+
+            <div class="mb-5">
+                <h3 class="text-lg font-bold text-slate-900">
+                    Información de la mascota
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Ayúdanos a conocer un poco mejor a tu mascota.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <!-- Nombre mascota -->
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Nombre *
+                    </label>
+
+                    <input type="text" formControlName="pet_name" placeholder="Ej. Rex, Nala, Firulais..."
+                        class="input-primary w-full">
+
+                    @if(getError('pet_name')){
+                    <small class="text-red-500 text-xs mt-1 block">
+                        {{ getError('pet_name') }}
+                    </small>
+                    }
+                </div>
+
+
+                <!-- Especie -->
+
+                <div>
+
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Especie *
+                    </label>
+
+                    <select formControlName="pet_species" class="input-primary w-full">
+
+                        <option value="">Seleccionar...</option>
+
+                        <option value="dog">🐶 Perro</option>
+                        <option value="cat">🐱 Gato</option>
+                        <option value="bird">🐦 Ave</option>
+                        <option value="rabbit">🐰 Conejo</option>
+                        <option value="hamster">🐹 Hámster</option>
+                        <option value="fish">🐠 Pez</option>
+                        <option value="reptile">🦎 Reptil</option>
+
+                        <option value="other">🐾 Otra especie</option>
+
+                    </select>
+
+                </div>
+
+                <div class="md:col-span-2">
+
+                    @if(form.get('pet_species')?.value === 'other'){
+
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        ¿Qué especie es tu mascota?
+                    </label>
+
+                    <input class="input-primary w-full" formControlName="pet_species_custom"
+                        placeholder="Ej. Gallo, Tortuga, Hurón...">
+
+                    }
+
+                </div>
+
+
+                <!-- Raza -->
+
+                <div>
+
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Raza
+                        <span class="text-slate-400 font-normal">(opcional)</span>
+                    </label>
+
+                    <input type="text" formControlName="pet_breed" placeholder="Ej. Labrador, Mestizo, Siamés..."
+                        class="input-primary w-full">
+
+                </div>
+
+
+                <!-- Sexo -->
+
+                <div>
+
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Sexo
+                        <span class="text-slate-400 font-normal">(opcional)</span>
+                    </label>
+
+                    <select formControlName="pet_gender" class="input-primary w-full">
+
+                        <option value="">Seleccionar...</option>
+                        <option value="male">Macho</option>
+                        <option value="female">Hembra</option>
+                        <option value="unknown">No lo sé</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Peso -->
+
+                <div>
+
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Peso
+                        <span class="text-slate-400 font-normal">(opcional)</span>
+                    </label>
+
+                    <div class="flex rounded-xl overflow-hidden border border-slate-300">
+
+                        <input type="number" step="0.1" formControlName="pet_weight" class="
+                flex-1
+                px-4
+                py-3
+                border-0
+                focus:ring-0
+                focus:outline-none">
+
+                        <select formControlName="pet_weight_unit" class="
+                w-20
+                border-l
+                border-slate-200
+                bg-slate-50
+                text-sm
+                font-semibold
+                focus:ring-0
+                focus:outline-none
+                cursor-pointer">
+
+                            <option value="kg">kg</option>
+                            <option value="lb">lb</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Fecha nacimiento -->
+
+                <div>
+
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Fecha de nacimiento
+                        <span class="text-slate-400 font-normal">(opcional)</span>
+                    </label>
+
+                    <input type="date" formControlName="pet_birthdate" class="input-primary w-full">
+
+                </div>
+
+            </div>
+
+        </section>
+
+        }
+
+
+        <!-- ====================== -->
+        <!-- NOTAS -->
+        <!-- ====================== -->
+
+        <section class="pt-8 border-t border-slate-200">
+
+            <h3 class="text-lg font-bold text-slate-900 mb-5">
+                {{ ui.customerNotesTitle }}
+            </h3>
+
+            <div>
+
+                <label class="block text-sm font-medium text-slate-700 mb-1">
+                    {{ ui.customerNotesSubtitle }}
+                </label>
+
+                <textarea rows="4" maxlength="500" formControlName="notes"
+                    [placeholder]="ui.customerNotesPlaceholder"
+                    class="input-primary w-full resize-none">
+
+                </textarea>
+
+                <div class="flex justify-end text-xs text-slate-400 mt-1">
+                    {{ form.get('notes')?.value?.length || 0 }}/500
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================== -->
+        <!-- BOTÓN -->
+        <!-- ====================== -->
+
+        <section class="pt-2">
+
+            <button type="submit" class="w-full py-3 rounded-xl
+    bg-[var(--brand-primary)]
+    text-white
+    font-semibold
+    transition
+    hover:opacity-90
+    cursor-pointer">
+
+                Continuar al resumen
+
+            </button>
+
+            <p class="text-center text-xs text-slate-500 mt-4">
+                Tus datos únicamente serán utilizados para gestionar tu cita.
+            </p>
+
+        </section>
+
+    </form>
+
+</div>

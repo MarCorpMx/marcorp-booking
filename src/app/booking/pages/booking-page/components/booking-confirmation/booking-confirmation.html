@@ -1,0 +1,342 @@
+<div class="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+
+    <!-- Header -->
+    <div class="px-6 py-5 border-b border-slate-100">
+
+        <h3 class="text-xl font-bold text-slate-900">
+            Revisa la información de tu cita
+        </h3>
+
+        <p class="text-sm text-slate-500 mt-1">
+            Verifica que todos los datos sean correctos antes de confirmar.
+        </p>
+
+    </div>
+
+    <!-- Información -->
+    <div class="p-6 space-y-8">
+
+        <!-- Servicio -->
+        <div>
+
+            <h4 class="text-xs uppercase tracking-wide font-bold text-slate-400 mb-4">
+                Servicio
+            </h4>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+
+                <div>
+                    <p class="text-xs text-slate-500">
+                        Servicio
+                    </p>
+
+                    <p class="font-semibold text-slate-900">
+                        {{ service?.name }}
+                    </p>
+                </div>
+
+                @if(variant){
+                <div>
+                    <p class="text-xs text-slate-500">
+                        Variante
+                    </p>
+
+                    <p class="font-semibold text-slate-900">
+                        {{ variant?.name }}
+                    </p>
+                </div>
+                }
+
+                <div>
+                    <p class="text-xs text-slate-500">
+                        Modalidad
+                    </p>
+
+                    <p class="font-semibold text-slate-900">
+
+                        @switch(selectedMode){
+
+                        @case('online'){
+                        En línea
+                        }
+
+                        @case('presential'){
+                        Presencial
+                        }
+
+                        @case('hybrid'){
+                        Híbrida
+                        }
+
+                        }
+
+                    </p>
+                </div>
+
+                @if(selectedStaff){
+                <div>
+
+                    <p class="text-xs text-slate-500">
+                        Especialista
+                    </p>
+
+                    <p class="font-semibold text-slate-900">
+                        {{ selectedStaff.name }}
+                    </p>
+
+                </div>
+                }
+
+            </div>
+
+        </div>
+
+        <!-- Fecha -->
+        <div class="border-t border-slate-100 pt-6">
+
+            <h4 class="text-xs uppercase tracking-wide font-bold text-slate-400 mb-4">
+                Fecha de la cita
+            </h4>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+
+                <div>
+
+                    <p class="text-xs text-slate-500">
+                        Fecha
+                    </p>
+
+                    <p class="font-semibold text-slate-900">
+                        {{ selectedDate | date:'fullDate' }}
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <p class="text-xs text-slate-500">
+                        Hora
+                    </p>
+
+                    <p class="font-semibold text-slate-900">
+                        {{ selectedTime?.time }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Cliente -->
+        <div class="border-t border-slate-100 pt-6">
+
+            <h4 class="text-xs uppercase tracking-wide font-bold text-slate-400 mb-4">
+                Datos del cliente
+            </h4>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+
+                <div>
+
+                    <p class="text-xs text-slate-500">
+                        Nombre
+                    </p>
+
+                    <p class="font-semibold text-slate-900">
+                        {{ customer?.first_name }} {{ customer?.last_name }}
+                    </p>
+
+                </div>
+
+                @if(customer?.email){
+                <div>
+
+                    <p class="text-xs text-slate-500">
+                        Correo electrónico
+                    </p>
+
+                    <p class="font-semibold text-slate-900 break-all">
+                        {{ customer?.email }}
+                    </p>
+
+                </div>
+                }
+
+                @if(customer?.phone?.internationalNumber){
+                <div>
+
+                    <p class="text-xs text-slate-500">
+                        Teléfono
+                    </p>
+
+                    <p class="font-semibold text-slate-900">
+                        {{ customer?.phone?.internationalNumber }}
+                    </p>
+
+                </div>
+                }
+
+            </div>
+
+
+        </div>
+
+        <!-- Mascota -->
+        @if(isPetGrooming){
+        <div class="border-t border-slate-100 pt-6">
+
+            <h4 class="text-xs uppercase tracking-wide font-bold text-slate-400 mb-4">
+                Datos de la mascota
+            </h4>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+
+                @if(customer?.pet_name){
+                <div>
+                    <p class="text-xs text-slate-500">Nombre</p>
+                    <p class="font-semibold text-slate-900">
+                        {{ customer?.pet_name }}
+                    </p>
+                </div>
+                }
+
+                @if(customer?.pet_species){
+                <div>
+                    <p class="text-xs text-slate-500">Especie</p>
+
+                    <p class="font-semibold text-slate-900">
+
+                        {{ getPetSpeciesName(customer?.pet_species) }}
+
+                    </p>
+
+                </div>
+                }
+
+                @if(customer?.pet_breed){
+                <div>
+                    <p class="text-xs text-slate-500">Raza</p>
+                    <p class="font-semibold text-slate-900">
+                        {{ customer?.pet_breed }}
+                    </p>
+                </div>
+                }
+
+                <div>
+                    <p class="text-xs text-slate-500">Sexo</p>
+                    <p class="font-semibold text-slate-900">
+
+                        {{ customer?.pet_gender === 'male'
+                        ? 'Macho'
+                        : customer?.pet_gender === 'female'
+                        ? 'Hembra'
+                        : 'No especificado' }}
+
+                    </p>
+                </div>
+
+                @if(customer?.pet_birthdate){
+                <div>
+                    <p class="text-xs text-slate-500">Nacimiento</p>
+                    <p class="font-semibold text-slate-900">
+                        {{ customer?.pet_birthdate | date:'longDate' }}
+                    </p>
+                </div>
+                }
+
+                @if(customer?.pet_weight){
+                <div>
+                    <p class="text-xs text-slate-500">Peso</p>
+                    <p class="font-semibold text-slate-900">
+                        {{ customer?.pet_weight }} {{ customer?.pet_weight_unit }}
+                    </p>
+                </div>
+                }
+
+            </div>
+
+        </div>
+        }
+
+        <!-- Notas -->
+        @if(customer?.notes){
+
+        <div class="border-t border-slate-100 pt-6">
+
+            <h4 class="text-xs uppercase tracking-wide font-bold text-slate-400 mb-4">
+                Notas
+            </h4>
+
+            <div class="rounded-2xl
+                bg-slate-50
+                border border-slate-200
+                p-4
+                text-sm
+                text-slate-700
+                leading-relaxed">
+
+                {{ customer.notes }}
+
+            </div>
+
+        </div>
+
+        }
+
+        <!-- Total -->
+        <div class="border-t-2 border-slate-200 pt-6">
+
+            <div class="flex items-center justify-between">
+
+                <span class="text-lg font-semibold text-slate-700">
+                    Total
+                </span>
+
+                <span class="text-2xl font-black text-[var(--brand-primary)]">
+                    ${{ variant?.price }} MXN
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="px-6 py-5 border-t border-slate-100 bg-slate-50">
+
+        <button (click)="confirmBooking()" [disabled]="loading" class="w-full py-3 rounded-xl
+                   bg-[var(--brand-primary)]
+                   text-white
+                   font-semibold
+                   transition
+                   hover:opacity-90
+                   disabled:opacity-50
+                   disabled:cursor-not-allowed
+                   cursor-pointer">
+
+            @if(!loading){
+
+            Confirmar cita
+
+            } @else {
+
+            Procesando...
+
+            }
+
+        </button>
+
+        <p class="mt-4 text-center text-xs text-slate-500 flex items-center justify-center gap-1">
+
+            <lucide-icon [img]="icons.Lock" size="14">
+            </lucide-icon>
+
+            Tu información será utilizada únicamente para gestionar tu cita.
+
+        </p>
+
+    </div>
+
+</div>

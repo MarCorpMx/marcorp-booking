@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { BookingAvailability, BookingCalendarDay, BookingTimeSlot } from '../../../../../core/models/booking-availability.models';
@@ -10,13 +10,13 @@ import { BookingAvailability, BookingCalendarDay, BookingTimeSlot } from '../../
   styleUrl: './date-time-selector.css',
 })
 
-export class DateTimeSelector {
+export class DateTimeSelector implements OnChanges {
 
   @Input({ required: true })
   availability!: BookingAvailability;
 
   @Input()
-  selectedDate: Date | null = null;
+  selectedDate: string | null = null;
 
   @Input()
   timeSlots: BookingTimeSlot[] = [];
@@ -31,6 +31,20 @@ export class DateTimeSelector {
   @Output()
   timeSelected = new EventEmitter<BookingTimeSlot>();
 
+  ngOnChanges(changes: SimpleChanges): void {
+
+    if (
+      changes['timeSlots'] &&
+      this.selectedDate &&
+      this.timeSlots.length > 0
+    ) {
+
+      this.scrollToTimeSelector();
+
+    }
+
+  }
+
   // getters
 
   get days(): BookingCalendarDay[] {
@@ -43,21 +57,17 @@ export class DateTimeSelector {
       return;
     }
 
-    this.selectedDate = new Date(day.date);
+    //this.selectedDate = new Date(day.date);
+    this.selectedDate = day.date;
 
     this.dateSelected.emit(day.date);
 
   }
 
+
   isSelected(day: BookingCalendarDay): boolean {
 
-    if (!this.selectedDate) {
-      return false;
-    }
-
-    return this.selectedDate
-      .toISOString()
-      .substring(0, 10) === day.date;
+    return this.selectedDate === day.date;
 
   }
 
@@ -71,6 +81,23 @@ export class DateTimeSelector {
     this.selectedTime = slot;
 
     this.timeSelected.emit(slot);
+
+  }
+
+  private scrollToTimeSelector(): void {
+
+    setTimeout(() => {
+
+      document
+        .getElementById('time-selector')
+        ?.scrollIntoView({
+
+          behavior: 'smooth',
+          block: 'start'
+
+        });
+
+    }, 100);
 
   }
 
