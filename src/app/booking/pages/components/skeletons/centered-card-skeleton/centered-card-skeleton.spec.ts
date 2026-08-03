@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BookingSuccess } from './booking-success';
+import { CenteredCardSkeleton } from './centered-card-skeleton';
 
-describe('BookingSuccess', () => {
-  let component: BookingSuccess;
-  let fixture: ComponentFixture<BookingSuccess>;
+describe('CenteredCardSkeleton', () => {
+  let component: CenteredCardSkeleton;
+  let fixture: ComponentFixture<CenteredCardSkeleton>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BookingSuccess]
+      imports: [CenteredCardSkeleton]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(BookingSuccess);
+    fixture = TestBed.createComponent(CenteredCardSkeleton);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

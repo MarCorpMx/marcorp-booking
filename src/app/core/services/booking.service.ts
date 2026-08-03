@@ -120,25 +120,7 @@ export class BookingService {
     return this.api.get(`v1/public/appointments/manage/${referenceCode}`);
   }
 
-  // CANCELAR POR REFERENCE
-  cancelByReference(
-    referenceCode: string,
-    payload: {
-      reason?: string;
-      note?: string;
-    }
-  ) {
-
-
-    const message = 'cancelByReference ESTA ROTO';
-    console.log(message);
-    alert(message);
-
-    return this.api.post(
-      `v1/public/appointments/manage/${referenceCode}/cancel`,
-      payload
-    );
-  }
+  
 
   // REAGENDAR
   rescheduleByReference(

@@ -4,7 +4,7 @@
 
 }
 
-@if( !loading.isLoading(BookingLoader.Organization)  && !restarting){
+@if( !loading.isLoading(BookingLoader.Organization) && !restarting){
 
 <div class="min-h-screen flex flex-col bg-slate-50">
 
@@ -90,14 +90,24 @@
             <div class="flex flex-wrap gap-3 text-xs">
 
                 @if(header?.stats?.rating){
-                <span class="text-amber-500 font-bold">
-                    ⭐ {{ header?.stats?.rating }} ({{ header?.stats?.reviews_count || 0 }})
+                <span class="inline-flex items-center gap-1.5 text-amber-500 font-bold">
+
+                    <lucide-icon [img]="icons.Star" size="15">
+                    </lucide-icon>
+
+                    {{ header?.stats?.rating }} ({{ header?.stats?.reviews_count || 0 }})
+
                 </span>
                 }
 
                 @if(header?.location){
-                <span class="text-slate-500">
-                    📍 {{ header?.location }}
+                <span class="inline-flex items-center gap-1.5 text-slate-500">
+
+                    <lucide-icon [img]="icons.MapPin" size="15">
+                    </lucide-icon>
+
+                    {{ header?.location }}
+
                 </span>
                 }
 
@@ -121,20 +131,62 @@
                 }
 
                 @if(header?.actions?.phone){
-                <a [href]="'tel:' + header?.actions?.phone" class="px-3 py-2 rounded-xl bg-slate-50 text-sm">
-                    📞 Llamar
+                <a [href]="'tel:' + header?.actions?.phone" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl 
+                border border-slate-200
+       bg-white
+       text-sm
+       transition-all duration-200
+       hover:bg-slate-100
+       hover:border-slate-300
+                        text-sm">
+                    <lucide-icon [img]="icons.Phone" size="18" class="text-sky-600">
+                    </lucide-icon>
+
+                    <span class="font-medium">
+
+                        Llamar
+
+                    </span>
                 </a>
                 }
 
                 @if(header?.actions?.website){
-                <a [href]="header?.actions?.website" target="_blank" class="px-3 py-2 rounded-xl bg-slate-50 text-sm">
-                    🌐 Web
+                <a [href]="header?.actions?.website" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl 
+                    border border-slate-200
+       bg-white
+       text-sm
+       transition-all duration-200
+       hover:bg-slate-100
+       hover:border-slate-300
+        text-sm">
+
+                    <lucide-icon [img]="icons.Globe" size="18" class="text-violet-600">
+                    </lucide-icon>
+
+                    <span class="font-medium">
+
+                        Web
+
+                    </span>
+
                 </a>
                 }
 
                 @if(header?.actions?.mapsUrl){
-                <a [href]="header?.actions?.mapsUrl" target="_blank" class="px-3 py-2 rounded-xl bg-slate-50 text-sm">
-                    📍 Cómo llegar
+                <a [href]="header?.actions?.mapsUrl" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl 
+                    border border-slate-200
+       bg-white
+       text-sm
+       transition-all duration-200
+       hover:bg-slate-100
+       hover:border-slate-300
+                    text-sm">
+                    <lucide-icon [img]="icons.MapPinned" size="18" class="text-emerald-600">
+                    </lucide-icon>
+
+                    <span class="font-medium">
+                        Cómo llegar
+                    </span>
                 </a>
                 }
 

@@ -54,6 +54,8 @@ export class BookingConfirmation implements OnInit {
 
   ngOnInit() {
 
+    //console.log('Customer:', this.customer);
+
   }
 
   get isPetGrooming(): boolean {
@@ -87,7 +89,7 @@ export class BookingConfirmation implements OnInit {
 
       case 'other': {
 
-        const custom = this.customer?.pet_species_custom?.trim();
+        const custom = this.customer?.pet.pet_species_custom?.trim();
 
         return custom
           ? custom
@@ -100,6 +102,10 @@ export class BookingConfirmation implements OnInit {
 
     }
 
+  }
+
+  formatSelectedDate(): Date {
+    return new Date(this.selectedDate + 'T00:00:00');
   }
 
 

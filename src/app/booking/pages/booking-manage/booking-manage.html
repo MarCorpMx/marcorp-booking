@@ -1,307 +1,1668 @@
-@if(isLoading){
-<div class="fixed inset-0 z-50 flex flex-col items-center justify-center
+@if(loading){
+
+<app-centered-card-skeleton />
+
+}
+@else{
+<div class="min-h-screen flex flex-col bg-slate-50">
+    <!-- ========================= -->
+    <!-- HEADER COMPACTO -->
+    <!-- ========================= -->
+    <header class="
+        sticky top-0 z-50
+        bg-white/90 backdrop-blur-md
+        border-b border-slate-100">
+
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+
+            <!-- LOGO -->
+            <div class="w-10 h-10 rounded-xl overflow-hidden border border-slate-100 shrink-0">
+
+                @if(header?.logoUrl){
+                <img [src]="header?.logoUrl" class="w-full h-full object-cover">
+                }@else{
+                <div class="w-full h-full flex items-center justify-center" [style.background]="nicheColor + '15'">
+                    <lucide-icon [img]="nicheIcon" size="18" [style.color]="nicheColor"></lucide-icon>
+                </div>
+                }
+
+            </div>
+
+            <!-- NAME -->
+            <div class="flex flex-col leading-tight">
+                <h1 class="text-sm font-black text-slate-900">
+                    {{ header?.organizationName }}
+                </h1>
+                <span class="text-sm font-semibold text-emerald-600 mt-1">
+                    {{ header?.branchName }}
+                </span>
+
+                <!-- SLOGAN -->
+                @if(organization?.slogan){
+                <p class="mt-1 text-xs uppercase tracking-wide text-slate-400">
+
+                    {{ organization?.slogan }}
+
+                </p>
+                }
+            </div>
+
+            <!-- BADGE -->
+            <div class="ml-auto hidden sm:flex">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold"
+                    [style.background]="nicheColor + '15'" [style.color]="nicheColor">
+
+                    <lucide-icon [img]="nicheIcon" size="14">
+                    </lucide-icon>
+
+                    {{ nicheLabel }}
+
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ====================================== -->
+    <!-- SPINNER -->
+    <!-- ====================================== -->
+
+    @if(processingReferenceCode){
+    <div class="fixed inset-0 z-49 flex flex-col items-center justify-center
             bg-[var(--brand-bg)] px-6 text-center">
 
-    <!-- LOGO -->
-    <img *ngIf="organization?.logo_url" [src]="organization?.logo_url" class="h-14 mb-6 rounded-xl opacity-90">
 
-    <!-- SPINNER -->
-    <div class="relative mb-6">
-        <div class="w-12 h-12 rounded-full border-4 border-gray-200"></div>
-        <div class="w-12 h-12 rounded-full border-4 border-transparent border-t-[var(--brand-primary)]
+        <!-- SPINNER -->
+        <div class="relative mb-6">
+            <div class="w-12 h-12 rounded-full border-4 border-gray-200"></div>
+            <div class="w-12 h-12 rounded-full border-4 border-transparent border-t-[var(--brand-primary)]
                 animate-spin absolute top-0 left-0">
+            </div>
         </div>
+
+        <!-- TEXTO -->
+        <h2 class="text-base font-semibold text-[var(--brand-text)] mb-1">
+            Procesando acción...
+        </h2>
+
+        <p class="text-sm text-gray-500">
+            Estamos confirmando la solicitud
+        </p>
+
     </div>
+    }
 
-    <!-- TEXTO -->
-    <h2 class="text-base font-semibold text-[var(--brand-text)] mb-1">
-        Procesando acción...
-    </h2>
+    <!-- ====================================== -->
+    <!-- CONTENIDO -->
+    <!-- ====================================== -->
 
-    <p class="text-sm text-gray-500">
-        Estamos confirmando la solicitud
-    </p>
+    @else{
+    <main class="flex-1 px-4 py-8">
 
+        <!-- ====================================== -->
+        <!-- BUSCADOR -->
+        <!-- ====================================== -->
+
+        @if(!appointment && !appointmentNotFound){
+
+        <div class="max-w-md mx-auto">
+
+            <div class="max-w-md mx-auto">
+                <div class="w-full max-w-md bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,.08)] p-8 text-center
+                transition-all duration-500 ease-out animate-fade-in">
+
+                    <form [formGroup]="form" (ngSubmit)="searchAppointment()" class="text-center">
+
+                        <h1 class="text-2xl font-bold text-slate-900 mb-2">
+                            Gestionar cita
+                        </h1>
+
+                        <p class="text-sm text-slate-500 mb-8">
+                            Ingresa el código de referencia que recibiste por correo.
+                        </p>
+
+
+                        <input formControlName="referenceCode" type="text" placeholder="Ej. ABC-12345"
+                            class="input-primary w-full text-center uppercase tracking-wider">
+
+                        @if(getError('referenceCode')){
+                        <small class="text-red-500 text-xs mt-1 block">
+                            {{ getError('referenceCode') }}
+                        </small>
+                        }
+
+
+                        <button type="submit" class="mt-4 w-full py-3 rounded-xl
+    bg-[var(--brand-primary)]
+    text-white
+    font-semibold
+    transition
+    hover:opacity-90
+    transition-all duration-200 hover:scale-[1.02]
+    cursor-pointer">
+
+                            Buscar cita
+
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+        }
+
+        <!-- ====================================== -->
+        <!-- NO ENCONTRADA -->
+        <!-- ====================================== -->
+
+        @else if(appointmentNotFound){
+
+        <div class="max-w-md mx-auto">
+
+            <div class="flex-1 flex items-center justify-center px-4">
+
+                <div class="w-full max-w-md bg-white rounded-2xl
+                shadow-[0_20px_60px_rgba(0,0,0,.08)]
+                p-8 text-center
+                animate-fade-in">
+
+                    <!-- ICONO -->
+                    <div class="flex justify-center mb-6">
+
+                        <div class="w-20 h-20 rounded-full
+                        bg-amber-50
+                        flex items-center justify-center">
+
+                            <lucide-angular [name]="icons.AlertCircle" class="w-10 h-10 text-amber-500">
+                            </lucide-angular>
+
+                        </div>
+
+                    </div>
+
+                    <!-- TÍTULO -->
+                    <h2 class="text-2xl font-bold text-slate-900 mb-3">
+
+                        No pudimos localizar la cita
+
+                    </h2>
+
+                    <!-- MENSAJE -->
+                    <p class="text-sm text-slate-500 leading-relaxed mb-8">
+
+                        Verifica que el código de referencia sea correcto
+                        o intenta nuevamente.
+
+                    </p>
+
+                    <!-- CÓDIGO BUSCADO -->
+                    <div class="rounded-xl
+                   bg-slate-50
+                   border border-slate-200
+                   px-4 py-3
+                   mb-8">
+
+                        <p class="text-xs uppercase tracking-wider text-slate-400">
+
+                            Código buscado
+
+                        </p>
+
+                        <p class="font-mono font-semibold text-slate-700 mt-1">
+
+                            {{ referenceCode }}
+
+                        </p>
+
+                    </div>
+
+                    <!-- BOTÓN -->
+                    <button (click)="searchAgain()" class="w-full py-3 rounded-xl
+                   text-white
+                   font-semibold
+                   transition
+                   hover:opacity-90
+                   transition-all duration-200 hover:scale-[1.02]
+                   cursor-pointer" style="background: var(--brand-primary)">
+
+                        Buscar otra cita
+
+                    </button>
+
+                    <!-- AYUDA -->
+                    <p class="text-xs text-slate-400 mt-6 leading-relaxed">
+
+                        Si el problema continúa,
+                        revisa el correo donde recibiste tu confirmación
+                        o comunícate con el establecimiento.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        }
+
+        <!-- ====================================== -->
+        <!-- DETALLE -->
+        <!-- ====================================== -->
+
+        @else if(appointment){
+
+        <div class="max-w-4xl mx-auto">
+
+            <!-- Hero -->
+            <section class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 mb-6">
+
+                <div class="text-center">
+
+                    <!-- estado -->
+
+                    @if(getStatusInfo(); as status){
+
+                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold"
+                        [class]="status.bg + ' ' + status.color">
+
+                        {{ status.label }}
+
+                    </span>
+
+                    }
+
+                    <h1 class="mt-5 text-3xl font-black text-slate-900">
+
+                        {{ appointment.service.name }}
+
+                    </h1>
+
+                    <p class="mt-2 text-slate-500">
+
+                        {{ appointment.variant.name }}
+
+                    </p>
+
+                    @if(getStatusInfo(); as status){
+                    <p class="mt-5 text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
+
+                        {{ status.description }}
+
+                    </p>
+                    }
+
+                </div>
+
+                <div class="mt-8
+                rounded-2xl
+                bg-slate-50
+                border
+                border-slate-100
+                p-6">
+
+                    <div class="grid md:grid-cols-2 gap-6">
+
+                        <div>
+
+                            <p class="text-xs uppercase text-slate-400">
+
+                                Fecha
+
+                            </p>
+
+                            <p class="font-semibold text-lg">
+
+                                {{ appointment.date }}
+
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-xs uppercase text-slate-400">
+
+                                Horario
+
+                            </p>
+
+                            <p class="font-semibold text-lg">
+
+                                {{ appointment.time }}
+
+                                -
+
+                                {{ appointment.end_time }}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            @if(!isInRescheduleMode){
+
+            <!-- Información -->
+            <section class="bg-white
+rounded-3xl
+border
+border-slate-100
+shadow-sm
+p-8
+mb-6">
+
+                <h2 class="text-lg font-bold mb-6">
+
+                    Información de la cita
+
+                </h2>
+
+                <div class="grid gap-6 md:grid-cols-2">
+
+                    <div>
+
+                        <p class="text-xs uppercase text-slate-400">
+
+                            Cliente
+
+                        </p>
+
+                        <p class="font-semibold">
+
+                            {{ appointment.client.first_name }}
+
+                            {{ appointment.client.last_name }}
+
+                        </p>
+
+                        <p class="text-sm text-slate-500">
+
+                            {{ appointment.client.email }}
+
+                        </p>
+
+                    </div>
+
+                    @if(
+                    businessNiche === 'pet_grooming'
+                    && appointment.pet
+                    ){
+
+                    <div>
+
+                        <p class="text-xs uppercase text-slate-400">
+
+                            Mascota
+
+                        </p>
+
+                        <p class="font-semibold flex items-center gap-2">
+
+                            <span class="text-lg">
+
+                                {{ getPetEmoji(appointment.pet.species) }}
+
+                            </span>
+
+                            <span>
+
+                                {{ appointment.pet.name }}
+
+                            </span>
+
+                        </p>
+
+                        <p class="text-sm text-slate-500">
+
+                            {{ getPetSpeciesLabel(
+                            appointment.pet.species,
+                            appointment.pet.species_custom
+                            ) }}
+
+                            @if(appointment.pet.breed){
+
+                            · {{ appointment.pet.breed }}
+
+                            }
+
+                        </p>
+
+                        @if(
+                        appointment.pet.gender ||
+                        appointment.pet.weight !== '0.00'
+                        ){
+
+                        <p class="text-xs text-slate-400 mt-1">
+
+                            @if(appointment.pet.gender){
+
+                            {{ getPetGenderLabel(appointment.pet.gender) }}
+
+                            }
+
+                            @if(
+                            appointment.pet.gender &&
+                            appointment.pet.weight !== '0.00'
+                            ){
+
+                            ·
+
+                            }
+
+                            @if(appointment.pet.weight !== '0.00'){
+
+                            {{ appointment.pet.weight }}
+                            {{ appointment.pet.weight_unit }}
+
+                            }
+
+                        </p>
+
+                        }
+
+                    </div>
+
+                    }
+
+                    <div>
+
+                        <p class="text-xs uppercase text-slate-400">
+
+                            Profesional
+
+                        </p>
+
+                        <p class="font-semibold">
+
+                            {{ appointment.staff?.name }}
+
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-xs uppercase text-slate-400">
+
+                            Código
+
+                        </p>
+
+                        <p class="font-mono font-semibold">
+
+                            {{ appointment.reference_code }}
+
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-xs uppercase text-slate-400">
+
+                            Modalidad
+
+                        </p>
+
+                        <p class="font-semibold">
+
+                            {{ getModeLabel(appointment.mode) }}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- Acciones -->
+            <section class="bg-white
+rounded-3xl
+border
+border-slate-100
+shadow-sm
+p-8">
+
+                <h2 class="text-lg font-bold mb-6">
+
+                    Gestionar cita
+
+                </h2>
+
+                @if(
+                appointment.can_cancel ||
+                appointment.can_reschedule
+                ){
+
+                <div class="grid gap-4">
+
+                    @if(appointment.can_reschedule){
+
+                    <button (click)="startReschedule()" class="w-full
+py-4
+rounded-2xl
+font-semibold
+bg-[var(--brand-primary)]
+text-white
+transition-all duration-200 hover:scale-[1.02]
+    hover:opacity-90
+cursor-pointer">
+
+                        Reagendar cita
+
+                    </button>
+
+                    }
+
+
+                    <!-- REAGENDAR -->
+
+
+
+
+
+
+                    @if(appointment.can_cancel){
+
+                    <button (click)="openCancelModal()" class="w-full
+py-4
+rounded-2xl
+border
+border-red-300
+text-red-600
+hover:bg-red-50
+transition-all duration-200 hover:scale-[1.02]
+cursor-pointer">
+
+                        Cancelar cita
+
+                    </button>
+
+                    }
+
+                </div>
+
+                }
+                @else{
+
+                <div class="rounded-2xl
+            border
+            border-slate-200
+            bg-slate-50
+            p-6
+            text-center">
+
+                    <div class="flex justify-center mb-4">
+
+                        <div class="w-14 h-14
+                    rounded-full
+                    bg-slate-200
+                    flex items-center justify-center">
+
+                            <lucide-icon [img]="icons.Lock" size="24" class="text-slate-600">
+                            </lucide-icon>
+
+                        </div>
+
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-slate-900">
+
+                        Esta cita ya no puede modificarse
+
+                    </h3>
+
+                    <p class="mt-2 text-sm text-slate-500 leading-relaxed">
+
+                        Si necesitas realizar algún cambio,
+                        comunícate directamente con el establecimiento.
+
+                    </p>
+
+                </div>
+
+                }
+
+            </section>
+
+            <!-- ========================= -->
+            <!-- NUEVA CITA -->
+            <!-- ========================= -->
+
+            <section class="mt-6">
+
+                <div class="bg-white
+                rounded-3xl
+                border
+                border-slate-100
+                shadow-sm
+                p-6
+                text-center">
+
+                    <h3 class="text-lg font-semibold text-slate-900">
+
+                        ¿Necesitas otro servicio?
+
+                    </h3>
+
+                    <p class="mt-2
+                  text-sm
+                  text-slate-500
+                  leading-relaxed">
+
+                        Puedes reservar una nueva cita cuando lo desees.
+
+                    </p>
+
+                    <button (click)="goToBooking()" class="mt-6
+                   inline-flex
+                   items-center
+                   justify-center
+                   gap-2
+                   px-6
+                   py-3
+                   rounded-2xl
+                   font-semibold
+                   text-white
+                   hover:opacity-90
+                   bg-[var(--brand-primary)]
+                   transition-all duration-200 hover:scale-[1.02]
+                   cursor-pointer">
+
+                        <lucide-icon [img]="icons.CalendarPlus" size="18">
+                        </lucide-icon>
+
+                        Agendar nueva cita
+
+                    </button>
+
+                </div>
+
+            </section>
+
+            <!-- ========================= -->
+            <!-- AYUDA -->
+            <!-- ========================= -->
+
+            @if(
+            header?.actions?.whatsapp ||
+            header?.actions?.phone ||
+            branch?.contact?.email ||
+            header?.actions?.website
+            ){
+
+            <section class="mt-10">
+
+                <div class="bg-white
+                rounded-3xl
+                border
+                border-slate-100
+                shadow-sm
+                p-6">
+
+                    <h3 class="text-base font-semibold text-slate-900 text-center">
+
+                        ¿Necesitas ayuda?
+
+                    </h3>
+
+                    <p class="text-sm text-slate-500 text-center mt-1 mb-6">
+
+                        Si tienes alguna duda sobre tu cita puedes comunicarte con el establecimiento.
+
+                    </p>
+
+                    <div class="flex flex-wrap justify-center gap-3">
+
+                        <!-- WhatsApp -->
+
+                        @if(header?.actions?.whatsapp){
+
+                        <button (click)="openWa(header?.actions?.whatsapp)" class="inline-flex items-center gap-2
+                       px-4 py-3
+                       rounded-2xl
+                       bg-green-50
+                       text-green-700
+                       hover:bg-green-100
+                       transition
+                       cursor-pointer">
+
+                            <img src="https://cdn-icons-png.flaticon.com/24/733/733585.png" class="w-5 h-5">
+
+                            <span class="font-medium">
+
+                                WhatsApp
+
+                            </span>
+
+                        </button>
+
+                        }
+
+                        <!-- Teléfono -->
+
+                        @if(header?.actions?.phone){
+
+                        <a [href]="'tel:' + header?.actions?.phone" class="inline-flex items-center gap-2
+                       px-4 py-3
+                       rounded-2xl
+                       border border-slate-200
+                       bg-white
+                       hover:bg-slate-50
+                       hover:bg-slate-100
+                       transition">
+
+                            <lucide-icon [img]="icons.Phone" size="18" class="text-sky-600">
+                            </lucide-icon>
+
+                            <span class="font-medium">
+
+                                Llamar
+
+                            </span>
+
+                        </a>
+
+                        }
+
+                        <!-- Email -->
+
+                        @if(branch?.contact?.email){
+
+                        <a [href]="'mailto:' + branch?.contact?.email" class="inline-flex items-center gap-2
+                       px-4 py-3
+                       rounded-2xl
+                       border border-slate-200
+                       bg-white
+                       hover:bg-slate-50
+                       hover:bg-slate-100
+                       transition">
+
+                            <lucide-icon [img]="icons.Mail" size="18" class="text-amber-600">
+                            </lucide-icon>
+
+                            <span class="font-medium">
+
+                                Correo
+
+                            </span>
+
+                        </a>
+
+                        }
+
+                        <!-- Sitio -->
+
+                        @if(header?.actions?.website){
+
+                        <a [href]="header?.actions?.website" target="_blank" class="inline-flex items-center gap-2
+                       px-4 py-3
+                       rounded-2xl
+                       border border-slate-200
+                       bg-white
+                       hover:bg-slate-50
+                       hover:bg-slate-100
+                       transition">
+
+                            <lucide-icon [img]="icons.Globe" size="18" class="text-violet-600">
+                            </lucide-icon>
+
+                            <span class="font-medium">
+
+                                Sitio web
+
+                            </span>
+
+                        </a>
+
+                        }
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            }
+
+            <!-- ========================= -->
+            <!-- OTRA BÚSQUEDA -->
+            <!-- ========================= -->
+
+            <section class="mt-8 text-center">
+
+                <p class="text-xs text-slate-400 mb-3">
+
+                    ¿Deseas consultar una cita diferente?
+
+                </p>
+
+                <button (click)="searchAgain()" class="inline-flex
+               items-center
+               gap-2
+               text-sm
+               font-medium
+               text-slate-600
+               hover:text-slate-900
+               transition
+               cursor-pointer">
+
+                    <lucide-icon [img]="icons.Search" size="16">
+                    </lucide-icon>
+
+                    Buscar otra cita
+
+                </button>
+
+            </section>
+            }
+
+            @if(isInRescheduleMode){
+
+            <section class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+
+                <!-- Header -->
+                <div class="border-b border-slate-100 p-8">
+
+                    <div class="flex items-start justify-between gap-6">
+
+                        <div>
+
+                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full
+                    bg-emerald-50 text-emerald-700 text-xs font-bold">
+
+                                <lucide-icon [img]="icons.CalendarClock" size="14">
+                                </lucide-icon>
+
+                                Reagendar cita
+
+                            </span>
+
+                            <h2 class="mt-4 text-3xl font-black text-slate-900">
+
+                                Selecciona un nuevo horario
+
+                            </h2>
+
+                            <p class="mt-2 text-slate-500 max-w-2xl">
+
+                                Tu cita actual permanecerá reservada hasta que
+                                confirmes el nuevo horario.
+
+                            </p>
+
+                        </div>
+
+                        <button (click)="cancelReschedule()" class="rounded-xl border border-slate-200
+                       px-4 py-2 text-sm font-medium
+                       hover:bg-slate-50 cursor-pointer">
+
+                            Cancelar
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- Resumen de la cita actual -->
+                <div class="bg-amber-50 border-b border-amber-100 px-8 py-5">
+
+                    <div class="grid md:grid-cols-3 gap-6">
+
+                        <div>
+
+                            <p class="text-xs uppercase text-amber-600">
+
+                                Fecha actual
+
+                            </p>
+
+                            <p class="font-semibold text-slate-900">
+
+                                {{ appointment.date }}
+
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-xs uppercase text-amber-600">
+
+                                Hora actual
+
+                            </p>
+
+                            <p class="font-semibold text-slate-900">
+
+                                {{ appointment.time }}
+
+                                -
+
+                                {{ appointment.end_time }}
+
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-xs uppercase text-amber-600">
+
+                                Profesional
+
+                            </p>
+
+                            <p class="font-semibold text-slate-900">
+
+                                {{ appointment.staff?.name }}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Selector -->
+                <div class="p-8">
+
+                    @if(availability){
+
+                    <app-date-time-selector [availability]="availability" [selectedDate]="selectedDate"
+                        [timeSlots]="timeSlots" (dateSelected)="onDateSelected($event)"
+                        (timeSelected)="onTimeSelected($event)">
+                    </app-date-time-selector>
+
+                    }
+
+
+                    @if(selectedTime){
+
+                    <div class="border-t border-slate-100 pt-6">
+
+                        <h4 class="text-base font-bold text-slate-900 mb-5">
+                            Nuevo horario seleccionado
+                        </h4>
+
+                        <div class="grid gap-4 sm:grid-cols-2">
+
+                            <div>
+
+                                <p class="text-xs text-slate-500">
+                                    Fecha
+                                </p>
+
+                                <p class="font-semibold text-slate-900">
+                                    {{ formatSelectedDate() | date:'fullDate' }}
+                                </p>
+
+                            </div>
+
+                            <div>
+
+                                <p class="text-xs text-slate-500">
+                                    Hora
+                                </p>
+
+                                <p class="font-semibold text-slate-900">
+                                    {{ selectedTime?.time }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    }
+
+                </div>
+
+                <!-- Footer -->
+                <div class="border-t border-slate-100 bg-slate-50 p-6">
+
+                    <div class="flex flex-col md:flex-row gap-4 justify-end">
+
+                        <button (click)="cancelReschedule()" class="px-6 py-3 rounded-xl
+                       border border-slate-300
+                       hover:bg-white
+                       font-medium cursor-pointer">
+
+                            Volver
+
+                        </button>
+
+                        <button [disabled]="!selectedTime" (click)="confirmReschedule()" class="px-8 py-3 rounded-xl
+                       bg-[var(--brand-primary)]
+                       text-white
+                       font-semibold
+                       disabled:opacity-40
+                       disabled:cursor-not-allowed
+                       hover:opacity-90
+                       transition
+                       cursor-pointer">
+
+                            Confirmar nuevo horario
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            }
+
+        </div>
+
+        }
+
+    </main>
+    }
 </div>
 }
 
+@if(showCancelModal){
 
-@if(!isLoading){
-<div class="min-h-screen bg-[var(--brand-bg)] flex flex-col">
+<div class="fixed inset-0
+    z-50
+    flex items-end sm:items-center
+    justify-center
+    p-0 sm:p-4">
 
-    <!-- PRIORIDAD: ESTADOS NO EDITABLES -->
-    <!-- <app-booking-result *ngIf="appointment && appointment.status !== 'pending' && appointment.status !== 'confirmed'" 
-        [statusInput]="appointment.status">
-    </app-booking-result> -->
-
-    <app-booking-result *ngIf="appointment && isLockedStatus(appointment.status)" [statusInput]="appointment.status">
-    </app-booking-result>
-
-    <!-- @if(!appointment || appointment.status === 'pending' || appointment.status === 'confirmed'){ -->
-    @if(!appointment || !isLockedStatus(appointment.status)){
-    <!-- HEADER reutilizable -->
-    <header class="py-6 text-center">
-        <img *ngIf="organization?.logo_url" [src]="organization?.logo_url" class="h-12 mx-auto mb-2 rounded-xl">
-
-        <h2 class="text-sm text-gray-500">
-            {{ organization?.name }}
-        </h2>
-    </header>
-
-    <main class="flex-1 flex items-center justify-center px-4">
-
-        <div class="w-full max-w-md bg-white rounded-2xl shadow-md p-6">
-
-            <!-- BUSCADOR -->
-            <div *ngIf="!appointment">
-                <h1 class="text-lg font-semibold mb-4 text-center">
-                    Gestionar cita
-                </h1>
-
-                <p class="text-xs text-gray-500 text-center mb-4">
-                    Ingresa el código que recibiste por correo
-                </p>
-
-                <input [(ngModel)]="referenceCode" placeholder="ID de referencia"
-                    class="w-full border rounded-xl px-4 py-2 text-sm mb-3" />
-
-                <button (click)="searchAppointment()"
-                    class="w-full py-2 rounded-xl text-white text-sm transition hover:opacity-90 cursor-pointer"
-                    style="background: var(--brand-primary)">
-                    Buscar
-                </button>
-            </div>
-
-            <!-- DETALLE -->
-            <div *ngIf="appointment && !isRescheduling">
-
-                <h1 class="text-lg font-semibold text-center mb-4">
-                    Tu cita
-                </h1>
-
-                <!-- SERVICIO -->
-                <div class="text-center mb-4">
-                    <p class="font-semibold text-gray-800">
-                        {{ appointment.service?.name }}
-                    </p>
-
-                    <p class="text-sm text-gray-500">
-                        {{ appointment.variant?.name }} · {{ appointment.variant?.duration }} min
-                    </p>
-                </div>
-
-                <!-- FECHA -->
-                <div class="bg-gray-50 rounded-xl p-3 text-center mb-4">
-                    <p class="text-sm text-gray-600">
-                        {{ appointment.date }} · {{ appointment.time }}
-                    </p>
-
-                    <p class="text-xs text-gray-400 mt-1">
-                        Finaliza a las {{ appointment.end_time }}
-                    </p>
-                </div>
-
-                <!-- MODO 🔥 -->
-                <div class="text-center mb-4">
-                    <span class="text-xs px-3 py-1 rounded-full" [ngClass]="{
-                'bg-green-100 text-green-700': appointment.mode === 'presential',
-                'bg-blue-100 text-blue-700': appointment.mode === 'online',
-                'bg-purple-100 text-purple-700': appointment.mode === 'hybrid'
-              }">
-                        {{ appointment.mode === 'online' ? 'En línea' :
-                        appointment.mode === 'presential' ? 'Presencial' : 'Híbrido' }}
-                    </span>
-                </div>
-
-                <!-- CLIENTE -->
-                <div class="text-center mb-6">
-                    <p class="text-sm text-gray-600">
-                        {{ appointment.client?.first_name }} {{ appointment.client?.last_name }}
-                    </p>
-
-                    <p class="text-xs text-gray-400">
-                        {{ appointment.client?.email }}
-                    </p>
-                </div>
-
-                <!-- CÓDIGO -->
-                <p class="text-xs text-gray-400 text-center mb-6">
-                    Código: {{ appointment.reference_code }}
-                </p>
-
-
-                <!-- ACCIONES -->
-                <div class="space-y-3">
-                    <button (click)="showCancelModal = true" [disabled]="isCancelling"
-                        class="w-full py-2 rounded-xl text-sm border border-red-300 text-red-600 hover:bg-red-50 transition cursor-pointer">
-                        {{ isCancelling ? 'Cancelando...' : 'Cancelar cita' }}
-                    </button>
-
-                    <button (click)="startReschedule()"
-                        class="w-full py-2 rounded-xl text-white text-sm transition hover:opacity-90 cursor-pointer"
-                        style="background: var(--brand-primary)">
-                        Reagendar
-                    </button>
-                </div>
-
-            </div>
-
-            <!-- REAGENDAR -->
-            <div *ngIf="isRescheduling">
-
-                <h1 class="text-lg font-semibold text-center mb-4">
-                    Reagendar cita
-                </h1>
-
-                <p class="text-xs text-gray-500 text-center mb-3">
-                    Selecciona una nueva fecha y horario
-                </p>
-
-                <app-date-time-selector [selectedVariant]="appointment.variant" [organization]="organization"
-                    [excludeAppointmentId]="appointment.id" (dateSelected)="onDateSelected($event)"
-                    (timeSelected)="onTimeSelected($event)">
-                </app-date-time-selector>
-
-                <!-- VOLVER -->
-                <div class="flex gap-2 mt-4">
-
-                    <!-- VOLVER -->
-                    <button (click)="isRescheduling = false" [disabled]="isCancelling" class="flex-1 py-2 rounded-xl text-sm border border-gray-300 cursor-pointer 
-           transition hover:opacity-80 active:scale-[0.98] disabled:opacity-50"
-                        style="background: var(--brand-secondary)">
-                        Volver
-                    </button>
-
-                    <!-- CONFIRMAR -->
-                    <button (click)="openRescheduleModal()" class="flex-1 py-2 rounded-xl text-white text-sm
-        transition hover:opacity-90 active:scale-[0.98] cursor-pointer" style="background: var(--brand-primary)">
-                        Confirmar
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </main>
-
-    @if(showCancelModal){
-    <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
-
-        <!-- BACKDROP -->
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="showCancelModal = false"></div>
-
-        <!-- MODAL -->
-        <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-6 animate-fade-in">
-
-            <!-- HEADER -->
-            <h2 class="text-lg font-semibold text-center mb-2">
-                Cancelar cita
-            </h2>
-
-            <p class="text-xs text-gray-500 text-center mb-5">
-                Ayúdanos a entender el motivo (opcional)
-            </p>
-
-            <!-- OPCIONES -->
-            <div class="space-y-2 mb-4">
-                <label *ngFor="let option of cancelOptions" class="flex items-center gap-2 text-sm cursor-pointer">
-
-                    <input type="radio" name="cancelReason" [value]="option" [(ngModel)]="cancelReason"
-                        class="accent-[var(--brand-primary)]" />
-
-                    {{ option }}
-                </label>
-            </div>
-
-            <!-- TEXTAREA -->
-            <textarea [(ngModel)]="cancelNote" rows="3" placeholder="Comentario adicional (opcional)"
-                class="w-full border rounded-xl px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]">
-    </textarea>
-
-            <!-- ACTIONS -->
-            <div class="flex gap-2">
-
-                <!-- VOLVER -->
-                <button (click)="showCancelModal = false" [disabled]="isCancelling" class="flex-1 py-2 rounded-xl text-sm border border-gray-300 cursor-pointer 
-           transition hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
-                    style="background: var(--brand-secondary)">
-                    Volver
-                </button>
-
-                <!-- CONFIRMAR -->
-                <button (click)="confirmCancel()" [disabled]="isCancelling" class="flex-1 py-2 rounded-xl text-white text-sm cursor-pointer
-           transition hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
-                    style="background: var(--brand-primary)">
-
-                    {{ isCancelling ? 'Cancelando...' : 'Confirmar' }}
-                </button>
-
-            </div>
-        </div>
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="!isCancelling && closeCancelModal()">
     </div>
-    }
+
+    <!-- Modal -->
+    <div class="relative
+        w-full h-full
+        sm:h-auto
+        sm:max-w-xl
+        bg-white
+        rounded-none sm:rounded-3xl
+        shadow-2xl
+        flex flex-col
+        max-h-screen sm:max-h-[90vh]">
+
+        <!-- ================= HEADER ================= -->
+
+        <div class="p-4 sm:p-6
+    border-b border-slate-100
+    flex items-start gap-3 sm:gap-4
+    shrink-0">
+
+            <div class="w-12 h-12 sm:w-14 sm:h-14
+    rounded-2xl
+    bg-red-50
+    flex items-center justify-center">
+
+                <lucide-icon [img]="icons.TriangleAlert" class="w-6 h-6 sm:w-7 sm:h-7 text-red-600"></lucide-icon>
+
+            </div>
+
+            <div class="flex-1">
+
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
+
+                    Cancelar cita
+
+                </h2>
+
+                <p class="hidden sm:block text-sm text-slate-500 mt-2 leading-relaxed">
+
+                    Estás a punto de cancelar tu cita.
+
+                    Esta acción no podrá deshacerse.
+
+                </p>
+
+            </div>
+
+            <button type="button" (click)="closeCancelModal()" class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-xl
+        bg-gray-50 border border-gray-200
+        flex items-center justify-center
+        hover:bg-gray-100
+        transition cursor-pointer">
+
+                <lucide-icon [name]="icons.X" class="w-4 h-4 text-gray-500">
+                </lucide-icon>
+
+            </button>
+
+        </div>
+
+        <!-- ================= BODY ================= -->
+        <form [formGroup]="formCancel" (ngSubmit)="confirmCancel()" class="flex flex-col flex-1 min-h-0">
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 sm:space-y-7">
+
+                <!-- Motivo -->
+
+                <div>
+
+                    <h3 class="text-sm font-semibold text-slate-900 mb-3 sm:mb-4">
+
+                        ¿Cuál es el motivo?
+
+                    </h3>
+
+                    <div class="grid gap-3">
+
+                        @for(option of cancelOptions; track option){
+
+                        <button type="button" (click)="
+                        formCancel.get('reason')?.setValue(option);
+                        formCancel.updateValueAndValidity();
+                        " class="w-full
+                        rounded-2xl
+                        border
+                        px-4 py-3 sm:py-4
+                        text-left
+                        transition
+                        cursor-pointer" [class.border-red-500]="formCancel.get('reason')?.value === option"
+                            [class.bg-red-50]="formCancel.get('reason')?.value === option"
+                            [class.border-slate-200]="formCancel.get('reason')?.value !== option"
+                            [class.hover:border-slate-300]="formCancel.get('reason')?.value !== option">
+
+                            <div class="flex items-center justify-between">
+
+                                <span class="font-medium">
+
+                                    {{ option }}
+
+                                </span>
+
+                                @if(formCancel.get('reason')?.value === option){
+
+                                <lucide-icon [img]="icons.Check" size="18" class="text-red-600">
+                                </lucide-icon>
+
+                                }
+
+                            </div>
+
+                        </button>
+
+                        }
+
+                    </div>
+
+                    @if(formCancel.get('reason')?.touched &&
+                    formCancel.get('reason')?.hasError('required')){
+
+                    <p class="mt-3 text-sm text-red-500">
+
+                        Selecciona el motivo de la cancelación.
+
+                    </p>
+
+                    }
+
+                </div>
+
+                <!-- Comentario -->
+
+                <div>
+
+                    <label class="block
+                    text-sm
+                    font-semibold
+                    text-slate-900
+                    mb-3">
+
+                        Comentario adicional
+                        <span class="font-normal text-slate-400">(opcional)</span>
+
+                    </label>
+
+                    <textarea formControlName="note" rows="4" maxlength="500"
+                        placeholder="Si deseas, puedes proporcionar más información." class="w-full
+                    rounded-2xl
+                    border border-slate-200
+                    bg-slate-50
+                    px-4 py-3
+                    outline-none
+                    focus:bg-white
+                    focus:border-red-400
+                    transition
+                    placeholder:text-gray-400
+  placeholder:font-normal">
+
+                </textarea>
 
 
-    }
+
+                    <div class="flex justify-between items-center mt-2">
+
+                        <div>
+
+                            @if(formCancel.get('note')?.touched){
+
+                            @if(formCancel.get('note')?.hasError('requiredForOther')){
+
+                            <p class="mt-2 text-sm text-red-500">
+
+                                Describe brevemente el motivo de la cancelación.
+
+                            </p>
+
+                            }
+
+                            @else if(formCancel.get('note')?.hasError('minlength')){
+
+                            <p class="mt-2 text-sm text-red-500">
+
+                                Escribe al menos 10 caracteres.
+
+                            </p>
+
+                            }
+
+                            @else if(formCancel.get('note')?.hasError('maxlength')){
+
+                            <p class="mt-2 text-sm text-red-500">
+
+                                El comentario no puede superar los 500 caracteres.
+
+                            </p>
+
+                            }
+
+                            }
+
+                        </div>
+
+                        <small [class.text-red-500]="(formCancel.get('note')?.value?.length || 0) > 450"
+                            class="text-slate-400">
+
+                            {{ formCancel.get('note')?.value?.length || 0 }}/500
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ================= FOOTER ================= -->
+
+            <div class="p-4 sm:p-6
+            border-t border-slate-100
+            flex flex-col-reverse sm:flex-row
+            gap-3
+            shrink-0">
+
+                <button type="button" (click)="closeCancelModal()" class="flex-1
+                py-2.5 sm:py-3
+                rounded-xl
+                border border-slate-300
+                hover:bg-slate-50
+                transition
+                cursor-pointer">
+
+                    Conservar cita
+
+                </button>
+
+                <button type="submit" [disabled]="isCancelling" class="flex-1
+                py-2.5 sm:py-3
+                rounded-xl
+                bg-red-600
+                text-white
+                hover:bg-red-700
+                transition
+                disabled:opacity-70
+                disabled:cursor-not-allowed
+                cursor-pointer">
+
+                    @if(!isCancelling){
+
+                    Sí, cancelar cita
+
+                    }@else{
+
+                    Cancelando...
+
+                    }
+
+                </button>
+
+            </div>
+        </form>
+
+    </div>
+
 </div>
+
 }
 
 @if(showRescheduleModal){
-<div class="fixed inset-0 z-50 flex items-center justify-center px-4">
 
-    <!-- BACKDROP -->
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="showRescheduleModal = false"></div>
+<div class="fixed inset-0
+    z-50
+    flex items-end sm:items-center
+    justify-center
+    p-0 sm:p-4">
 
-    <!-- MODAL -->
-    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-6 animate-fade-in">
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="!isSavingReschedule  && closeRescheduleModal()">
+    </div>
 
-        <!-- HEADER -->
-        <h2 class="text-lg font-semibold text-center mb-2">
-            Reagendar cita
-        </h2>
+    <!-- Modal -->
+    <div class="relative
+        w-full h-full
+        sm:h-auto
+        sm:max-w-xl
+        bg-white
+        rounded-none sm:rounded-3xl
+        shadow-2xl
+        flex flex-col
+        max-h-screen sm:max-h-[90vh]">
 
-        <p class="text-xs text-gray-500 text-center mb-5">
-            ¿Por qué deseas cambiar el horario? (opcional)
-        </p>
+        <!-- ================= HEADER ================= -->
 
-        <!-- OPCIONES -->
-        <div class="space-y-2 mb-4">
-            <label *ngFor="let option of rescheduleOptions" class="flex items-center gap-2 text-sm cursor-pointer">
+        <div class="p-4 sm:p-6
+    border-b border-slate-100
+    flex items-start gap-3 sm:gap-4
+    shrink-0">
 
-                <input type="radio" name="rescheduleReason" [value]="option" [(ngModel)]="rescheduleReason"
-                    class="accent-[var(--brand-primary)]" />
+            <div class="w-12 h-12 sm:w-14 sm:h-14
+    rounded-2xl
+    bg-red-50
+    flex items-center justify-center">
 
-                {{ option }}
-            </label>
+                <lucide-icon [img]="icons.CalendarSync"
+                    class="w-6 h-6 sm:w-7 sm:h-7 text-[var(--brand-primary)]"></lucide-icon>
+
+            </div>
+
+            <div class="flex-1">
+
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
+
+                    Confirmar reagendado
+
+                </h2>
+
+                <p class="hidden sm:block text-sm text-slate-500 mt-2 leading-relaxed">
+
+                    Revisa la información antes de actualizar tu cita.
+
+                </p>
+
+            </div>
+
+            <button type="button" (click)="closeRescheduleModal()" class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-xl
+        bg-gray-50 border border-gray-200
+        flex items-center justify-center
+        hover:bg-gray-100
+        transition cursor-pointer">
+
+                <lucide-icon [name]="icons.X" class="w-4 h-4 text-gray-500">
+                </lucide-icon>
+
+            </button>
+
         </div>
 
-        <!-- TEXTAREA -->
-        <textarea [(ngModel)]="rescheduleNote" rows="3" placeholder="Comentario adicional (opcional)"
-            class="w-full border rounded-xl px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]">
+        <!-- ================= BODY ================= -->
+        <form [formGroup]="formReschedule" (ngSubmit)="saveReschedule()" class="flex flex-col flex-1 min-h-0">
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 sm:space-y-7">
+
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+
+                    <!-- Horario actual -->
+
+                    <div class="rounded-2xl
+                    border border-slate-200
+                    bg-slate-50
+                    p-5">
+
+                        <p class="text-xs uppercase tracking-wide text-slate-400 mb-3">
+
+                            Horario actual
+
+                        </p>
+
+                        <p class="font-semibold text-slate-900">
+
+                            {{ appointment?.date }}
+
+                        </p>
+
+                        <p class="text-slate-600">
+
+                            {{ appointment?.time }}
+
+                            -
+
+                            {{ appointment?.end_time }}
+
+                        </p>
+
+                    </div>
+
+                    <!-- Flecha -->
+
+                    <div class="flex justify-center">
+
+                        <div class="w-12 h-12 rounded-full
+                    bg-[var(--brand-primary)]/10
+                    flex items-center justify-center">
+
+                            <lucide-icon [img]="icons.ArrowDown" class="text-[var(--brand-primary)]">
+                            </lucide-icon>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Nuevo horario -->
+
+                    <div class="rounded-2xl
+        border border-emerald-200
+        bg-emerald-50
+        p-5">
+
+                        <p class="text-xs uppercase tracking-wide text-emerald-600 mb-3">
+
+                            Nuevo horario
+
+                        </p>
+
+                        <p class="font-semibold text-slate-900">
+
+                            {{ selectedDate | date:'fullDate' }}
+
+                        </p>
+
+                        <p class="text-slate-700">
+
+                            {{ selectedTime?.time }}
+
+                        </p>
+
+                    </div>
+
+                    <!-- ================= Motivo ================= -->
+
+                    <div>
+
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">
+
+                            ¿Por qué deseas reagendar?
+
+                        </label>
+
+                        <div class="space-y-2">
+
+                            @for(reason of rescheduleOptions; track reason){
+
+                            <label class="flex items-start gap-3
+            rounded-xl
+            border border-slate-200
+            p-3
+            cursor-pointer
+            hover:border-[var(--brand-primary)]
+            hover:bg-[var(--brand-primary)]/5">
+
+                                <input type="radio" class="mt-1" formControlName="reason" [value]="reason">
+
+                                <span class="text-sm text-slate-700">
+
+                                    {{ reason }}
+
+                                </span>
+
+                            </label>
+
+                            }
+
+                        </div>
+
+                        @if(formReschedule.get('reason')?.touched &&
+                        formReschedule.get('reason')?.invalid){
+
+                        <p class="text-red-600 text-xs mt-2">
+
+                            Selecciona un motivo.
+
+                        </p>
+
+                        }
+
+                    </div>
+
+                    @if(formReschedule.value.reason === 'Otro motivo'){
+
+                    <div>
+
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+
+                            Cuéntanos un poco más
+
+                        </label>
+
+                        <textarea formControlName="note" rows="4" maxlength="500"
+                            placeholder="Escribe el motivo del cambio..." class="w-full
+                    rounded-2xl
+                    border border-slate-200
+                    bg-slate-50
+                    px-4 py-3
+                    outline-none
+                    focus:bg-white
+                    focus:border-red-400
+                    transition
+                    placeholder:text-gray-400
+  placeholder:font-normal">
+
+
     </textarea>
 
-        <!-- ACTIONS -->
-        <div class="flex gap-2">
+                        @if(formReschedule.get('note')?.errors?.['requiredForOther']){
 
-            <!-- VOLVER -->
-            <button (click)="showRescheduleModal = false" [disabled]="isLoading" class="flex-1 py-2 rounded-xl text-sm border border-gray-300 cursor-pointer 
-           transition hover:opacity-80 active:scale-[0.98] disabled:opacity-50"
-                style="background: var(--brand-secondary)">
-                Volver
-            </button>
+                        <p class="text-xs text-red-600 mt-2">
+
+                            Describe el motivo del cambio.
+
+                        </p>
+
+                        }
+
+                    </div>
+
+                    }
+
+                    <!-- Aviso -->
+
+                    <div class="rounded-xl
+        bg-amber-50
+        border border-amber-200
+        p-4">
+
+                        <div class="flex gap-3">
+
+                            <lucide-icon [img]="icons.Info" class="text-amber-600 mt-0.5">
+                            </lucide-icon>
+
+                            <p class="text-sm text-amber-800 leading-relaxed">
+
+                                El horario anterior dejará de estar disponible y será reemplazado
+                                por el nuevo horario seleccionado.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
 
-            <!-- CONFIRMAR -->
+            </div>
 
-            <button (click)="confirmReschedule()" [disabled]="isLoading" class="flex-1 py-2 rounded-xl text-white text-sm
-        transition hover:opacity-90 active:scale-[0.98] cursor-pointer" style="background: var(--brand-primary)">
-                {{ isLoading ? 'Procesando...' : 'Confirmar' }}
-            </button>
+            <!-- ================= FOOTER ================= -->
 
-        </div>
+            <div class="p-4 sm:p-6
+            border-t border-slate-100
+            flex flex-col-reverse sm:flex-row
+            gap-3
+            shrink-0">
+
+                <button type="button" (click)="closeRescheduleModal()" [disabled]="isSavingReschedule" class="flex-1
+                py-2.5 sm:py-3
+                rounded-xl
+                border border-slate-300
+                hover:bg-slate-50
+                transition
+                cursor-pointer">
+
+                    Seguir revisando
+
+                </button>
+
+                <button type="button" (click)="saveReschedule()" [disabled]="isSavingReschedule" class="flex-1
+                py-2.5 sm:py-3
+                rounded-xl
+                bg-[var(--brand-primary)]
+                text-white
+                hover:opacity-90
+                transition
+                disabled:opacity-70
+                disabled:cursor-not-allowed
+                cursor-pointer">
+
+                    @if(!isSavingReschedule){
+
+                    Confirmar reagendado
+
+                    }@else{
+
+                    Actualizando cita...
+
+                    }
+
+                </button>
+
+            </div>
+        </form>
 
     </div>
+
 </div>
+
 }

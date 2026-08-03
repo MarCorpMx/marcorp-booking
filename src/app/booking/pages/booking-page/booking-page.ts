@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   LucideAngularModule,
   Sparkles, Scissors, Hand, Brain, Stethoscope, Heart, Flower, Dumbbell, GraduationCap, Presentation,
@@ -67,6 +67,7 @@ export class BookingPage implements OnInit {
 
   private bookingPublicService = inject(BookingPublicService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private notify = inject(NotificationService);
   public loading = inject(BookingLoadingService);
@@ -113,8 +114,8 @@ export class BookingPage implements OnInit {
 
   // Data para date-time-selector
   availability: BookingAvailability | null = null;
-  //timeSlots: BookingTimeSlot[] = [];
-  timeSlots: any = [];
+  timeSlots: BookingTimeSlot[] = [];
+  //timeSlots: any = [];
 
 
   selectedDate: string | null = null;
@@ -183,6 +184,39 @@ export class BookingPage implements OnInit {
 
           this.bookingContext.setOrganization(res);
 
+          /*
+          |--------------------------------------------------------------------------
+          | Validaciones
+          |--------------------------------------------------------------------------
+          */
+
+          if (!res.organization.onboarding_completed_at) {
+
+            this.router.navigate(['/status/not-found']);
+
+            return;
+          }
+
+          if (res.organization.status !== 'active') {
+            this.router.navigate(['/status/suspended']);
+
+            return;
+          }
+
+          if (!res.organization.online_booking_enabled) {
+
+            this.router.navigate(['/status/disabled']);
+
+            return;
+          }
+
+          //
+          if (!res.branch.is_active || res.branch.locked_by_plan) {
+            this.router.navigate(['/status/suspended']);
+
+            return;
+          }
+
           this.branch = res.branch;
 
           this.plan = res.plan;
@@ -241,6 +275,10 @@ export class BookingPage implements OnInit {
       return;
     }
 
+    this.selectedDate = null;
+    this.selectedTime = null;
+    this.timeSlots = [];
+
     this.loading.wrap(
 
       BookingLoader.Availability,
@@ -280,6 +318,8 @@ export class BookingPage implements OnInit {
   onDateSelected(date: string) {
 
     this.selectedDate = date;
+
+    this.selectedTime = null; // limpiamos la hora anterior
 
     this.loadTimeSlots(date);
 

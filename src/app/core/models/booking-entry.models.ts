@@ -141,6 +141,10 @@ export interface BookingBranch {
 
     is_primary: boolean;
 
+    is_active: boolean;
+
+    locked_by_plan: boolean;
+
     location: BookingBranchLocation;
 
     contact: BookingBranchContact;

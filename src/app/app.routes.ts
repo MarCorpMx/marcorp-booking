@@ -77,27 +77,6 @@ export const routes: Routes = [
   },
 
   /**
-   * Result
-   */
-
-  {
-    path: ':organizationSlug/result',
-    //canActivate: [organizationGuard],
-    loadComponent: () => BookingResult
-  },
-
-  /**
-   * Manage
-   */
-
-  {
-    path: ':organizationSlug/manage',
-    //canActivate: [organizationGuard],
-    loadComponent: () => BookingManage
-  },
-
-
-  /**
    * Booking
    */
   {
@@ -111,6 +90,34 @@ export const routes: Routes = [
     //canActivate: [organizationGuard],
     loadComponent: () => OrganizationEntryPage
   },
+
+  /**
+   * Manage
+   */
+
+  {
+    path: ':organizationSlug/:branchSlug/manage',
+    //path: ':organizationSlug/manage',
+    //canActivate: [organizationGuard],
+    loadComponent: () => BookingManage
+  },
+
+  {
+    path: ':organizationSlug/:branchSlug/manage/:referenceCode',
+    loadComponent: () => BookingManage
+  },
+
+  /**
+  * Result
+  */
+
+  {
+    path: ':organizationSlug/:branchSlug/result/:token',
+    //path: ':organizationSlug/result',
+    //canActivate: [organizationGuard],
+    loadComponent: () => BookingResult
+  },
+
 
   { path: '**', redirectTo: '' }
 

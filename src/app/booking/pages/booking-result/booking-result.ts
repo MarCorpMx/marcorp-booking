@@ -1,273 +1,466 @@
-import { Component, OnInit, inject, Input } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { finalize } from 'rxjs/operators';
-import { LucideAngularModule, CheckCircle, XCircle, AlertTriangle, AlertCircle } from 'lucide-angular';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { OrganizationService } from '../../../core/services/organization.service';
-//import { OrganizationModel } from '../../../core/models/organization.model';
-import { BrandingService } from '../../../core/services/branding.service';
+import {
+  LucideAngularModule,
+  Sparkles, Scissors, Hand, Brain, Stethoscope, Heart, Flower, Dumbbell, GraduationCap, Presentation,
+  Target, PawPrint, PenTool, Circle, Apple, ShieldPlus,
+  CheckCircle, XCircle, AlertTriangle, AlertCircle
+} from 'lucide-angular';
+import { ICONS } from '../../../core/config/icons.config';
+
+import { BookingOrganization, BookingBranch, BookingPlan } from '../../../core/models/booking-entry.models';
+import { BookingHeaderViewModel } from '../../../core/models/booking-header.model';
+
+import { CenteredCardSkeleton } from '../components/skeletons/centered-card-skeleton/centered-card-skeleton';
+
+import { BUSINESS_NICHE_UI } from '../../../core/config/business-niche-ui';
+import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { BookingService, AppointmentActionResponse } from '../../../core/services/booking.service';
-
-type BackendStatus =
-  | 'confirmed'
-  | 'cancelled'
-  | 'expired'
-  | 'already_used'
-  | 'already_confirmed'
-  | 'already_cancelled'
-  | 'invalid_token'
-  | 'already_completed'
-  | 'already_no_show';
-
-type StatusType =
-  | 'confirmed'
-  | 'cancelled'
-  | 'expired'
-  | 'invalid'
-  | 'info'
-  | 'rescheduled'
-  | 'completed'
-  | 'no_show';
+import { BookingPublicService } from '../../../core/services/booking-public.service';
+import { BookingContextService } from '../../../core/services/booking-context.service';
+import { BusinessCatalogService } from '../../../core/services/business-catalog.service';
 
 @Component({
   selector: 'app-booking-result',
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, CenteredCardSkeleton],
   templateUrl: './booking-result.html',
   styleUrl: './booking-result.css',
 })
 
 export class BookingResult implements OnInit {
-  readonly CheckCircle = CheckCircle;
-  readonly XCircle = XCircle;
-  readonly AlertTriangle = AlertTriangle;
-  readonly AlertCircle = AlertCircle;
 
+  icons = ICONS;
+
+  readonly NICHE_ICON_MAP: Record<string, any> = {
+    sparkles: Sparkles,
+    scissors: Scissors,
+    hand: Hand,
+    brain: Brain,
+    stethoscope: Stethoscope,
+    heart: Heart,
+    flower: Flower,
+    dumbbell: Dumbbell,
+    'graduation-cap': GraduationCap,
+    presentation: Presentation,
+    target: Target,
+    'paw-print': PawPrint,
+    'pen-tool': PenTool,
+    circle: Circle,
+    apple: Apple,
+    'shield-plus': ShieldPlus
+  };
+
+  private bookingPublicService = inject(BookingPublicService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private orgService = inject(OrganizationService);
-  private branding = inject(BrandingService);
+  private errorHandler = inject(ErrorHandlerService);
   private notify = inject(NotificationService);
-  private bookingService = inject(BookingService);
+  private bookingContext = inject(BookingContextService);
+  public businessCatalog = inject(BusinessCatalogService);
 
+  loading = true;
+  processingToken = true;
   showManualCloseMessage = false;
-  isLoading = true;
 
-  organizationSlug!: string;
-  //organization?: OrganizationModel;
-  organization?: any;
+  organizationSlug!: string | null;
+  branchSlug!: string | null;
+  token!: string;
 
-  @Input() statusInput?: StatusType; // Llega desde booking-manage
-  status: StatusType = 'invalid'; // Llega desde Url (token)
-  isToken = true;
+  // Organization + brach data
+  organization?: BookingOrganization;
+  branch?: BookingBranch;
+  plan?: BookingPlan;
 
-  response?: AppointmentActionResponse;
+  result: any = null;
 
-  config!: {
-    title: string;
-    message: string;
-    icon: any;
-    color: string;
-  };
-
-  private statusMessages: Record<StatusType, string> = {
-    confirmed: 'Todo está listo. Tu cita ha sido confirmada correctamente.',
-    cancelled: 'La cita fue cancelada correctamente.',
-    expired: 'Este enlace ya no está disponible.',
-    invalid: 'No se pudo procesar la acción.',
-    rescheduled: 'Tu cita ha sido reagendada correctamente.',
-    info: 'Esta acción ya había sido realizada previamente.',
-    completed: 'Esta cita ya fue atendida.',
-    no_show: 'La cita fue marcada como no asistida.'
-  };
+  header?: BookingHeaderViewModel;
 
   ngOnInit(): void {
-    this.organizationSlug = this.route.snapshot.paramMap.get('slug')!;
 
-    // Cargar organization + branding
-    this.orgService.loadOrganization(this.organizationSlug)
-      .subscribe({
-        next: (org) => {
-          this.organization = org;
-         
-          //this.branding.apply(org); FALTA HACER LA PETICION CHINGONA PARA CARGAR CHINGON EL BRANDING CARBON
-        },
-        error: () => {
-          this.notify.error('Ocurrió un error al procesar la solcitud.');
-          this.branding.reset();
-          this.goHome();
-        }
-      });
+    this.loadContext();
 
-    // MODO DIRECTO (sin token)
-    if (this.statusInput) {
-      this.status = this.statusInput;
+  }
 
-      console.log(this.status);
-      this.isToken = false;
-      this.setConfig();
-      this.isLoading = false;
+  private loadContext(): void {
 
+    this.organizationSlug =
+      this.route.snapshot.paramMap.get('organizationSlug');
+
+    this.branchSlug =
+      this.route.snapshot.paramMap.get('branchSlug');
+
+    if (!this.organizationSlug || !this.branchSlug) {
+      this.notify.error('Ruta inválida.');
       return;
     }
 
-    // TOKEN FLOW (con token)
-    this.route.queryParamMap.subscribe(params => {
-      const token = params.get('token');
+    this.bookingPublicService
+      .getBranchBookingEntry(
+        this.organizationSlug,
+        this.branchSlug
+      )
+      .subscribe({
 
-      if (!token) {
-        this.status = 'invalid';
-        this.isLoading = false;
-        this.setConfig();
-        return;
-      }
+        next: (res) => {
 
-      this.processToken(token);
-    });
+          this.organization = res.organization;
+
+          // Reset contexto
+          if (
+            this.bookingContext.organization()?.slug !== res.organization.slug
+          ) {
+            this.bookingContext.clear();
+          }
+
+          this.bookingContext.setOrganization(res);
+
+          /*
+          |--------------------------------------------------------------------------
+          | Validaciones
+          |--------------------------------------------------------------------------
+          */
+
+          if (!res.organization.onboarding_completed_at) {
+
+            this.router.navigate(['/status/not-found']);
+
+            return;
+          }
+
+          if (res.organization.status !== 'active') {
+            this.router.navigate(['/status/suspended']);
+
+            return;
+          }
+
+          if (!res.branch.is_active || res.branch.locked_by_plan) {
+            this.router.navigate(['/status/suspended']);
+
+            return;
+          }
+
+          this.branch = res.branch;
+
+          this.plan = res.plan;
+
+          this.buildHeader();
+
+          this.loading = false;
+
+          this.loadToken();
+        },
+
+        error: (err) => {
+
+          this.errorHandler.handle(err);
+
+        }
+
+      });
+
+  }
+
+  private loadToken(): void {
+
+    const token =
+      this.route.snapshot.paramMap.get('token');
+
+    if (!token) {
+      this.notify.error('Ocurrió un error al procesar la solicitud.');
+      return;
+    }
+
+    this.processToken(token);
+
   }
 
   processToken(token: string) {
-    this.isLoading = true;
+    if (!this.organizationSlug || !this.branchSlug) {
+      return;
+    }
 
-    this.bookingService
-      .processAppointmentAction(token)
-      .pipe(
-        finalize(() => this.isLoading = false)
-      )
+    this.bookingPublicService.processAppointmentAction(
+      this.organizationSlug,
+      this.branchSlug,
+      token
+    )
       .subscribe({
-        next: (res: AppointmentActionResponse) => {
-          //console.log(res);
 
-          this.response = res;
-          this.status = this.mapBackendStatus(res.status);
-          this.setConfig(res);
+        next: (res) => {
+
+          //console.log('dataBackend :', JSON.stringify(res, null, 2));
+
+          this.result = this.normalizeResult(res);
+
+          this.processingToken = false;
+
         },
+
         error: (err) => {
-          this.status = this.mapErrorStatus(err);
-          this.setConfig();
+
+          this.processingToken = false;
+
+          if (err.error?.status) {
+
+            this.result = err.error;
+
+            return;
+          }
+
+          this.errorHandler.handle(err);
+
         }
+
       });
+
   }
 
-  mapBackendStatus(status: BackendStatus): StatusType {
-    const map: Record<BackendStatus, StatusType> = {
-      confirmed: 'confirmed',
-      cancelled: 'cancelled',
-      expired: 'expired',
-      invalid_token: 'invalid',
+  private normalizeResult(result: any): any {
 
-      already_used: 'info',
-      already_confirmed: 'confirmed',
-      already_cancelled: 'cancelled',
+    if (result.status === 'invalid_token' && !result.title) {
 
-      already_completed: 'completed',
-      already_no_show: 'no_show',
-    };
-
-    return map[status] || 'invalid';
-  }
-
-  mapErrorStatus(err: any): StatusType {
-    if (err.status === 410) return 'expired';
-    return 'invalid';
-  }
-
-  setConfig(res?: AppointmentActionResponse) {
-
-    //const backendStatus = res?.status;
-    const map = {
-      confirmed: {
-        title: 'Cita confirmada',
-        icon: CheckCircle,
-        color: 'text-green-500'
-      },
-      cancelled: {
-        title: 'Cita cancelada',
-        icon: XCircle,
-        color: 'text-gray-400'
-      },
-      rescheduled: {
-        title: 'Cita reagendada',
-        icon: CheckCircle,
-        color: 'text-blue-500'
-      },
-      completed: {
-        title: 'Cita finalizada',
-        icon: CheckCircle,
-        color: 'text-green-500'
-      },
-      no_show: {
-        title: 'No asistió',
-        icon: AlertTriangle,
-        color: 'text-yellow-500'
-      },
-      expired: {
-        title: 'Enlace expirado',
-        icon: AlertTriangle,
-        color: 'text-yellow-500'
-      },
-      info: {
-        title: 'Información',
-        icon: AlertCircle,
-        color: 'text-blue-500'
-      },
-      invalid: {
+      return {
+        ...result,
         title: 'Enlace no válido',
-        icon: AlertCircle,
-        color: 'text-red-400'
-      }
+        message: 'Este enlace no existe o ya no es válido.'
+      };
+
+    }
+
+    return result;
+
+  }
+
+  private buildHeader(): void {
+
+    if (!this.organization || !this.branch || !this.plan) {
+      return;
+    }
+
+    this.header = {
+
+      organizationName:
+        this.organization.name,
+
+      branchName:
+        this.branch.name,
+
+      logoUrl:
+        this.branch.branding?.logo_url
+        ||
+        this.organization.logo_url
+        ||
+        null,
+
+      subtitle:
+        this.buildHeaderSubtitle(),
+
+      description:
+        this.buildHeaderDescription(),
+
+      location:
+        this.buildLocation(),
+
+      stats: {
+
+        rating:
+          this.branch.metadata?.rating ?? null,
+
+        reviews_count:
+          this.branch.metadata?.reviews_count ?? null
+      },
+
+      actions: {
+
+        phone:
+          this.branch.contact?.phone?.internationalNumber ?? null,
+
+        whatsapp:
+          this.branch.contact?.whatsapp?.e164Number ?? null,
+
+        website:
+          this.branch.contact?.website ?? null,
+
+        /*
+        si luego agregas maps_url desde backend
+        */
+        mapsUrl:
+          this.branch.location?.maps_url ?? null,
+
+        socialLinks:
+          this.branch.contact?.social_links ?? null
+      },
+
+      showRombiBranding:
+        this.plan.is_free
     };
+  }
 
-    const base = map[this.status] || map.invalid;
+  private buildLocation(): string | null {
 
-    let message = '';
-
-    // PRIORIDAD 1: backend (token flow)
-    if (res?.message) {
-      message = res.message;
+    if (!this.branch) {
+      return null;
     }
 
-    // PRIORIDAD 2: backend fallback (cuando hay token pero no message)
-    else if (this.isToken && res?.status) {
-      message = this.getFallbackMessage(res.status);
+    const city = this.branch.location?.city;
+
+    const state = this.branch.location?.state;
+
+    if (city && state) {
+      return `${city}, ${state}`;
     }
 
-    // PRIORIDAD 3: frontend (booking-manage)
-    else {
-      message = this.statusMessages[this.status];
+    if (city) {
+      return city;
     }
 
-    this.config = {
-      ...base,
-      message
-    };
+    if (state) {
+      return state;
+    }
 
-    /*this.config = {
-      ...base,
-      message: res?.message || this.getFallbackMessage(backendStatus)
-    };*/
+    return null;
+  }
+
+  private resolveBusinessUI() {
+
+    if (!this.organization) {
+      return BUSINESS_NICHE_UI.other;
+    }
+
+    return (
+
+      BUSINESS_NICHE_UI[
+      this.organization.business_niche as keyof typeof BUSINESS_NICHE_UI
+      ]
+
+      ||
+
+      BUSINESS_NICHE_UI.other
+    );
+  }
+
+  private buildHeaderSubtitle(): string {
+
+    if (
+      this.branch?.tagline &&
+      this.branch.tagline.trim().length > 0
+    ) {
+      return this.branch.tagline;
+    }
+
+    return this.resolveBusinessUI()
+      .branchTaglineFallback;
+  }
+
+  private buildHeaderDescription(): string {
+
+    if (
+      this.branch?.description &&
+      this.branch.description.trim().length > 0
+    ) {
+      return this.branch.description;
+    }
+
+    return this.resolveBusinessUI()
+      .branchDescriptionFallback;
   }
 
 
-  getFallbackMessage(status?: BackendStatus): string {
-    const messages: Record<BackendStatus, string> = {
-      confirmed: 'Todo está listo. Tu cita ha sido confirmada correctamente.',
-      cancelled: 'La cita fue cancelada correctamente.',
-      expired: 'Este enlace ya no está disponible.',
-      invalid_token: 'No se pudo procesar la acción.',
+  get nicheIcon() {
 
-      already_used: 'Este enlace ya fue utilizado.',
-      already_confirmed: 'Esta cita ya había sido confirmada anteriormente.',
-      already_cancelled: 'Esta cita ya había sido cancelada previamente.',
+    const niche =
+      this.organization?.business_niche ?? 'other';
 
-      already_completed: 'Esta cita ya fue atendida.',
-      already_no_show: 'Esta cita fue marcada como no asistida.',
-    };
+    const iconName =
+      this.businessCatalog.getIcon(niche);
 
-    if (!status) return 'Ocurrió un problema.';
-    return messages[status] || 'Ocurrió un problema.';
+    return this.NICHE_ICON_MAP[iconName] || Circle;
   }
+
+  get nicheColor() {
+
+    const niche =
+      this.organization?.business_niche ?? 'other';
+
+    return this.businessCatalog.getColor(niche);
+
+  }
+  
+  get nicheLabel() {
+    const niche =
+      this.organization?.business_niche ?? 'other';
+
+    return this.businessCatalog.getLabel(niche);
+  }
+
+  readonly STATUS_UI: Record<string, any> = {
+
+    confirmed: {
+      icon: CheckCircle,
+      iconClass: 'text-green-500',
+      bgClass: 'bg-green-50'
+    },
+
+    already_confirmed: {
+      icon: CheckCircle,
+      iconClass: 'text-green-500',
+      bgClass: 'bg-green-50'
+    },
+
+    cancelled: {
+      icon: XCircle,
+      iconClass: 'text-gray-500',
+      bgClass: 'bg-gray-100'
+    },
+
+    already_cancelled: {
+      icon: XCircle,
+      iconClass: 'text-gray-500',
+      bgClass: 'bg-gray-100'
+    },
+
+    expired: {
+      icon: AlertTriangle,
+      iconClass: 'text-yellow-500',
+      bgClass: 'bg-yellow-50'
+    },
+
+    already_used: {
+      icon: AlertTriangle,
+      iconClass: 'text-yellow-500',
+      bgClass: 'bg-yellow-50'
+    },
+
+    already_completed: {
+      icon: AlertTriangle,
+      iconClass: 'text-yellow-500',
+      bgClass: 'bg-yellow-50'
+    },
+
+    already_no_show: {
+      icon: AlertTriangle,
+      iconClass: 'text-yellow-500',
+      bgClass: 'bg-yellow-50'
+    },
+
+    invalid_token: {
+      icon: AlertCircle,
+      iconClass: 'text-red-500',
+      bgClass: 'bg-red-50'
+    }
+
+  };
+
+  get statusUI() {
+    return this.STATUS_UI[this.result?.status] ?? {
+      icon: AlertCircle,
+      iconClass: 'text-red-500',
+      bgClass: 'bg-red-50'
+    };
+  }
+
 
   handleClose() {
     // intento cerrar
@@ -279,7 +472,74 @@ export class BookingResult implements OnInit {
     }, 300);
   }
 
-  goHome() {
-    this.router.navigate([`/${this.organizationSlug}`]);
-  }
 }
+
+/*
+private normalizeResult(result: any): any {
+
+  // Si ya viene completo del backend, lo dejamos igual
+  if (result.title) {
+    return result;
+  }
+
+  switch (result.status) {
+
+    case 'invalid_token':
+      return {
+        ...result,
+        title: 'Enlace no válido',
+        message: 'Este enlace no existe o ya no es válido.'
+      };
+
+    case 'expired':
+      return {
+        ...result,
+        title: 'Enlace expirado',
+        message: 'Este enlace ya expiró y no puede volver a utilizarse.'
+      };
+
+    case 'already_used':
+      return {
+        ...result,
+        title: 'Enlace utilizado',
+        message: 'Este enlace ya fue utilizado anteriormente.'
+      };
+
+    case 'already_completed':
+      return {
+        ...result,
+        title: 'Cita finalizada',
+        message: 'Esta cita ya fue atendida.'
+      };
+
+    case 'already_no_show':
+      return {
+        ...result,
+        title: 'No asistió',
+        message: 'Esta cita fue marcada como no asistida.'
+      };
+
+    case 'already_confirmed':
+      return {
+        ...result,
+        title: 'Cita ya confirmada',
+        message: 'Esta cita ya había sido confirmada anteriormente.'
+      };
+
+    case 'already_cancelled':
+      return {
+        ...result,
+        title: 'Cita ya cancelada',
+        message: 'Esta cita ya había sido cancelada anteriormente.'
+      };
+
+    default:
+      return {
+        ...result,
+        title: 'Ocurrió un problema',
+        message: 'No fue posible procesar la solicitud.'
+      };
+
+  }
+
+}*/

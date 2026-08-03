@@ -5,22 +5,28 @@ import { Observable } from 'rxjs';
 import { BookingOrganizationEntryResponse, BookingOrganizationBranchResponse } from '../models/booking-entry.models';
 import { BookingServicesResponse } from '../models/booking-service.models';
 import { BookingAvailability } from '../models/booking-availability.models';
+import { AppointmentActionResponse } from '../models/appointmentAction.models';
+import { BookingManageResponse } from '../models/booking-manage.model';
+import { BookingCancelRequest, BookingCancelResponse } from '../models/booking-cancel-request.model';
+import { BookingRescheduleRequest, BookingRescheduleResponse } from '../models/booking-reschedule.models';
 
 import { CreateBookingRequest, CreateBookingResponse } from '../models/booking-create.models';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class BookingPublicService {
 
   private api = inject(ApiService);
+  private endpoint = 'v1/public-booking';
 
   // rombi/org
   getOrganizationEntry(
     organizationSlug: string
   ): Observable<BookingOrganizationEntryResponse> {
     return this.api.get<BookingOrganizationEntryResponse>(
-      `v1/public-booking/${organizationSlug}`
+      `${this.endpoint}/${organizationSlug}`
     );
   }
 
@@ -31,7 +37,7 @@ export class BookingPublicService {
   ): Observable<BookingOrganizationBranchResponse> {
 
     return this.api.get<BookingOrganizationBranchResponse>(
-      `v1/public-booking/${organizationSlug}/${branchSlug}`
+      `${this.endpoint}/${organizationSlug}/${branchSlug}`
     );
   }
 
@@ -41,7 +47,7 @@ export class BookingPublicService {
     branchSlug: string
   ) {
     return this.api.get<BookingServicesResponse>(
-      `v1/public-booking/${organizationSlug}/${branchSlug}/services`
+      `${this.endpoint}/${organizationSlug}/${branchSlug}/services`
     );
 
   }
@@ -53,7 +59,7 @@ export class BookingPublicService {
   ): Observable<BookingAvailability> {
 
     let url =
-      `v1/public-booking/variants/${variantId}/availability`;
+      `${this.endpoint}/variants/${variantId}/availability`;
 
     if (staffMemberId) {
       url += `?staff=${staffMemberId}`;
@@ -70,7 +76,7 @@ export class BookingPublicService {
   ) {
 
     let url =
-      `v1/public-booking/variants/${variantId}/timeslots?date=${date}`;
+      `${this.endpoint}/variants/${variantId}/timeslots?date=${date}`;
 
     if (staffMemberId) {
       url += `&staff=${staffMemberId}`;
@@ -93,7 +99,7 @@ export class BookingPublicService {
   ): Observable<CreateBookingResponse> {
 
     return this.api.post<CreateBookingResponse>(
-      'v1/public-booking/bookings',
+      `${this.endpoint}/bookings`,
       payload
     );
 
@@ -154,26 +160,61 @@ export class BookingPublicService {
 
   }
 
-  // cancel -> falta saber si esta correcto
-  cancelBooking(
-    referenceCode: string
-  ) {
+  /*
+  |--------------------------------------------------------------------------
+  | Appointment Actions
+  |--------------------------------------------------------------------------
+  */
 
-    return this.api.post(
-      `v1/public-booking/bookings/${referenceCode}/cancel`,
+  // booking-result (cuando realizan una acción desde email)
+  processAppointmentAction(
+    organizationSlug: string,
+    branchSlug: string,
+    token: string
+  ) {
+    return this.api.post<AppointmentActionResponse>(
+      `${this.endpoint}/${organizationSlug}/${branchSlug}/actions/${token}`,
       {}
     );
-
   }
 
-  // reschedule -> falta saber si esta correcto
-  rescheduleBooking(
+  // Buscar la cita por reference_code
+  getAppointmentByReference(
+    organizationSlug: string,
+    branchSlug: string,
+    referenceCode: string
+  ) {
+    return this.api.get<BookingManageResponse>(
+      `${this.endpoint}/${organizationSlug}/${branchSlug}/bookings/${referenceCode}`,
+      {}
+    );
+  }
+
+
+  // Cancelar Cita
+  cancelByReference(
+    organizationSlug: string,
+    branchSlug: string,
     referenceCode: string,
-    payload: any
+    payload: BookingCancelRequest
+  ) {
+    return this.api.post<BookingCancelResponse>(
+      `${this.endpoint}/${organizationSlug}/${branchSlug}/bookings/${referenceCode}/cancel`,
+      payload
+    );
+  }
+
+
+  // Reagendar Cita
+  rescheduleByReference(
+    organizationSlug: string,
+    branchSlug: string,
+    referenceCode: string,
+    payload: BookingRescheduleRequest
   ) {
 
-    return this.api.post(
-      `v1/public-booking/bookings/${referenceCode}/reschedule`,
+    return this.api.post<BookingRescheduleResponse>(
+      `${this.endpoint}/${organizationSlug}/${branchSlug}/bookings/${referenceCode}/reschedule`,
       payload
     );
 
