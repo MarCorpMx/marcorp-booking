@@ -12,7 +12,8 @@ export class SubscriptionService {
 
   getPlans(subsystem: string): Observable<any> {
     return this.api.get<any>(
-      `v1/public/plans?subsystem=${subsystem}`
+      //`v1/public/plans?subsystem=${subsystem}`
+      `v1/public-booking/plans?subsystem=${subsystem}`
     );
   }
 

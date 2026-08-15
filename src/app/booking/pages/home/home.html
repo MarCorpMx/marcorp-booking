@@ -916,11 +916,31 @@ text-white">
 
                                     @if(feature.limit_type === 'quantity') {
 
+                                    @if(feature.key === 'services'){
+
+                                    @if(plan.key === 'free'){
+                                    <span class="text-gray-500 text-sm">
+
+                                        · {{ feature.limit }} servicios con hasta 3 variantes cada uno
+
+                                    </span>
+                                    }
+                                    @if(plan.key === 'basic'){
+                                    <span class="text-gray-500 text-sm">
+
+                                        · {{ feature.limit }} servicios con hasta 10 variantes cada uno
+
+                                    </span>
+                                    }
+
+                                    } @else{
+
                                     <span class="text-gray-500 text-sm">
 
                                         · hasta {{ feature.limit }}
 
                                     </span>
+                                    }
 
                                     }
 

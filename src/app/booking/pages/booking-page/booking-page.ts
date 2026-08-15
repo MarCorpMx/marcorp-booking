@@ -754,7 +754,6 @@ export class BookingPage implements OnInit {
 
     };
 
-    console.log('payloadEnviar:', JSON.stringify(payload, null, 2));
 
 
     this.loading.start(

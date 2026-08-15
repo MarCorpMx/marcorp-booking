@@ -19,13 +19,16 @@
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
 
             <!-- LOGO -->
-            <div class="w-10 h-10 rounded-xl overflow-hidden border border-slate-100 shrink-0">
+            <div class="h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-slate-100 sm:h-16 sm:w-16">
 
                 @if(header?.logoUrl){
-                <img [src]="header?.logoUrl" class="w-full h-full object-cover">
-                }@else{
-                <div class="w-full h-full flex items-center justify-center" [style.background]="nicheColor + '15'">
-                    <lucide-icon [img]="nicheIcon" size="18" [style.color]="nicheColor"></lucide-icon>
+                <img [src]="header?.logoUrl" class="h-full w-full object-cover">
+                } @else {
+                <div class="flex h-full w-full items-center justify-center" [style.background]="nicheColor + '15'">
+
+                    <lucide-icon [img]="nicheIcon" size="18" [style.color]="nicheColor">
+                    </lucide-icon>
+
                 </div>
                 }
 

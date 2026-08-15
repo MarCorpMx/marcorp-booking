@@ -119,7 +119,7 @@ export class BookingManage implements OnInit {
   ];
 
   // Reagendar
-  isInRescheduleMode = false; // Selecto de fecha
+  isInRescheduleMode = false; // Selector de fecha
 
   isSavingReschedule = false; // Modal de confirmación
 
@@ -408,7 +408,7 @@ export class BookingManage implements OnInit {
 
         next: (res) => {
 
-          //console.log('dataBackend :', JSON.stringify(res, null, 2));
+          //console.log('dataCita:', JSON.stringify(res, null, 2));
 
           if (res.status === 'not_found') {
 
@@ -681,7 +681,6 @@ export class BookingManage implements OnInit {
 
     };
 
-    console.log('payload:', JSON.stringify(payload, null, 2));
 
 
     this.isSavingReschedule = true;

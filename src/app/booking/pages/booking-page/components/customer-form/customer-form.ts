@@ -71,7 +71,7 @@ export class CustomerForm implements OnInit {
     this.form = this.fb.group({
 
       first_name: [
-        'Omar',
+        '',
         [
           Validators.required,
           Validators.minLength(2),
@@ -80,14 +80,14 @@ export class CustomerForm implements OnInit {
       ],
 
       last_name: [
-        'Escobar',
+        '',
         [
           Validators.maxLength(100)
         ]
       ],
 
       email: [
-        'omar.lawliet90@gmail.com',
+        '',
         [
           Validators.required,
           Validators.email,
@@ -95,18 +95,18 @@ export class CustomerForm implements OnInit {
         ]
       ],
 
-      /*phone: [
-        null,
-        Validators.required
-      ],*/
-
       phone: [
-        '7702021345',
+        null,
         Validators.required
       ],
 
+      /*phone: [
+        '7702021345',
+        Validators.required
+      ],*/
+
       notes: [
-        'Es una prueba desde booking-publico',
+        '',
         Validators.maxLength(500)
       ]
 
