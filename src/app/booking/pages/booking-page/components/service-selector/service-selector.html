@@ -449,20 +449,12 @@ transition">
                                 <lucide-angular [name]="icons.Users" class="w-4 h-4">
                                 </lucide-angular>
 
-                                @if(
-                                pendingVariant?.id === variant.id
-                                && pendingStaff
-                                ){
-
+                                @if(pendingStaffVariantId === variant.id && pendingStaff) {
                                 {{ pendingStaff.name }}
 
-                                <lucide-angular [name]="icons.Check" class="w-4 h-4">
-                                </lucide-angular>
-
-                                }@else{
-
+                                <lucide-angular [name]="icons.Check" class="w-4 h-4"></lucide-angular>
+                                } @else {
                                 Elegir especialista
-
                                 }
 
                             </button>
@@ -822,7 +814,7 @@ cursor-pointer
                     shadow-lg
                     bg-slate-100">
 
-                    
+
 
                     @if(staffProfile.avatar){
 

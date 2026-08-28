@@ -56,6 +56,146 @@ export class CustomerForm implements OnInit {
     CountryISO.UnitedStates
   ];
 
+  // =========================================================
+  // FORMS
+  // =========================================================
+
+  readonly participationForm = this.fb.group({
+    type: ['', Validators.required],
+  });
+
+  readonly teamForm = this.fb.group({
+    teamName: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(60),
+      ],
+    ],
+
+    projectName: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(100),
+      ],
+    ],
+
+    projectType: [
+      '',
+      Validators.required,
+    ],
+  });
+
+  readonly joinTeamForm = this.fb.group({
+    invitationCode: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(20),
+      ],
+    ],
+  });
+
+  readonly participantForm = this.fb.group({
+
+    firstName: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+      ],
+    ],
+
+    lastName: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(100),
+      ],
+    ],
+
+    email: [
+      '',
+      [
+        Validators.required,
+        Validators.email,
+      ],
+    ],
+
+    password: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(8),
+      ],
+    ],
+
+    phone: [
+      null,
+      Validators.required,
+    ],
+
+    university: [
+      '',
+      Validators.required,
+    ],
+
+    career: [
+      '',
+      Validators.required,
+    ],
+
+    semester: [
+      '',
+      Validators.required,
+    ],
+
+    city: [
+      '',
+      Validators.required,
+    ],
+
+    age: [
+      null,
+      [
+        Validators.required,
+        Validators.min(16),
+        Validators.max(80),
+      ],
+    ],
+
+    mentor: [
+      '',
+      Validators.required,
+    ],
+
+    socialMedia: [
+      '',
+    ],
+  });
+
+  readonly documentsForm = this.fb.group({
+
+    studentProof: [
+      null,
+      Validators.required,
+    ],
+
+    ine: [
+      null,
+      Validators.required,
+    ],
+
+  });
+
+  
+
   ngOnInit(): void {
 
     this.ui =
@@ -218,7 +358,7 @@ export class CustomerForm implements OnInit {
 
     }
 
-     this.formCompleted.emit(payload);
+    this.formCompleted.emit(payload);
 
   }
 

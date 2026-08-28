@@ -33,6 +33,8 @@ export class ServiceSelector {
   pendingVariant: BookingServiceVariant | null = null;
 
   pendingStaff: BookingStaffMember | null = null;
+  pendingStaffVariantId: number | null = null;
+
   pendingMode: 'online' | 'presential' | null = null;
 
   staffSelectionVariant: BookingServiceVariant | null = null;
@@ -83,13 +85,18 @@ export class ServiceSelector {
 
     this.pendingService = service;
     this.pendingVariant = variant;
-
     this.selectedVariantId = variant.id;
 
-    if (
+    // Si el especialista (y/o modalidad) ya se eligió antes, continúa el flujo.
+    /*if (
       !variant.requires_staff_selection &&
       variant.mode !== 'hybrid'
     ) {
+      this.finalizeSelection();
+      return;
+    }*/
+
+    if (this.canFinalize()) {
       this.finalizeSelection();
       return;
     }
@@ -101,6 +108,7 @@ export class ServiceSelector {
 
   canFinalize(): boolean {
 
+
     if (!this.pendingVariant) {
       return false;
     }
@@ -111,11 +119,22 @@ export class ServiceSelector {
     const needsMode =
       this.pendingVariant.mode === 'hybrid';
 
-    if (needsStaff && !this.pendingStaff) {
+
+    /*  if (needsStaff && !this.pendingStaff) {
       return false;
     }
 
     if (needsMode && !this.pendingMode) {
+      return false;
+    }*/
+
+    if (
+      needsStaff &&
+      (
+        !this.pendingStaff ||
+        this.pendingStaffVariantId !== this.pendingVariant.id
+      )
+    ) {
       return false;
     }
 
@@ -147,6 +166,7 @@ export class ServiceSelector {
     this.pendingService = null;
     this.pendingVariant = null;
     this.pendingStaff = null;
+    this.pendingStaffVariantId = null;
     this.pendingMode = null;
     this.hybridVariantId = null;
   }
@@ -199,6 +219,7 @@ export class ServiceSelector {
   selectStaff(staff: BookingStaffMember): void {
 
     this.pendingStaff = staff;
+    this.pendingStaffVariantId = this.staffSelectionVariant?.id ?? null;
 
     this.closeStaffModal();
 
@@ -231,16 +252,14 @@ export class ServiceSelector {
     );
   }
 
-  needsStaffSelection(
-    variant: BookingServiceVariant
-  ): boolean {
-
+  needsStaffSelection(variant: BookingServiceVariant): boolean {
     return (
-      this.pendingVariant?.id === variant.id
-      &&
-      variant.requires_staff_selection
-      &&
-      !this.pendingStaff
+      this.pendingVariant?.id === variant.id &&
+      variant.requires_staff_selection &&
+      (
+        !this.pendingStaff ||
+        this.pendingStaffVariantId !== variant.id
+      )
     );
   }
 
